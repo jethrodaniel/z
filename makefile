@@ -17,7 +17,7 @@ OBJS    := ${SRCS:.cpp=.o}
 TARGET  := bin
 
 CATCH2_INCLUDE := third_party/Catch2/single_include/catch2
-TEST_FLAGS    := -I $(CATCH2_INCLUDE) -I src
+TEST_FLAGS    := -I $(CATCH2_INCLUDE) -I include
 TEST_PROG     := test/run
 TEST_MAIN     := test/main.cpp
 TEST_MAIN_OBJ := ${TEST_MAIN:.cpp=.o}
