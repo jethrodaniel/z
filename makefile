@@ -47,7 +47,7 @@ purge: clean
 # Create executable
 #
 run: $(TARGET)/$(PROG)
-	./$<
+	./$< 42
 $(TARGET):
 	mkdir -p $(TARGET)
 $(OBJS): $(SRCS)
@@ -83,7 +83,7 @@ fix: $(SRCS) $(TEST_SRCS) $(MAIN)
 	clang-tidy --fix $(LINT_FLAGS) $^ -- -I $(CATCH2_INCLUDE) $(FLAGS)
 
 ##
-# Install prerequisites
+# Install prerequisites for the linter
 prereqs:
 	yum install -y centos-release-scl llvm-toolset-7-clang-tools-extra
 	scl enable llvm-toolset-7 bash
