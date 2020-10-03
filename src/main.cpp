@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include <app/app.hpp>
+#include <holycc/holycc.hpp>
 
 int main(int  /*argc*/, char ** /*argv*/) {
   std::cout << "yo" << std::endl;

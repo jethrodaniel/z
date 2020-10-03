@@ -3,7 +3,7 @@
 # $< - first dependency, $@ is target file
 # $@ - target
 
-PROG=app
+PROG=holycc
 
 CC       := g++
 FLAGS    := -std=c++11 -I include
