@@ -18,3 +18,10 @@ git submodule update --init --progress --depth=1
 ## license
 
 MIT
+
+## references
+
+- http://scheme2006.cs.uchicago.edu/11-ghuloum.pdf
+- https://www.sigbus.info/compilerbook
+  - https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=https%3A%2F%2Fwww.sigbus.info%2Fcompilerbook
+- https://github.com/fmtlib/fmt

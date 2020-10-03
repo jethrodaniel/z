@@ -28,7 +28,7 @@ LINT_FLAGS := -checks='*' -header-filter='.*'
 
 ##
 
-default: clean test run
+default: clean build test run
 
 ##
 # Helpers
@@ -39,7 +39,7 @@ tree:
 # Cleanup object files and executables.
 # To avoid compiling Catch2, we don't remove the test driver obj file.
 clean:
-	rm -rfv *.o $(TEST_OBJS) $(TEST_PROG) $(OBJS) $(MAIN_OBJ) $(TARGET)
+	rm -rfv *.o $(TEST_OBJS) $(TEST_PROG) $(OBJS) $(MAIN_OBJ) $(TARGET) tmp
 purge: clean
 	rm -rf $(TEST_MAIN_OBJ)
 
@@ -55,6 +55,7 @@ $(OBJS): $(SRCS)
 $(TARGET)/$(PROG): $(OBJS) $(MAIN)
 	mkdir -p $(TARGET)
 	$(CC) $(FLAGS) $^ -o $@
+build: $(TARGET)/$(PROG)
 
 ##
 # Testing using Catch2

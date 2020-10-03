@@ -1,6 +1,6 @@
-#ifndef APP_HPP
-#define APP_HPP
+#ifndef HOLYCC_HOLYCC_HPP
+#define HOLYCC_HOLYCC_HPP
 
 int foo();
 
-#endif // APP_HPP
+#endif // HOLYCC_HOLYCC_HPP
