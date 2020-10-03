@@ -4,6 +4,13 @@
 
 #include <holycc/holycc.hpp>
 
+// = holycc
+//
+// == Language recognized so far:
+//
+// Just a single integer.
+//
+
 int main(int argc, char ** argv) {
   if (argc != 2) {
 		std::cerr << "arg missing";
