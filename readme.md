@@ -25,10 +25,14 @@ MIT
 
 TempleOS
 
+- https://templeos.org/
 - https://github.com/cia-foundation/TempleOS
 - https://harrisontotty.github.io/p/a-lang-design-analysis-of-holyc
 - https://christine.website/blog/templeos-1-installation-and-basic-use-2019-05-20
 - https://archive.org/details/TerryADavis_TempleOS_Archive
+- https://minexew.github.io/2020/02/27/templeos-loader-part1.html
+- https://minexew.github.io/2020/03/29/templeos-loader-part2.html
+- https://minexew.github.io/2020/05/10/templeos-loader-part3.html
 
 Compilers
 
