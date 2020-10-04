@@ -8,8 +8,8 @@
 //
 // == Language recognized so far:
 //
-// Addition/Subtraction - one number followed by zero or more numbers
-// or +/-.
+// Takes as input a number or addition/subtraction, and exits with the
+// result of the expression.
 
 int main(int argc, char ** argv) {
   if (argc != 2) {

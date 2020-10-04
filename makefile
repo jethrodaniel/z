@@ -6,7 +6,7 @@
 PROG=holycc
 
 CC       := g++
-FLAGS    := -std=c++11 -I include
+FLAGS    = -std=c++11 -I include -g
 MAIN     := src/main.cpp
 MAIN_OBJ := ${MAIN:.cpp=.o}
 
