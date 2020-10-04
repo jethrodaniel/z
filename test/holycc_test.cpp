@@ -26,6 +26,9 @@ TEST_CASE("holycc compiler input/output tests") {
   SECTION("simple program that reads an int and exits") {
     REQUIRE(holyc("42") == 42);
   }
+  SECTION("addition/subtraction") {
+    REQUIRE(holyc("42+1+2-1") == 44);
+  }
 
   sh("rm -rf a.S a.out");
 }
