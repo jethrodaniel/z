@@ -16,18 +16,18 @@ int sh(const char *cmd) {
   return code;
 }
 
-int holyc(const char *code) {
+int cc(const char *code) {
   char *cmd;
 	asprintf(&cmd, "./bin/holycc %s > a.S && cc a.S -o a.out && ./a.out", code);
   return sh(cmd);
 }
 
-TEST_CASE("holycc compiler input/output tests") {
+TEST_CASE("compiler input/output tests") {
   SECTION("simple program that reads an int and exits") {
-    REQUIRE(holyc("42") == 42);
+    REQUIRE(cc("42") == 42);
   }
   SECTION("addition/subtraction") {
-    REQUIRE(holyc("42+1+2-1") == 44);
+    REQUIRE(cc("42+1+2-1") == 44);
   }
 
   sh("rm -rf a.S a.out");
