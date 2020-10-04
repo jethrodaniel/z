@@ -23,9 +23,17 @@ MIT
 
 ## references
 
+TempleOS
+
 - https://github.com/cia-foundation/TempleOS
 - https://harrisontotty.github.io/p/a-lang-design-analysis-of-holyc
+- https://christine.website/blog/templeos-1-installation-and-basic-use-2019-05-20
+- https://archive.org/details/TerryADavis_TempleOS_Archive
+
+Compilers
+
 - http://scheme2006.cs.uchicago.edu/11-ghuloum.pdf
 - https://www.sigbus.info/compilerbook
   - https://github.com/KENNN/compiler-book
   - https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=https%3A%2F%2Fwww.sigbus.info%2Fcompilerbook
+  - https://github.com/rui314/chibicc
