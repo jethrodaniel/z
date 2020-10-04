@@ -1,5 +1,9 @@
 #include <holycc/holycc.hpp>
 
-int   foo() {
+namespace holyc {
+
+int foo() {
   return 0;
 }
+
+} // namespace holyc

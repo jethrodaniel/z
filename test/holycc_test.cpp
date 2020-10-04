@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include <holycc/holycc.hpp>
+/* #include <holycc/holycc.hpp> */
 
 // Run a shell command, return the exit code.
 //
