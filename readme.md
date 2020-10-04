@@ -1,6 +1,8 @@
-# cpp-template
+# holycc
 
-starter template for c++.
+![](https://github.com/jethrodaniel/holycc/workflows/ci/badge.svg)
+
+Following along with Rui Ueyama's 9cc, but implementing Terry David's HolyC.
 
 ## install
 
@@ -21,6 +23,8 @@ MIT
 
 ## references
 
+- https://github.com/cia-foundation/TempleOS
+- https://harrisontotty.github.io/p/a-lang-design-analysis-of-holyc
 - http://scheme2006.cs.uchicago.edu/11-ghuloum.pdf
 - https://www.sigbus.info/compilerbook
   - https://github.com/KENNN/compiler-book
