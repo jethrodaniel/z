@@ -50,7 +50,7 @@ run: $(TARGET)/$(PROG)
 	./$< 42
 $(TARGET):
 	mkdir -p $(TARGET)
-$(OBJS): $(SRCS)
+%.o: %.cpp
 	$(CC) $(FLAGS) $< -o $@ -c
 $(TARGET)/$(PROG): $(OBJS) $(MAIN)
 	mkdir -p $(TARGET)
@@ -68,9 +68,9 @@ build: $(TARGET)/$(PROG)
 #
 test: $(TEST_PROG)
 	./$<
-$(TEST_OBJS): $(TEST_SRCS)
-	$(CC) $(FLAGS) $(TEST_FLAGS) $^ -o $@ -c
-$(TEST_MAIN_OBJ):
+%test.o: %test.cpp
+	$(CC) $(FLAGS) $(TEST_FLAGS) $^ -c -o $@
+$(TEST_MAIN_OBJ): $(TEST_MAIN)
 	$(CC) $(FLAGS) $(TEST_FLAGS) $(TEST_MAIN) -c -o $@
 $(TEST_PROG): $(OBJS) $(TEST_OBJS) $(TEST_MAIN_OBJ)
 	$(CC) $(FLAGS) $(TEST_FLAGS) $^ -o $@
