@@ -8,9 +8,9 @@
 namespace holycc {
 
 class Compiler {
-  public:
-    Compiler();
-    int run(int argc, char **argv);
+public:
+  Compiler();
+  int run(int argc, char **argv);
 };
 
 } // namespace holycc
