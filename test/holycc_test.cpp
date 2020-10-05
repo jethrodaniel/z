@@ -28,6 +28,7 @@ TEST_CASE("compiler input/output tests") {
   }
   SECTION("addition/subtraction") {
     REQUIRE(cc("42+1+2-1") == 44);
+    REQUIRE(cc("1+2-3+4-5+6") == 4);
   }
 
   sh("rm -rf a.S a.out");
