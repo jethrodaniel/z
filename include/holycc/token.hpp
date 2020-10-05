@@ -12,10 +12,26 @@ public:
   enum class Type {
     PLUS,     // +
     MINUS,    // -
+    DIVIDE,   // /
+    MULTIPLY, // *
     NUMBER,   // 123
     NEWLINE,  // \n
     END 			// EOF
   };
+
+  // thanks, c++, I hate it.
+  std::string type_name() const {
+    switch(type) {
+      case Type::PLUS:     return std::string("PLUS");
+      case Type::MINUS:    return std::string("MINUS");
+      case Type::DIVIDE:   return std::string("DIVIDE");
+      case Type::MULTIPLY: return std::string("MULTIPLY");
+      case Type::NUMBER:   return std::string("NUMBER");
+      case Type::NEWLINE:  return std::string("NEWLINE");
+      case Type::END:      return std::string("END");
+    }
+  }
+
 
   const Type type;          // The type of this token
   const std::string lexeme; // The characters that form this token
@@ -49,7 +65,7 @@ public:
     std::string indent(indention, ' ');
 
     out << indent << "Token: [\n"
-        << indent << "  type:   [" << static_cast<int>(type) << "]\n"
+        << indent << "  type:   [" << type_name() << "]\n"
         << indent << "  line:   [" << line      << "]\n"
         << indent << "  start:  [" << start     << "]\n"
         << indent << "  end:    [" << end       << "]\n"
@@ -61,14 +77,6 @@ public:
 
   // @param  other  A token instance to compare to this instance
   // @return        Whether this token is the same, member-wise, as other
-  bool operator==(const Token &other) {
-    return type   == other.type   &&
-           lexeme == other.lexeme &&
-           line   == other.line   &&
-           start  == other.start  &&
-           end    == other.end;
-  }
-
   // @param  t1  A token to compare against t2
   // @param  t2  A token to compare against t1
   // @return     Whether the tokens are the same, member-wise
@@ -79,6 +87,7 @@ public:
            t1.start  == t2.start  &&
            t1.end    == t2.end;
   }
+
 };
 
 } // namespace holycc

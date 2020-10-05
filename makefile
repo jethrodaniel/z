@@ -28,7 +28,7 @@ LINT_FLAGS := -checks='*' -header-filter='.*'
 
 ##
 
-default: clean build test run
+default: clean build test run clean
 
 ##
 # Helpers
