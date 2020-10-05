@@ -1,4 +1,4 @@
-#include <holycc/holycc.hpp>
+#include <holycc/compiler.hpp>
 
 int main(int argc, char **argv) {
   holycc::Compiler cc;

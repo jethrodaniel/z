@@ -1,4 +1,4 @@
-#include <holycc/holycc.hpp>
+#include <holycc/compiler.hpp>
 
 holycc::Compiler::Compiler() {
 }

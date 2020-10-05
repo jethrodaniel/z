@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-/* #include <holycc/holycc.hpp> */
+/* #include <holycc/compiler.hpp> */
 
 // Run a shell command, return the exit code.
 //
@@ -12,7 +12,7 @@
 int sh(const char *cmd) {
   int result = system(cmd);
   int code = WEXITSTATUS(result);
-  printf("[%i] sh '%s'\n", code, cmd);
+  /* printf("[%i] sh '%s'\n", code, cmd); */
   return code;
 }
 
@@ -28,7 +28,7 @@ TEST_CASE("compiler input/output tests") {
   }
   SECTION("addition/subtraction") {
     REQUIRE(cc("42+1+2-1") == 44);
-    REQUIRE(cc("1+2-3+4-5+6") == 4);
+    REQUIRE(cc("1+2-3+4-5+6") == 5);
   }
 
   sh("rm -rf a.S a.out");
