@@ -1,3 +1,7 @@
+#define FMT_HEADER_ONLY // needed to use as a header only lib
+#include <fmt/format.h>
+#include <fmt/color.h>
+
 #include <holycc/compiler.hpp>
 
 holycc::Compiler::Compiler() {
@@ -12,7 +16,7 @@ holycc::Compiler::Compiler() {
 
 int holycc::Compiler::run(int argc, char **argv) {
   if (argc != 2) {
-    std::cerr << "arg missing";
+    fmt::print(stderr, fg(fmt::color::red) | fmt::emphasis::bold, "No input file provided!\n");
     return 1;
   }
 

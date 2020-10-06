@@ -23,6 +23,11 @@ MIT
 
 ## references
 
+Dependecies
+
+- https://github.com/fmtlib/fmt
+- https://github.com/catchorg/Catch2 (test)
+
 TempleOS
 
 - https://templeos.org/
@@ -41,3 +46,8 @@ Compilers
   - https://github.com/KENNN/compiler-book
   - https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=https%3A%2F%2Fwww.sigbus.info%2Fcompilerbook
   - https://github.com/rui314/chibicc
+
+Etc
+
+- https://blogs.oracle.com/linux/hello-from-a-libc-free-world-part-1-v2
+- https://blogs.oracle.com/linux/hello-from-a-libc-free-world-part-2-v2
