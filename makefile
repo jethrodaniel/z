@@ -47,7 +47,7 @@ purge: clean
 # Create executable
 #
 run: $(TARGET)/$(PROG)
-	./$< 42
+	./$< 42+9000-3+1+2
 $(TARGET):
 	mkdir -p $(TARGET)
 %.o: %.cpp
