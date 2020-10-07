@@ -22,29 +22,29 @@ int holycc::Compiler::run(int argc, char **argv) {
 
   char *c = argv[1];
 
-  printf(".intel_syntax noprefix\n");
-  printf(".globl main\n");
-  printf("main:\n");
-  printf("  mov rax, %ld\n", strtol(c, &c, 10));
+  fmt::print(".intel_syntax noprefix\n");
+  fmt::print(".globl main\n");
+  fmt::print("main:\n");
+  fmt::print("  mov rax, {}\n", strtol(c, &c, 10));
 
   while (*c != 0) {
     if (*c == '+') {
       c++;
-      printf("  add rax, %ld\n", strtol(c, &c, 10));
+      fmt::print("  add rax, {}\n", strtol(c, &c, 10));
       continue;
     }
 
     if (*c == '-') {
       c++;
-      printf("  sub rax, %ld\n", strtol(c, &c, 10));
+      fmt::print("  sub rax, {}\n", strtol(c, &c, 10));
       continue;
     }
 
-    std::cerr << "Error: " << *c << "\n";
+    fmt::print(stderr, fg(fmt::color::red) | fmt::emphasis::bold, "Error: {}\n", *c);
     return 1;
   }
 
-  printf("  ret\n");
+  fmt::print("  ret\n");
 
   return 0;
 }
