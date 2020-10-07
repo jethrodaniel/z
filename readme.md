@@ -23,7 +23,13 @@ MIT
 
 ## references
 
-Dependecies
+> If I have seen further, it is by standing upon the shoulders of giants.
+>
+> Sir Isaac Newton, 1675
+
+Thanks, y'all.
+
+Dependencies
 
 - https://github.com/fmtlib/fmt
 - https://github.com/catchorg/Catch2 (test)
