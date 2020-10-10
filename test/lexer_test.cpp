@@ -14,7 +14,6 @@ TEST_CASE("lexer") {
     holycc::Token(holycc::Token::Type::NUMBER, "42", 1, 0, 1),
     holycc::Token(holycc::Token::Type::PLUS,   "+",  1, 3, 3),
     holycc::Token(holycc::Token::Type::NUMBER, "5",  1, 5, 5),
-    holycc::Token(holycc::Token::Type::END,    "\0", 1, 6, 6)
   };
 
   REQUIRE(tokens == expected);

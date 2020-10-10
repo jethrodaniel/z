@@ -10,6 +10,9 @@
 
 using namespace std::string_literals;
 
+#include <regex>
+#include <fmt/format.h>
+
 namespace holycc {
 
 class Lexer {
@@ -24,8 +27,13 @@ class Lexer {
     tokens.push_back(Token(type, lexeme, scanner.line, start, scanner.pos - 1));
   }
 
+  bool is_digit(std::string n) {
+    return std::regex_match(n, std::regex("[[:digit:]]"));
+  }
+
+  // TODO: only handles positive integers for now
   void numeric() {
-    while (std::isdigit(scanner.peek())) {
+    while (is_digit(scanner.peek())) {
       scanner.advance();
     }
 
@@ -34,31 +42,24 @@ class Lexer {
 
   // Read characters until the the next available token is formed
   void scan_token() {
-    char c = scanner.advance();
-    switch (c) {
-      case '+': add_token(Token::Type::PLUS); break;
-      case '-': add_token(Token::Type::MINUS); break;
-      case '/': add_token(Token::Type::DIVIDE); break;
-      case '*': add_token(Token::Type::MULTIPLY); break;
-
-      // Ignore whitespace
-      case ' ':  break;
-      case '\t': break;
-
-      // newlines
-      case '\r': break; // todo \r\n
-      case '\n': add_token(Token::Type::NEWLINE); break;
-
-      case '\0': add_token(Token::Type::END); break;
-
-      default:
-        if (std::isdigit(c))
-          numeric();
-        else {
-          auto error = "Unexpected character '"s + c + "'.";
-          // TODO: return expected<T, error> here
-          throw Error(error, scanner.line, start);
-        }
+    auto c = scanner.advance();
+    if (c == "+")
+      add_token(Token::Type::PLUS);
+    else if (c == "-")
+      add_token(Token::Type::MINUS);
+    else if (c == "/")
+      add_token(Token::Type::DIVIDE);
+    else if (c == "*")
+      add_token(Token::Type::MULTIPLY);
+    else if (c == " ")
+      return; // skip whitespace
+    else if (c == "\n")
+      add_token(Token::Type::NEWLINE);
+    else if (is_digit(c))
+      numeric();
+    else {
+      auto error = "Unexpected character '"s + c + "'.";
+      throw Error(error, scanner.line, start);
     }
   }
 
@@ -74,11 +75,6 @@ public:
       start = scanner.pos;
       scan_token();
     }
-
-    // this is a bit ugly, but looping until EOF is pretty sane
-    start++;
-    scanner.advance();
-    add_token(Token::Type::END);
 
     return tokens;
   }

@@ -6,6 +6,13 @@
 namespace holycc {
 
 // Simple scanner class, just maintains position and line number in a string.
+//
+// Right now it uses a `std::string`, and returns `std::string`s instead of
+// `chars` - this is to ease any conversions needed to handle UTF8.
+//
+// Eventually, the string here should index graphemes, so that `[0]` with
+// Japanese, for example, returns the first _character_ as the human eye
+// sees it.
 class Scanner {
 public:
   const std::string source;
@@ -18,16 +25,16 @@ public:
 
   // Moves the scanner to the next character
   // @return the previous character
-  char advance() {
-    auto c = source[pos++];
-    if (c == '\n') line++;
+  std::string advance() {
+    auto c = std::string(1,source[pos++]);
+    if (c == "\n") line++;
     return c;
   }
 
   // Looks at the next character, without moving the scanner
   // @return the next character
-  char peek() {
-    return is_eof() ? '\0' : source[pos];
+  std::string peek() {
+    return std::string(1, source[pos]);
   }
 
   // @param source The input text
