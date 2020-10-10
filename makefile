@@ -28,7 +28,7 @@ LINT_FLAGS := -checks='*' -header-filter='.*'
 
 ##
 
-default: clean build test run clean
+default: clean build test run
 
 ##
 # Helpers
@@ -83,7 +83,9 @@ fix: $(SRCS) $(TEST_SRCS) $(MAIN)
 	clang-tidy --fix $(LINT_FLAGS) $^ -- -I $(CATCH2_INCLUDE) $(FLAGS)
 
 ##
-# Install prerequisites for the linter
+# Install prerequisites for the linter and c++17
 prereqs:
 	yum install -y centos-release-scl llvm-toolset-7-clang-tools-extra
 	scl enable llvm-toolset-7 bash
+	yum install -y devtoolset-9-gcc*
+	scl enable devtoolset-9 bash

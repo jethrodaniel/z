@@ -17,12 +17,7 @@ If you forget the `--recursive`, check out the submodule like so
 git submodule update --init --progress --depth=1
 ```
 
-Note for CentOS 7
-
-```
-yum install -y devtoolset-9-gcc*
-scl enable devtoolset-9 bash
-```
+If you're on CentOS (using `yum`, that is), set up c++17 with `make prereqs`.
 
 ## license
 
