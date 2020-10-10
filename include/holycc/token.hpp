@@ -30,6 +30,7 @@ public:
       case Type::NEWLINE:  return std::string("NEWLINE");
       case Type::END:      return std::string("END");
     }
+    return "error!";
   }
 
 
