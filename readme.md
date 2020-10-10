@@ -17,6 +17,13 @@ If you forget the `--recursive`, check out the submodule like so
 git submodule update --init --progress --depth=1
 ```
 
+Note for CentOS 7
+
+```
+yum install -y devtoolset-9-gcc*
+scl enable devtoolset-9 bash
+```
+
 ## license
 
 MIT

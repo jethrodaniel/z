@@ -6,7 +6,7 @@
 PROG=holycc
 
 CC       := g++
-FLAGS    = -std=c++11 -I include -g -I third_party/fmt/include
+FLAGS    = -std=c++17 -I include -g -I third_party/fmt/include
 MAIN     := src/main.cpp
 MAIN_OBJ := ${MAIN:.cpp=.o}
 
