@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <regex>
 
 #include <holycc/error.hpp>
 #include <holycc/token.hpp>
@@ -10,16 +11,12 @@
 
 using namespace std::string_literals;
 
-#include <regex>
-#include <fmt/format.h>
-
 namespace holycc {
 
 class Lexer {
   Scanner scanner;
-  std::vector<Token> tokens; // list of the current tokens
-
-  unsigned int start = 1; // The start of the current token
+  std::vector<Token> tokens;
+  unsigned int start = 1; // The start index of the current token
 
   // Adds a token to the list of tokens
   void add_token(Token::Type type) {
@@ -75,7 +72,6 @@ public:
       start = scanner.pos;
       scan_token();
     }
-
     return tokens;
   }
 };

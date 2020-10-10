@@ -13,6 +13,8 @@ namespace holycc {
 // Eventually, the string here should index graphemes, so that `[0]` with
 // Japanese, for example, returns the first _character_ as the human eye
 // sees it.
+//
+// Maybe we'll use a `string_view` here eventually?
 class Scanner {
 public:
   const std::string source;
