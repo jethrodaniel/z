@@ -3,7 +3,7 @@
 
 #include <holycc/lexer.hpp>
 
-using namespace std::literals::string_literals;
+using namespace std::string_literals;
 
 TEST_CASE("lexer") {
   holycc::Lexer lex("42 + 5"s);

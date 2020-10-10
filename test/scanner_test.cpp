@@ -3,7 +3,7 @@
 
 #include <holycc/scanner.hpp>
 
-using namespace std::literals::string_literals;
+using namespace std::string_literals;
 
 TEST_CASE("scanner") {
   holycc::Scanner scanner("Be\nexcellent !"s);
