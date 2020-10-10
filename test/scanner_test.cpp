@@ -3,8 +3,10 @@
 
 #include <holycc/scanner.hpp>
 
+using namespace std::literals::string_literals;
+
 TEST_CASE("scanner") {
-  holycc::Scanner scanner(std::string("Be\nexcellent !"));
+  holycc::Scanner scanner("Be\nexcellent !"s);
 
   REQUIRE(scanner.pos == 0);
   REQUIRE(scanner.line == 1);

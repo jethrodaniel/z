@@ -3,8 +3,10 @@
 
 #include <holycc/lexer.hpp>
 
+using namespace std::literals::string_literals;
+
 TEST_CASE("lexer") {
-  holycc::Lexer lex(std::string("42 + 5"));
+  holycc::Lexer lex("42 + 5"s);
 
   auto tokens = lex.scan_tokens();
 
