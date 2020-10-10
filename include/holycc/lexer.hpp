@@ -1,53 +1,32 @@
 #ifndef HOLYCC_LEXER_HPP
 #define HOLYCC_LEXER_HPP
 
-#include <iostream>
 #include <string>
 #include <vector>
 
 #include <holycc/error.hpp>
 #include <holycc/token.hpp>
-/* #include <holycc/scanner.hpp> */
+#include <holycc/scanner.hpp>
+
+using namespace std::string_literals;
 
 namespace holycc {
 
 class Lexer {
-  const std::string source;  // The source text to process
-  std::vector<Token> tokens; // A list of the current tokens
+  Scanner scanner;
+  std::vector<Token> tokens; // list of the current tokens
 
-  unsigned int start   = 0,  // The start of the current token
-               current = 0,  // The index of the current token
-               line    = 1;  // The line number of the current token
-
-  // @return Whether or not the scanner is at the end of input
-  bool is_eof() {
-    return current >= source.size();
-  }
-
-  // Moves the scanner to the next character
-  // @return the previous character
-  char advance() {
-    return source[current++];
-  }
+  unsigned int start = 1; // The start of the current token
 
   // Adds a token to the list of tokens
   void add_token(Token::Type type) {
-    auto lexeme = source.substr(start, current - start);
-    tokens.push_back(Token(type, lexeme, line, start, current));
-  }
-
-  // Looks at the next character, without moving the scanner
-  // @return the next character
-  char peek() {
-    if (is_eof())
-      return '\0';
-    else
-      return source[current];
+    auto lexeme = scanner.source.substr(start, scanner.pos - start);
+    tokens.push_back(Token(type, lexeme, scanner.line, start, scanner.pos - 1));
   }
 
   void numeric() {
-    while (std::isdigit(peek())) {
-      advance();
+    while (std::isdigit(scanner.peek())) {
+      scanner.advance();
     }
 
     add_token(Token::Type::NUMBER);
@@ -55,48 +34,52 @@ class Lexer {
 
   // Read characters until the the next available token is formed
   void scan_token() {
-    char c = advance();
+    char c = scanner.advance();
     switch (c) {
       case '+': add_token(Token::Type::PLUS); break;
       case '-': add_token(Token::Type::MINUS); break;
       case '/': add_token(Token::Type::DIVIDE); break;
       case '*': add_token(Token::Type::MULTIPLY); break;
-      case ' ':  // Ignore whitespace
-      case '\t':
-      case '\r': break;
-      case '\n':
-        add_token(Token::Type::NEWLINE);
-        line++;
-        break;
+
+      // Ignore whitespace
+      case ' ':  break;
+      case '\t': break;
+
+      // newlines
+      case '\r': break; // todo \r\n
+      case '\n': add_token(Token::Type::NEWLINE); break;
+
+      case '\0': add_token(Token::Type::END); break;
+
       default:
         if (std::isdigit(c))
           numeric();
         else {
-          auto error = std::string("Unexpected character '") + c + "'.";
+          auto error = "Unexpected character '"s + c + "'.";
           // TODO: return expected<T, error> here
-          throw Error(error, line, start);
+          throw Error(error, scanner.line, start);
         }
     }
   }
 
 public:
-  // @param  source The input text to scan
-  // @return        A new lexer instance
-  Lexer(std::string source) : source(source) { }
+  // @param source The input text to scan
+  // @return A new lexer instance
+  Lexer(std::string source) : scanner(source) { }
 
   // @return A list of all tokens from the input
   std::vector<Token> scan_tokens() {
-    // Until the end of input is found, build tokens
-    while (!is_eof()) {
-      start = current;
+    // build tokens until the end of input
+    while (!scanner.is_eof()) {
+      start = scanner.pos;
       scan_token();
     }
-    if (current != 0)
-      start++;
 
-    current++;
+    // this is a bit ugly, but looping until EOF is pretty sane
+    start++;
+    scanner.advance();
+    add_token(Token::Type::END);
 
-    tokens.push_back(Token(Token::Type::END, "END", line, start, current));
     return tokens;
   }
 };
