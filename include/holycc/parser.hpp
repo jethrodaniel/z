@@ -76,6 +76,7 @@ public:
   // @return A new AST tree
   ast::Node parse() {
     ast::Node node(ast::Node::Type::ADD);
+    node.children = {"42"s};
     tokens = lexer.scan_tokens();
     return node;
   }

@@ -52,15 +52,15 @@ public:
 
   // Allows a token instance to be printed using <<
   //
-  // @param  output The output stream to write to
-  // @param  t      The token instance to write out
+  // @param output The output stream to write to
+  // @param t      The token instance to write out
   friend std::ostream &operator<<(std::ostream &output, const Token &t) {
     output << t.to_s();
     return output;
   }
 
-  // @return  indention  The amount to indent
-  // @return             A string representation of this token
+  // @return indention The amount to indent
+  // @return A string representation of this token
   const std::string to_s(const int indention = 0) const {
     std::ostringstream out;
     std::string indent(indention, ' ');

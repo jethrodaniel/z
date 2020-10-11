@@ -12,9 +12,10 @@ TEST_CASE("parser") {
 
   holycc::ast::Node expected(
     holycc::ast::Node::Type::ADD,
-    std::vector<std::variant<holycc::ast::Node, std::string>>{
-      holycc::Token(holycc::Token::Type::NUMBER, "42", 1, 0, 1),
-      holycc::Token(holycc::Token::Type::NUMBER, "5", 1, 5, 5),
+    std::vector<holycc::ast::Node::child_t>{
+      "42"s
+      //holycc::Token(holycc::Token::Type::NUMBER, "42", 1, 0, 1),
+      //holycc::Token(holycc::Token::Type::NUMBER, "5", 1, 5, 5),
     }
   );
   REQUIRE(node == expected);
