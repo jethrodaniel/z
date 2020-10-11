@@ -2,6 +2,7 @@
 #define HOLYCC_AST_HPP
 
 #include <string>
+#include <vector>
 #include <variant>
 
 using namespace std::string_literals;
@@ -25,7 +26,8 @@ struct Node {
     return n1.type == n2.type && n1.children == n2.children;
   }
 
-  Node(Type type) : type(type) { }
+  Node(Type type, std::vector<std::variant<holycc::ast::Node, std::string>> children = {})
+    : type(type), children(children) { }
 };
 
 } // namespace holycc::ast
