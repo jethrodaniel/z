@@ -76,11 +76,10 @@ public:
     return out.str();
   }
 
-  // @param  other  A token instance to compare to this instance
-  // @return        Whether this token is the same, member-wise, as other
-  // @param  t1  A token to compare against t2
-  // @param  t2  A token to compare against t1
-  // @return     Whether the tokens are the same, member-wise
+  // @param other A token instance to compare to this instance
+  // @param t1  A token to compare against t2
+  // @param t2  A token to compare against t1
+  // @return Whether the tokens are the same
   friend bool operator==(const Token &t1, const Token &t2) {
     return t1.type   == t2.type   &&
            t1.lexeme == t2.lexeme &&
@@ -88,7 +87,6 @@ public:
            t1.start  == t2.start  &&
            t1.end    == t2.end;
   }
-
 };
 
 } // namespace holycc
