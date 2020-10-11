@@ -2,22 +2,31 @@
 #define HOLYCC_AST_HPP
 
 #include <string>
+#include <variant>
 
 using namespace std::string_literals;
 
 #include <holycc/token.hpp>
 
-namespace holycc {
+namespace holycc::ast {
 
+// AST node
 struct Node {
+  enum class Type {
+    ADD,
+    SUB,
+    DIV,
+    MUL,
+  };
+  Type type;
+  std::vector<std::variant<Node, std::string>> children;
+
   friend bool operator==(const Node &n1, const Node &n2) {
-    return true;
+    return n1.type == n2.type && n1.children == n2.children;
   }
 
-  /* Token token; */
-  /* Node(Token token) : token(token) { } */
-  Node() { }
+  Node(Type type) : type(type) { }
 };
 
-} // namespace holycc
+} // namespace holycc::ast
 #endif // HOLYCC_AST_HPP

@@ -3,7 +3,8 @@
 #include <holycc/ast.hpp>
 
 TEST_CASE("AST") {
-  holycc::Node node;
+  holycc::ast::Node node(holycc::ast::Node::Type::ADD);
 
-  // REQUIRE(t.end == 1);
+  std::vector<std::variant<holycc::ast::Node, std::string>> children;
+  REQUIRE(node.children == children);
 }

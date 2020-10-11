@@ -14,7 +14,7 @@ namespace holycc {
 // Japanese, for example, returns the first _character_ as the human eye
 // sees it.
 //
-// Maybe we'll use a `string_view` here eventually?
+// TODO: use a `string_view` here eventually
 class Scanner {
 public:
   const std::string source;

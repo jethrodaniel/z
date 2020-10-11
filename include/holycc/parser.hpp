@@ -65,8 +65,8 @@ class Parser {
   // expr    = mul ("+" mul | "-" mul)*
   // mul     = primary ("*" primary | "/" primary)*
   // primary = num | "(" expr ")"
-public:
 
+public:
   // @param source The source input
   // @return A new parser instance
   explicit Parser(std::string source) : lexer(Lexer(source)) { }
@@ -74,8 +74,8 @@ public:
   // Parse and run the input
   //
   // @return A new AST tree
-  Node parse() {
-    Node node;
+  ast::Node parse() {
+    ast::Node node(ast::Node::Type::ADD);
     tokens = lexer.scan_tokens();
     return node;
   }

@@ -10,6 +10,6 @@ TEST_CASE("parser") {
 
   auto node = parser.parse();
 
-  holycc::Node expected;
+  holycc::ast::Node expected(holycc::ast::Node::Type::ADD);
   REQUIRE(node == expected);
 }
