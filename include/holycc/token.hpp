@@ -22,13 +22,13 @@ public:
   // thanks, c++, I hate it.
   std::string type_name() const {
     switch(type) {
-      case Type::PLUS:     return std::string("PLUS");
-      case Type::MINUS:    return std::string("MINUS");
-      case Type::DIVIDE:   return std::string("DIVIDE");
-      case Type::MULTIPLY: return std::string("MULTIPLY");
-      case Type::NUMBER:   return std::string("NUMBER");
-      case Type::NEWLINE:  return std::string("NEWLINE");
-      case Type::END:      return std::string("END");
+      case Type::PLUS:     return "PLUS"s;
+      case Type::MINUS:    return "MINUS"s;
+      case Type::DIVIDE:   return "DIVIDE"s;
+      case Type::MULTIPLY: return "MULTIPLY"s;
+      case Type::NUMBER:   return "NUMBER"s;
+      case Type::NEWLINE:  return "NEWLINE"s;
+      case Type::END:      return "END"s;
     }
     return "error!";
   }

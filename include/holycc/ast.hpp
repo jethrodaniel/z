@@ -26,10 +26,10 @@ struct Node {
   // thanks, c++, I hate it.
   std::string type_name() const {
     switch(type) {
-      case Type::ADD: return std::string("ADD");
-      case Type::SUB: return std::string("SUB");
-      case Type::DIV: return std::string("DIV");
-      case Type::MUL: return std::string("MUL");
+      case Type::ADD: return "ADD"s;
+      case Type::SUB: return "SUB"s;
+      case Type::DIV: return "DIV"s;
+      case Type::MUL: return "MUL"s;
     }
     return "error!";
   }
