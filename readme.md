@@ -50,6 +50,7 @@ TempleOS
 - https://minexew.github.io/2020/02/27/templeos-loader-part1.html
 - https://minexew.github.io/2020/03/29/templeos-loader-part2.html
 - https://minexew.github.io/2020/05/10/templeos-loader-part3.html
+- https://www.youtube.com/watch?v=1hCrl2wsz5c
 
 Compilers
 
