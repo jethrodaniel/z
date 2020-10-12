@@ -5,6 +5,8 @@
 #include <string>
 #include <utility>
 
+using namespace std::string_literals;
+
 namespace holycc {
 
 class Token {
