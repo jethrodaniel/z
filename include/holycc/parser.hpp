@@ -67,12 +67,6 @@ class Parser {
     }
   }
 
-  bool match(std::vector<Token::Type> types) {
-    for (auto t : types)
-      if (peek().type == t) return true;
-    return false;
-  }
-
   // expr    = mul ("+" mul | "-" mul)*
   // mul     = primary ("*" primary | "/" primary)*
   // primary = num | "(" expr ")"
