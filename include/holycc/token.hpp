@@ -35,6 +35,10 @@ public:
     return "error!";
   }
 
+  static std::string t(Type type) {
+    auto token = Token(type, "", 0, 0, 0);
+    return token.type_name();
+  }
 
   const Type type;          // The type of this token
   const std::string lexeme; // The characters that form this token

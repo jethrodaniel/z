@@ -1,6 +1,4 @@
 #ifndef HOLYCC_PARSER_HPP
-#define HOLYCC_PARSER_HPP
-
 //#include <iostream>
 //#include <string>
 //#include <vector>
@@ -19,46 +17,59 @@ class Parser {
   std::vector<Token> tokens;
   int pos = 0;
 
-  // const std::vector<Token::Type> REDIRECTION_OPS = {
-  //   Token::Type::REDIRECT_LEFT,
-  //   Token::Type::DREDIRECT_LEFT,
-  //   Token::Type::REDIRECT_RIGHT,
-  //   Token::Type::DREDIRECT_RIGHT
-  // };
-
-  // @return The current token
   Token peek() {
     return tokens[pos];
   }
 
-  // @return The previous token
   Token previous() {
     if (pos == 0) throw "there is no previous token";
     return tokens[pos - 1];
   }
 
-  // @return Whether or not the parser is the end of input
   bool is_eof() {
     return pos >= tokens.size();
   }
 
-  // Moves the parser to the next token
-  //
-  // @return The previous token
   Token advance() {
     if (!is_eof()) pos++;
     return previous();
   }
 
-  // Checks the type of the current token against a list
-  //
-  // @param  types A list of types to compare with
-  // @return Whether the current token is of a type in types
+  bool consume(std::string str) {
+    if (peek().lexeme == str) {
+      pos++;
+      return true;
+    } else return false;
+  }
+
+  bool consume(Token::Type type) {
+    if (peek().type == type) {
+      pos++;
+      return true;
+    } else return false;
+  }
+
+  bool expect(std::string str) {
+    if (consume(str)) return true;
+    else {
+      auto err = fmt::format("Expected `{}`, got `{}`", str, peek().lexeme);
+      throw Error(err, peek().line, peek().start);
+      // return false;
+    }
+  }
+
+  bool expect(Token::Type type) {
+    if (consume(type)) return true;
+    else {
+      auto err = fmt::format("Expected `{}`, got `{}`", Token::t(type), peek().type_name());
+      throw Error(err, peek().line, peek().start);
+      // return false;
+    }
+  }
+
   bool match(std::vector<Token::Type> types) {
     for (auto t : types)
-      if (peek().type == t)
-        return true;
-
+      if (peek().type == t) return true;
     return false;
   }
 
@@ -67,17 +78,17 @@ class Parser {
   // primary = num | "(" expr ")"
 
 public:
-  // @param source The source input
-  // @return A new parser instance
   explicit Parser(std::string source) : lexer(Lexer(source)) { }
 
-  // Parse and run the input
-  //
-  // @return A new AST tree
   ast::Node parse() {
+    tokens = lexer.scan_tokens();
+
+    expect(Token::Type::NUMBER);
+    expect("+");
+    expect("5");
+
     ast::Node node(ast::Node::Type::ADD);
     node.children = {"42"s};
-    tokens = lexer.scan_tokens();
     return node;
   }
 };
