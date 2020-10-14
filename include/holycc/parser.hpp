@@ -73,19 +73,25 @@ class Parser {
   // mul     = primary ("*" primary | "/" primary)*
   // primary = num | "(" expr ")"
 
+  ast::Node primary() {
+    ast::Node node(ast::Node::Type::LIT);
+
+    if (consume(Token::Type::NUMBER))
+      node.children = {previous().lexeme};
+    /* else if (consume("("s)) */
+    /*   expr(); */
+    else
+      throw Error("Expected a literal or an expression"s, peek().line, peek().start);
+
+    return node;
+  }
+
 public:
   explicit Parser(std::string source) : lexer(Lexer(source)) { }
 
   ast::Node parse() {
     tokens = lexer.scan_tokens();
-
-    expect(Token::Type::NUMBER);
-    expect("+");
-    expect("5");
-
-    ast::Node node(ast::Node::Type::ADD);
-    node.children = {"42"s};
-    return node;
+    return primary();
   }
 };
 

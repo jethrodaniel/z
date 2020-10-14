@@ -19,6 +19,8 @@ struct Node {
     SUB,
     DIV,
     MUL,
+    LIT,
+    EXPR
   };
   Type type;
   typedef std::variant<holycc::ast::Node, std::string> child_t;

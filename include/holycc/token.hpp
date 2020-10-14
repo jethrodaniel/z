@@ -41,11 +41,11 @@ public:
     return token.type_name();
   }
 
-  const Type type;          // The type of this token
-  const std::string lexeme; // The characters that form this token
-  const int line,           // The line number of this token
-            start,          // The column number of the start of this token
-            end;            // The column number of the end of this token
+  const Type type;
+  const std::string lexeme;
+  const int line,
+            start,
+            end;
 
   // @param  type   The token's type
   // @param  lexeme The text of this token
