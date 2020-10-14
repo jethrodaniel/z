@@ -55,7 +55,7 @@ class Lexer {
     else if (is_digit(c))
       numeric();
     else {
-      auto error = "Unexpected character '"s + c + "'.";
+      auto error = "[lexer] Unexpected character '"s + c + "'.";
       throw Error(error, scanner.line, start);
     }
   }

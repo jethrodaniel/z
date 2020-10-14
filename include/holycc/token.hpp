@@ -33,6 +33,7 @@ public:
       case Type::END:      return "END"s;
     }
     return "error!";
+    throw fmt::format("Error: unknown token type `{}`", type);
   }
 
   static std::string t(Type type) {
@@ -56,36 +57,17 @@ public:
                  const int line, const int start, const int end)
     : type(type), lexeme(std::move(std::move(lexeme))), line(line), start(start), end(end) { }
 
-  // Allows a token instance to be printed using <<
-  //
-  // @param output The output stream to write to
-  // @param t      The token instance to write out
   friend std::ostream &operator<<(std::ostream &output, const Token &t) {
     output << t.to_s();
     return output;
   }
 
-  // @return indention The amount to indent
-  // @return A string representation of this token
-  const std::string to_s(const int indention = 0) const {
+  const std::string to_s() const {
     std::ostringstream out;
-    std::string indent(indention, ' ');
-
-    out << indent << "Token: [\n"
-        << indent << "  type:   [" << type_name() << "]\n"
-        << indent << "  line:   [" << line      << "]\n"
-        << indent << "  start:  [" << start     << "]\n"
-        << indent << "  end:    [" << end       << "]\n"
-        << indent << "  lexeme: [" << lexeme    << "]\n"
-        << indent << "] // Token";
-
+    out << "[" << line << ":" << start << "-" << end << "][" << type_name() << ", '" << lexeme << "']";
     return out.str();
   }
 
-  // @param other A token instance to compare to this instance
-  // @param t1  A token to compare against t2
-  // @param t2  A token to compare against t1
-  // @return Whether the tokens are the same
   friend bool operator==(const Token &t1, const Token &t2) {
     return t1.type   == t2.type   &&
            t1.lexeme == t2.lexeme &&

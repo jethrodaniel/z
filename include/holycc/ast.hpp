@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <fmt/format.h>
 
 using namespace std::string_literals;
 
@@ -31,7 +32,7 @@ struct Node {
       case Type::DIV: return "DIV"s;
       case Type::MUL: return "MUL"s;
     }
-    return "error!";
+    throw fmt::format("Error: unknown AST type `{}`", type);
   }
 
   friend bool operator==(const Node &n1, const Node &n2) {
