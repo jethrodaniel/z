@@ -18,6 +18,11 @@ class Parser {
   int pos = 0;
 
   Token peek() {
+    if (is_eof()) {
+      auto err = fmt::format("Parsed past EOF; pos: {}", pos);
+      throw Error(err, previous().line, previous().start);
+    }
+
     return tokens[pos];
   }
 
@@ -41,7 +46,6 @@ class Parser {
       return true;
     } else return false;
   }
-
   bool consume(Token::Type type) {
     if (peek().type == type) {
       pos++;
@@ -54,10 +58,8 @@ class Parser {
     else {
       auto err = fmt::format("Expected `{}`, got `{}`", str, peek().lexeme);
       throw Error(err, peek().line, peek().start);
-      // return false;
     }
   }
-
   bool expect(Token::Type type) {
     if (consume(type)) return true;
     else {
