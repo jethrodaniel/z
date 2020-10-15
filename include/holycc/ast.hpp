@@ -33,7 +33,9 @@ struct Node {
       case Type::SUB: return "SUB"s;
       case Type::DIV: return "DIV"s;
       case Type::MUL: return "MUL"s;
+      case Type::LIT: return "LIT"s;
     }
+    /* throw Error(err, previous().line, previous().start); */
     throw fmt::format("Error: unknown AST type `{}`", type);
   }
 

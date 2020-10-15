@@ -1,5 +1,5 @@
 #ifndef HOLYCC_PARSER_HPP
-//#include <iostream>
+#include <iostream>
 //#include <string>
 //#include <vector>
 
@@ -18,8 +18,10 @@ class Parser {
   int pos = 0;
 
   Token peek() {
+    if (tokens.size() == 0)
+      throw fmt::format("[parser] missing input");
     if (is_eof()) {
-      auto err = fmt::format("Parsed past EOF; pos: {}", pos);
+      auto err = fmt::format("[parser] parsed past EOF; pos: {}", pos);
       throw Error(err, previous().line, previous().start);
     }
 
@@ -27,7 +29,7 @@ class Parser {
   }
 
   Token previous() {
-    if (pos == 0) throw "there is no previous token";
+    if (pos == 0) throw "[parser] there is no previous token"s;
     return tokens[pos - 1];
   }
 
@@ -56,14 +58,14 @@ class Parser {
   bool expect(std::string str) {
     if (consume(str)) return true;
     else {
-      auto err = fmt::format("Expected `{}`, got `{}`", str, peek().lexeme);
+      auto err = fmt::format("[parser] Expected `{}`, got `{}`", str, peek().lexeme);
       throw Error(err, peek().line, peek().start);
     }
   }
   bool expect(Token::Type type) {
     if (consume(type)) return true;
     else {
-      auto err = fmt::format("Expected `{}`, got `{}`", Token::t(type), peek().type_name());
+      auto err = fmt::format("[parser] Expected `{}`, got `{}`", Token::t(type), peek().type_name());
       throw Error(err, peek().line, peek().start);
       // return false;
     }
@@ -81,7 +83,7 @@ class Parser {
     /* else if (consume("("s)) */
     /*   expr(); */
     else
-      throw Error("Expected a literal or an expression"s, peek().line, peek().start);
+      throw Error("[parser] Expected a literal or an expression"s, peek().line, peek().start);
 
     return node;
   }

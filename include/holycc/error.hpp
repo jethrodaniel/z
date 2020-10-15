@@ -19,6 +19,7 @@ namespace holycc {
 // // auto detail = "\n" + std::string("-", start) + "^\n";
 // // error += detail;
 //
+// TODO: errors::LexerError
 struct Error : public std::exception {
   std::string msg;
   int line, column;

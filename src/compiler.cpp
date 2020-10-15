@@ -73,10 +73,16 @@ int holycc::Compiler::run(int argc, char **argv) {
 
   CLI11_PARSE(app, argc, argv);
 
+  try {
   if (app.count("--lex") > 0)
     run_lexer(input);
   if (app.count("--parse") > 0)
     run_parser(input);
+  } catch(const std::string& e) {
+    fmt::print("{}\n", e);
+  } catch (const std::exception &e) {
+    fmt::print("{}\n", e.what());
+  }
 
   run_compiler(input);
 
