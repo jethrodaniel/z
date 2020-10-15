@@ -2,6 +2,8 @@
 #include <fmt/format.h>
 #include <fmt/color.h>
 #include <fmt/ranges.h>
+#include <fmt/ostream.h>
+
 #include <iostream>
 #include <vector>
 
@@ -23,14 +25,15 @@ holycc::Compiler::Compiler() {
 void run_lexer(std::string input) {
   holycc::Lexer lex(input);
   auto tokens = lex.scan_tokens();
+  /* fmt::print("{}\n", tokens); */
   for (auto t : tokens)
-    std::cout << t << "\n";
+    fmt::print("{}\n", t);
 }
 
 void run_parser(std::string input) {
   holycc::Parser parser(input);
   auto node = parser.parse();
-  std::cout << node << "\n";
+  fmt::print("{}\n", node);
 }
 
 int run_compiler(std::string input) {
@@ -74,17 +77,19 @@ int holycc::Compiler::run(int argc, char **argv) {
   CLI11_PARSE(app, argc, argv);
 
   try {
-  if (app.count("--lex") > 0)
-    run_lexer(input);
-  if (app.count("--parse") > 0)
-    run_parser(input);
+    if (app.count("--lex") > 0)
+      run_lexer(input);
+    if (app.count("--parse") > 0)
+      run_parser(input);
+
+    run_compiler(input);
   } catch(const std::string& e) {
     fmt::print("{}\n", e);
+    return 1;
   } catch (const std::exception &e) {
     fmt::print("{}\n", e.what());
+    return 1;
   }
-
-  run_compiler(input);
 
   return 0;
 }
