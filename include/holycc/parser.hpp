@@ -85,6 +85,9 @@ class Parser {
     else
       throw Error("[parser] Expected a literal or an expression"s, peek().line, peek().start);
 
+    if (!is_eof())
+      throw Error("[parser] Unexpected EOF"s, peek().line, peek().start);
+
     return node;
   }
 
