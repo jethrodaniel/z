@@ -38,6 +38,7 @@ Thanks, y'all.
 Dependencies
 
 - https://github.com/fmtlib/fmt
+- https://github.com/CLIUtils/CLI11
 - https://github.com/catchorg/Catch2 (test)
 
 TempleOS

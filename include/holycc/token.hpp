@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <utility>
+#include <fmt/format.h>
 
 using namespace std::string_literals;
 
