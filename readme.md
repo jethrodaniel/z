@@ -7,8 +7,8 @@ Following along with Rui Ueyama's 9cc, but implementing Terry David's HolyC.
 ## install
 
 ```
-git clone --recursive git@github.com:jethrodaniel/cpp-starter app
-cd app && make
+git clone --recursive git@github.com:jethrodaniel/holycc
+cd holycc && make
 ```
 
 If you forget the `--recursive`, check out the submodule like so
@@ -17,11 +17,9 @@ If you forget the `--recursive`, check out the submodule like so
 git submodule update --init --progress --depth=1
 ```
 
-If you're on CentOS (using `yum`, that is), set up c++17 with `make prereqs`.
-
 ## prerequisites
 
-- c++17
+- crystal 0.35 or greater
 
 ## license
 
@@ -34,12 +32,6 @@ MIT
 > Sir Isaac Newton, 1675
 
 Thanks, y'all.
-
-Dependencies
-
-- https://github.com/fmtlib/fmt
-- https://github.com/CLIUtils/CLI11
-- https://github.com/catchorg/Catch2 (test)
 
 TempleOS
 
@@ -60,10 +52,6 @@ Compilers
   - https://github.com/KENNN/compiler-book
   - https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=https%3A%2F%2Fwww.sigbus.info%2Fcompilerbook
   - https://github.com/rui314/chibicc
-
-C++
-
-- https://github.com/AnthonyCalandra/modern-cpp-features
 
 Etc
 
