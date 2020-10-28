@@ -14,6 +14,9 @@ namespace holycc::ast {
 
 // AST node
 struct Node {
+  virtual
+}
+
   enum class Type {
     ADD,
     SUB,
@@ -44,12 +47,23 @@ struct Node {
   }
 
   // TODO: rm trailing comma, indent newlines
-  friend std::ostream &operator<<(std::ostream &output, const Node &n) {
-    output << "s(:" << n.type_name() << ", ";
-    for (auto c : n.children)
-      std::visit([&](const auto &e) { output << e << ", "; }, c);
-    output << ")";
-    return output;
+  friend std::ostream &operator<<(std::ostream &o, const Node &n) {
+    o << "s(:" << n.type_name();
+
+    /* for (auto i = 0; i++; i < n.children.size()) */
+    /*   std::visit([&](const auto &e) { */
+    /*     o << n; */
+    /*     if (i != n.children.size() - 1) */
+    /*       o << ", "; */
+    /*   }, n.children[i]); */
+    /* o << ")"; */
+    for (auto i = 0; i++; i < n.children.size()) {
+      o << n.children[i];
+      if (i != n.children.size() - 1)
+        o << ", ";
+      o << ")";
+    }
+    return o;
   }
 
   Node(Type type, std::vector<child_t> children = {})

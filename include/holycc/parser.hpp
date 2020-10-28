@@ -76,17 +76,22 @@ class Parser {
   // primary = num | "(" expr ")"
 
   ast::Node primary() {
-    ast::Node node(ast::Node::Type::LIT);
+    ast::Node node(ast::Node::Type::LIT, std::vector<holycc::ast::Node::child_t>{
+      "wow"s
+    });
 
-    if (consume(Token::Type::NUMBER))
-      node.children = {previous().lexeme};
+    if (consume(Token::Type::NUMBER)) {
+      std::cout << "shit\n";
+      node.children = {previous().lexeme, "wow"};
     /* else if (consume("("s)) */
     /*   expr(); */
-    else
+    } else
       throw Error("[parser] Expected a literal or an expression"s, peek().line, peek().start);
 
-    if (!is_eof())
-      throw Error("[parser] Unexpected EOF"s, peek().line, peek().start);
+    std::cout << "node: " << node << "\n";
+
+    /* if (!is_eof()) */
+    /*   throw Error("[parser] Unexpected EOF"s, peek().line, peek().start); */
 
     return node;
   }

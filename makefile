@@ -29,7 +29,7 @@ LINT_FLAGS := -checks='*' -header-filter='.*'
 
 ##
 
-default: build test run
+default: clean build test run
 
 ##
 # Helpers
@@ -89,4 +89,4 @@ prereqs:
 	yum install -y centos-release-scl llvm-toolset-7-clang-tools-extra
 	scl enable llvm-toolset-7 bash
 	yum install -y devtoolset-9-gcc*
-	scl enable devtoolset-9 bash
+	scl enable devtoolset-9 bash # you need to run this on your own
