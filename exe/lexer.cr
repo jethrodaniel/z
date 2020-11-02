@@ -10,8 +10,8 @@ while line = gets
   lex = Holycc::Lexer.new(line)
 
   begin
-    while res = lex.next_token
-      puts "=> #{res}"
+    lex.each do |token|
+      puts "=> #{token}"
     end
   rescue e : Holycc::Lexer::Error
     puts "#{e.class} #{e.message}"
