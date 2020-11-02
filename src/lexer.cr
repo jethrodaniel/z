@@ -27,7 +27,15 @@ module Holycc
         when '+'
           return add_token T::PLUS, c.to_s
         when '-'
-          return add_token T::MINUS, c.to_s
+          return add_token T::MIN, c.to_s
+        when '/'
+          return add_token T::DIV, c.to_s
+        when '*'
+          return add_token T::MUL, c.to_s
+        when '('
+          return add_token T::LEFT_PAREN, c.to_s
+        when ')'
+          return add_token T::RIGHT_PAREN, c.to_s
         when '\0'
           break
         when ' '
@@ -43,9 +51,7 @@ module Holycc
       stop
     end
 
-    def tokens
-      to_a
-    end
+    def tokens; to_a; end
 
     private def next_char
       c = @reader.next_char
@@ -59,13 +65,9 @@ module Holycc
     end
 
     private def add_token(type, value)
-      Token.new(@line, @col - value.size + 1, type, value).tap { next_char }
-    end
-
-    private def consume_whitespace
-      while [' ', '\t', '\n'].includes?(@reader.current_char) &&
-            @reader.next_char
-      end
+      t = Token.new(@line, @col - value.size + 1, type, value)
+      next_char
+      t
     end
 
     private def error(msg : String)
