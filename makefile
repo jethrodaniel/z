@@ -1,92 +1,20 @@
-# $^ - all of the target's dependency files
-# $< - first dependency, $@ is target file
-# $< - first dependency, $@ is target file
-# $@ - target
-
-PROG=holycc
-
-CC       := g++
-FLAGS    = -std=c++17 -g
-FLAGS += -I include -I third_party/fmt/include -I third_party/CLI11/include
-MAIN     := src/main.cpp
-MAIN_OBJ := ${MAIN:.cpp=.o}
-
-SRCS    := $(wildcard src/*.cpp)
-SRCS    := $(filter-out src/main.cpp, ${SRCS})
-HEADERS := $(wildcard include/*.hpp)
-OBJS    := ${SRCS:.cpp=.o}
-TARGET  := bin
-
-CATCH2_INCLUDE := third_party/Catch2/single_include/catch2
-TEST_FLAGS    := -I $(CATCH2_INCLUDE) -I include
-TEST_PROG     := test/run
-TEST_MAIN     := test/main.cpp
-TEST_MAIN_OBJ := ${TEST_MAIN:.cpp=.o}
-TEST_SRCS     := $(wildcard test/*test.cpp)
-TEST_OBJS     := ${TEST_SRCS:.cpp=.o}
-
-LINT_FLAGS := -checks='*' -header-filter='.*'
-
-##
-
-default: clean build test run
-
-##
-# Helpers
-tree:
-	tree -I third_party
-
-##
-# Cleanup object files and executables.
-# To avoid compiling Catch2, we don't remove the test driver obj file.
-clean:
-	rm -rfv *.o $(TEST_OBJS) $(TEST_PROG) $(OBJS) $(MAIN_OBJ) $(TARGET) tmp
-purge: clean
-	rm -rf $(TEST_MAIN_OBJ)
-
-##
-# Create executable
-#
-run: $(TARGET)/$(PROG)
-	./$< 42+9000-3+1+2
-$(TARGET):
-	mkdir -p $(TARGET)
-%.o: %.cpp
-	$(CC) $(FLAGS) $< -o $@ -c
-$(TARGET)/$(PROG): $(OBJS) $(MAIN)
-	mkdir -p $(TARGET)
-	$(CC) $(FLAGS) $^ -o $@
-build: $(TARGET)/$(PROG)
-
-##
-# Testing using Catch2
-#
-# We first compile Catch's test driver, then we link our specs against
-# it. We do this to prevent having to recompile Catch2 every time we
-# need to recompile our tests.
-#
-# See https://github.com/catchorg/Catch2/blob/master/docs/slow-compiles.md
-#
-test: $(TEST_PROG)
-	./$<
-%test.o: %test.cpp
-	$(CC) $(FLAGS) $(TEST_FLAGS) $^ -c -o $@
-$(TEST_MAIN_OBJ): $(TEST_MAIN)
-	$(CC) $(FLAGS) $(TEST_FLAGS) $(TEST_MAIN) -c -o $@
-$(TEST_PROG): $(OBJS) $(TEST_OBJS) $(TEST_MAIN_OBJ)
-	$(CC) $(FLAGS) $(TEST_FLAGS) $^ -o $@
-
-##
-# Lint
-lint: $(SRCS) $(TEST_SRCS) $(MAIN)
-	clang-tidy $(LINT_FLAGS) $^ -- -I $(CATCH2_INCLUDE) $(FLAGS)
-fix: $(SRCS) $(TEST_SRCS) $(MAIN)
-	clang-tidy --fix $(LINT_FLAGS) $^ -- -I $(CATCH2_INCLUDE) $(FLAGS)
-
-##
-# Install prerequisites for the linter and c++17
-prereqs:
-	yum install -y centos-release-scl llvm-toolset-7-clang-tools-extra
-	scl enable llvm-toolset-7 bash
-	yum install -y devtoolset-9-gcc*
-	scl enable devtoolset-9 bash # you need to run this on your own
+default: install
+run: ./bin/holycc
+spec: install
+	crystal spec
+fmt:
+	crystal tool format exe/* src/*
+./bin/holycc: install fmt
+	./$@
+install:
+	shards install
+	shards build
+tmp:
+	mkdir -p tmp
+crystal: tmp libevent
+	wget https://github.com/crystal-lang/crystal/releases/download/0.35.1/crystal-0.35.1-1-linux-x86_64.tar.gz -P tmp
+	cd tmp && tar -xzvf crystal-0.35.1-1-linux-x86_64.tar.gz -C /usr/local
+	cd tmp && sudo ln -fvs /usr/local/crystal-0.35.1-1/bin/* /usr/bin/
+libevent:
+	cd third_party/libevent && ./autogen.sh && ./configure && make && sudo make install
+	sh -c 'lib=/usr/local/lib/; conf=/etc/ld.so.conf; grep $lib $conf || echo $lib | sudo tee -a $conf'
