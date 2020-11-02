@@ -3,7 +3,7 @@ module Holycc
     enum Type
       EOF
       PLUS
-      MIN
+      MINUS
       INT
     end
 
@@ -26,37 +26,57 @@ module Holycc
 end
 
 module Holycc
+  class Scanner
+    getter :line, :col
+
+    def initialize(code : String)
+      @reader = Char::Reader.new(code)
+      @line = 0
+      @col = 0
+    end
+
+    def advance
+      c = @col == 0 ? @reader.current_char : @reader.next_char
+
+      if c == '\n'
+        @line += 1
+        @col = 1
+      else
+        @col += 1
+        @line = 1 if @line.zero?
+      end
+      c
+    end
+
+    def current_char; @reader.current_char; end
+    def peek; @reader.peek_next_char; end
+  end
+
   class Lexer
     class Error < Exception
     end
 
     def initialize(@code : String)
-      @line = 1
-      @col = 1
-      @scanner = Char::Reader.new(@code)
+      @scanner = Scanner.new(@code)
     end
 
     def next_token
-      case c = @scanner.current_char
+      case c = @scanner.advance
       when '0'..'9'
         v = c.to_s
-        while ('0'..'9').includes? @scanner.peek_next_char
-          v += next_char
+        while ('0'..'9').includes? @scanner.peek
+          v += @scanner.advance
         end
         return Token.new(1, 1, Token::Type::INT, v)
+      when '+'
+        return Token.new(1, 1, Token::Type::PLUS, c.to_s)
+      when '-'
+        return Token.new(1, 1, Token::Type::MINUS, c.to_s)
       else
-        raise Error.new("[#{@line}:#{@col}] unexpected character `#{c}`")
+        line = @scanner.line
+        col = @scanner.col
+        raise Error.new("[#{line}:#{col}] unexpected character `#{c}`")
       end
-    end
-
-    private def next_char
-      if c = @scanner.next_char == '\n'
-        @line += 1
-        @col = 1
-      else
-        @col += 1
-      end
-      @scanner.current_char
     end
   end
 end
