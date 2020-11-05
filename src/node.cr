@@ -1,21 +1,27 @@
+
 module Holycc
-  class Node
-    class Error < Exception
-    end
+  module Ast
+    abstract class Node
+      class Error < Exception; end
 
-    alias T = Token::Type
-    alias Text = String | Symbol
-
-    def initialize(@line : Int32, @col : Int32, @type : Text, @value : Text? = nil)
-    end
-
-    def to_s(io)
-      io.print "s(:#{@type}"
-      if @value
-        io.print ", #{@value})"
-      else
-        io.print ")"
+      def name
+        {{ @type }}.to_s.split("::").last.underscore
       end
+
+      def to_s(io)
+        io.print "s(:#{name})"
+      end
+    end
+
+    class NumberLiteral < Node
+      property :value
+      def initialize(@value : String)
+      end
+      def to_s(io)
+        io.print "s(:#{name}, #{@value})"
+      end
+    end
+    class Nop < Node
     end
   end
 end

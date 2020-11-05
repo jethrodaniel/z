@@ -38,7 +38,7 @@ module Holycc
     ##
 
     private def _root
-      return Node.new(1, 1, :NOP) if @tokens.size.zero?
+      return Ast::Nop.new if @tokens.size.zero?
       _expr
     end
 
@@ -49,15 +49,14 @@ module Holycc
     private def _term
       f = _factor
 
-      # rest = []
+      # rest = [f]
 
       # while match? T::MUL, T::DIV
       #   op = advance
-      #   f2 = _factor
-      #   rest << Node.new(peek.line, peek.col, op, [f, f2])
+      #   rest << _factor
       # end
 
-
+      # Node.new(peek.line, peek.col, :, rest)
     end
 
     private def _factor
@@ -73,7 +72,7 @@ module Holycc
     private def _number
       return false if eof?
       if match?(T::INT)
-        n = Node.new(peek.line, peek.col, :INT, peek.value)
+        n = Ast::NumberLiteral.new(peek.value)
         advance
         return n
       end
