@@ -14,7 +14,7 @@ while line = gets
       puts "=> #{token}"
     end
   rescue e : Holycc::Lexer::Error
-    puts "#{e.class} #{e.message}"
+    puts e.message
   end
 
   print prompt

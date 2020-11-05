@@ -12,7 +12,7 @@ while line = gets
   begin
     puts parser.parse
   rescue e : Holycc::Lexer::Error | Holycc::Parser::Error
-    puts "#{e.class} #{e.message}"
+    puts e.message
   end
 
   print prompt

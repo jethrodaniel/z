@@ -32,29 +32,67 @@ module Holycc
 
     def parse
       @tokens = @lex.tokens
-      _root
+      # _root
+      _term
     end
+
+    ##
 
     private def _root
       _expr
     end
 
     private def _expr
+      _term
+    end
+
+    private def _term
+      f = _factor
+      # return f if f
+
+      # if match? T::MUL, T::DIV
+      #   op = advance
+      #   t = _term
+      #   Node.new(peek.line, peek.col,
+    end
+
+    private def _factor
+      n = _number
+      return n if n
+      consume T::LEFT_PAREN
+      e = _number
+      error "expected an expression after #{prev.type}" unless e
+      consume T::RIGHT_PAREN
+      e
+    end
+
+    private def _number
+      return false if eof?
       if match?(T::INT)
-        Node.new(peek.line, peek.col, peek.type, peek.value)
+        n = Node.new(peek.line, peek.col, peek.type, peek.value)
+        advance
+        return n
       end
+      nil
     end
 
     ##
 
     private def match?(*types)
-      types.each do |type|
-        if check? type
-          advance
-          return true
-        end
+      types.any? { |type| check? type }
+    end
+
+    # private def consume(*types : Array(T), msg : String)
+    private def consume(type : T, msg : String? = "")
+      if check?(type)
+        advance
+      else
+        error "expected a #{type}, got `#{peek.value}`"
       end
-      false
+    end
+
+    private def error(msg : String)
+      raise Error.new(msg)
     end
 
     private def check?(type)
@@ -63,26 +101,23 @@ module Holycc
     end
 
     private def advance
-      @pos += 1 if eof?
+      @pos += 1 unless @pos + 1 >= @tokens.size
       prev
     end
 
     private def eof?
-      peek.type == T::EOF
+      @pos >= @tokens.size
     end
 
     private def peek
-      raise Error.new("no tokens available for #peek") if @tokens.empty?
+      error "no tokens available for #peek" if @tokens.size.zero?
+      error "pos #{@pos} out of range for #peek" if eof? # rm
       @tokens[@pos]
     end
 
     private def prev
       raise Error.new("no tokens available for #prev") if @tokens.empty?
       @tokens[@pos - 1]
-    end
-
-    private def error(msg : String)
-      raise Error.new("[#{@line}:#{@col}] #{msg}")
     end
   end
 end
