@@ -3,3 +3,4 @@ module Holycc
 end
 
 require "./lexer"
+require "./parser"

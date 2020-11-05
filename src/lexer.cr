@@ -38,7 +38,7 @@ module Holycc
           return add_token T::RIGHT_PAREN, c.to_s
         when '\0'
           break
-        when ' '
+        when ' ' # skip
         else
           error "unexpected character `#{c}`"
         end
