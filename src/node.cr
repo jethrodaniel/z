@@ -20,8 +20,20 @@ module Holycc
       def to_s(io)
         io.print "s(:#{name}, #{@value})"
       end
+      def ==(o)
+        value == o.value
+      end
     end
     class Nop < Node
     end
+    class Seq < Node
+      property :type, :list
+      def initialize(@type : Symbol, @list : Array(Node))
+      end
+      def to_s(io)
+        io.print "s(:#{name}, :#{@type}, #{list})"
+      end
+    end
+
   end
 end

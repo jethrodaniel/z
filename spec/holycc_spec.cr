@@ -29,7 +29,6 @@ describe Holycc::Lexer do
   end
 end
 
-# alias T = Holycc::Token::Type
 describe Holycc::Token do
   it ".new" do
     t = token(1, 1, T::INT, "1")
@@ -39,3 +38,4 @@ describe Holycc::Token do
     t.value.should eq "1"
   end
 end
+

@@ -39,24 +39,41 @@ module Holycc
 
     private def _root
       return Ast::Nop.new if @tokens.size.zero?
-      _expr
+      e = _expr
+      # error "expected EOF, got `#{peek.value}`" unless eof?
+      e
     end
 
     private def _expr
-      _term
+      # _term
+      _factor
     end
 
     private def _term
       f = _factor
 
-      # rest = [f]
+      mul = [] of Ast::Node
+      div = [] of Ast::Node
+      puts peek
 
-      # while match? T::MUL, T::DIV
-      #   op = advance
-      #   rest << _factor
-      # end
+      while match? T::MUL, T::DIV
+        case advance
+        when T::MUL
+          mul << _factor
+        when T::DIV
+          div << _factor
+        end
+      end
 
-      # Node.new(peek.line, peek.col, :, rest)
+      return f if [mul, div].map(&.size).sum.zero?
+
+      div_seq = Ast::Seq.new(:div, div)
+      return div_seq if mul.size.zero?
+
+      mul_seq = Ast::Seq.new(:mul, mul)
+      return mul_seq if div.size.zero?
+
+      # Ast::Seq.new(:mul, mul)
     end
 
     private def _factor
@@ -70,7 +87,6 @@ module Holycc
     end
 
     private def _number
-      return false if eof?
       if match?(T::INT)
         n = Ast::NumberLiteral.new(peek.value)
         advance
