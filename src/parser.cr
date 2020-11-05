@@ -32,13 +32,13 @@ module Holycc
 
     def parse
       @tokens = @lex.tokens
-      # _root
-      _term
+      _root
     end
 
     ##
 
     private def _root
+      return Node.new(1, 1, :NOP) if @tokens.size.zero?
       _expr
     end
 
@@ -48,12 +48,16 @@ module Holycc
 
     private def _term
       f = _factor
-      # return f if f
 
-      # if match? T::MUL, T::DIV
+      # rest = []
+
+      # while match? T::MUL, T::DIV
       #   op = advance
-      #   t = _term
-      #   Node.new(peek.line, peek.col,
+      #   f2 = _factor
+      #   rest << Node.new(peek.line, peek.col, op, [f, f2])
+      # end
+
+
     end
 
     private def _factor
@@ -69,7 +73,7 @@ module Holycc
     private def _number
       return false if eof?
       if match?(T::INT)
-        n = Node.new(peek.line, peek.col, peek.type, peek.value)
+        n = Node.new(peek.line, peek.col, :INT, peek.value)
         advance
         return n
       end
