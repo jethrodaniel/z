@@ -26,12 +26,12 @@ module Holycc
     end
     class Nop < Node
     end
-    class Seq < Node
-      property :type, :list
-      def initialize(@type : Symbol, @list : Array(Node))
+    class BinOp < Node
+      property :type, :left, :right
+      def initialize(@type : Symbol, @left : Node, @right : Node)
       end
       def to_s(io)
-        io.print "s(:#{name}, :#{@type}, #{list})"
+        io.print "s(:#{name}, :#{@type}, #{left}, #{right})"
       end
     end
 

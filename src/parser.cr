@@ -14,6 +14,13 @@ require "./node"
 #         | number
 # number -> INT
 #
+#
+#
+#expr    = mul ("+" mul | "-" mul)*
+#mul     = primary ("*" primary | "/" primary)*
+#primary = num | "(" expr ")"
+#
+#
 # Recursive descent works like so
 #
 # For each rule, create a procedure that attempts to match a non-terminal
@@ -51,49 +58,43 @@ module Holycc
     end
 
     private def _expr
-      # _term
-      _factor
-    end
+      # _factor
 
-    private def _term
-      f = _factor
+      n = _mul
 
-      mul = [] of Ast::Node
-      div = [] of Ast::Node
-      puts curr
-
-      while match? T::MUL, T::DIV
-        case advance
-        when T::MUL
-          mul << _factor
-        when T::DIV
-          div << _factor
+      loop do
+        if accept T::PLUS
+          n = Ast::BinOp.new(:+, n, _mul)
+        elsif accept T::MIN
+          n = Ast::BinOp.new(:-, n, _mul)
+        else
+          return n
         end
       end
-
-      return f if [mul, div].map(&.size).sum.zero?
-
-      div_seq = Ast::Seq.new(:div, div)
-      return div_seq if mul.size.zero?
-
-      mul_seq = Ast::Seq.new(:mul, mul)
-      return mul_seq if div.size.zero?
-
-      # Ast::Seq.new(:mul, mul)
     end
 
-    private def _factor
+    private def _mul
+      n = _primary
+
+      loop do
+        if accept T::MUL
+          n = Ast::BinOp.new(:*, n, _primary)
+        elsif accept T::DIV
+          n = Ast::BinOp.new(:/, n, _primary)
+        else
+          return n
+        end
+      end
+    end
+
+    private def _primary
       if accept T::LEFT_PAREN
-        e = _number
-        # error "expected an expression after #{prev.type}" unless e
+        e = _expr
         consume T::RIGHT_PAREN
         return e
       end
 
-      n = _number
-      return n if n
-
-      error "expected parenthesized list or an integer"
+      _number
     end
 
     private def _number
@@ -120,6 +121,7 @@ module Holycc
     end
 
     private def match?(type)
+      return false if eof?
       curr.type == type
     end
 
@@ -138,7 +140,7 @@ module Holycc
     end
 
     private def prev
-      raise Error.new("no tokens available for #prev") if @tokens.empty?
+      error "no tokens available for #prev" if @tokens.empty?
       @tokens[@pos - 1]
     end
 

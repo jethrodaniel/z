@@ -13,7 +13,9 @@ while line = gets
     puts parser.parse
   rescue e : Holycc::Lexer::Error | Holycc::Parser::Error
     puts e.message
-    e.backtrace.each { |line| puts line }
+    e.backtrace.reverse_each.with_index do |line, index|
+      puts "\t#{index}: #{line}"
+    end
   end
 
   print prompt
