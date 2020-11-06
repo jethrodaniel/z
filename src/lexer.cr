@@ -45,7 +45,7 @@ module Holycc
         if @reader.has_next?
           next_char
         else
-          break
+          return add_token T::EOF, c.to_s
         end
       end
       stop

@@ -13,6 +13,7 @@ while line = gets
     puts parser.parse
   rescue e : Holycc::Lexer::Error | Holycc::Parser::Error
     puts e.message
+    e.backtrace.each { |line| puts line }
   end
 
   print prompt

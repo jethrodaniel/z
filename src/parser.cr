@@ -1,21 +1,26 @@
 require "./lexer"
 require "./node"
 
-# expression     → equality ;
-# equality       → comparison ( ( "!=" | "==" ) comparison )* ;
-# comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
-# term           → factor ( ( "-" | "+" ) factor )* ;
-# factor         → unary ( ( "/" | "*" ) unary )* ;
-# unary          → ( "!" | "-" ) unary
-#                | primary ;
-# primary        → NUMBER | STRING | "true" | "false" | "nil"
-#                | "(" expression ")" ;
+# Simple calculator grammar for now
+#
+# expr   -> term LEFT_PAREN PLUS term RIGHT_PAREN
+#         | term LEFT_PAREN MIN  term RIGHT_PAREN
+#         | term
+# term   -> factor LEFT_PAREN DIV factor RIGHT_PAREN
+#         | factor LEFT_PAREN MUL factor RIGHT_PAREN
+#         | factor
 
-# Expr ::= Term ('+' Term | '-' Term)*
-# Term ::= Factor ('*' Factor | '/' Factor)*
-# Factor ::= ['-'] (Number | '(' Expr ')')
-# Number ::= Digit+
-
+# factor -> LEFT_PAREN expr RIGHT_PAREN
+#         | number
+# number -> INT
+#
+# Recursive descent works like so
+#
+# For each rule, create a procedure that attempts to match a non-terminal
+# production.
+# a -> b c
+#    | d
+# b -> ckk
 module Holycc
   class Parser
     class Error < Exception
@@ -32,15 +37,16 @@ module Holycc
 
     def parse
       @tokens = @lex.tokens
+      # @toens << Token.new(0, 0, T::EOF, "\0") unles
       _root
     end
 
     ##
 
     private def _root
-      return Ast::Nop.new if @tokens.size.zero?
+      return Ast::Nop.new if eof?
       e = _expr
-      # error "expected EOF, got `#{peek.value}`" unless eof?
+      error "expected EOF, got `#{curr.value}`" unless eof?
       e
     end
 
@@ -54,7 +60,7 @@ module Holycc
 
       mul = [] of Ast::Node
       div = [] of Ast::Node
-      puts peek
+      puts curr
 
       while match? T::MUL, T::DIV
         case advance
@@ -77,66 +83,67 @@ module Holycc
     end
 
     private def _factor
+      if accept T::LEFT_PAREN
+        e = _number
+        # error "expected an expression after #{prev.type}" unless e
+        consume T::RIGHT_PAREN
+        return e
+      end
+
       n = _number
       return n if n
-      consume T::LEFT_PAREN
-      e = _number
-      error "expected an expression after #{prev.type}" unless e
-      consume T::RIGHT_PAREN
-      e
+
+      error "expected parenthesized list or an integer"
     end
 
     private def _number
-      if match?(T::INT)
-        n = Ast::NumberLiteral.new(peek.value)
-        advance
-        return n
+      if accept T::INT
+        return Ast::NumberLiteral.new(prev.value)
       end
-      nil
+      error "expected a number, got `#{curr.value}`"
     end
 
     ##
 
-    private def match?(*types)
-      types.any? { |type| check? type }
-    end
-
     # private def consume(*types : Array(T), msg : String)
     private def consume(type : T, msg : String? = "")
-      if check?(type)
-        advance
-      else
-        error "expected a #{type}, got `#{peek.value}`"
+      unless accept type
+        error "expected a #{type}, got `#{curr.value}`"
       end
     end
 
-    private def error(msg : String)
-      raise Error.new(msg)
+    private def accept(type)
+      if match? type
+        @pos += 1
+        prev
+      end
     end
 
-    private def check?(type)
-      return false if eof?
-      peek.type == type
-    end
-
-    private def advance
-      @pos += 1 unless @pos + 1 >= @tokens.size
-      prev
+    private def match?(type)
+      curr.type == type
     end
 
     private def eof?
       @pos >= @tokens.size
     end
 
-    private def peek
-      error "no tokens available for #peek" if @tokens.size.zero?
-      error "pos #{@pos} out of range for #peek" if eof? # rm
+    private def last?
+      @pos == @tokens.size - 1
+    end
+
+    private def curr
+      error "no tokens available for #curr" if @tokens.size.zero?
+      error "pos #{@pos} out of range for #curr" if eof? # rm
       @tokens[@pos]
     end
 
     private def prev
       raise Error.new("no tokens available for #prev") if @tokens.empty?
       @tokens[@pos - 1]
+    end
+
+    private def error(msg : String)
+      raise Error.new(msg)
     end
   end
 end
