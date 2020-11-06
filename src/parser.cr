@@ -101,7 +101,11 @@ module Holycc
       if accept T::INT
         return Ast::NumberLiteral.new(prev.value)
       end
-      error "expected a number, got `#{curr.value}`"
+      if eof?
+        error "expected a number, got EOF"
+      else
+        error "expected a number, got `#{curr.value}`"
+      end
     end
 
     ##
