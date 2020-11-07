@@ -21,8 +21,20 @@ describe Holycc::Parser do
   it_parses "1",   num("1")
   it_parses "(1)", num("1")
   it_parses "((1))", num("1")
-  it_parses "1 + 2", bi(:+, num("1"), num("2"))
-  it_parses "1 - 2", bi(:-, num("1"), num("2"))
-  it_parses "1 + 2 * 3", bi(:+, num("1"), bi(:*, num("2"), num("3")))
-  it_parses "1 - 2 / 3", bi(:-, num("1"), bi(:/, num("2"), num("3")))
+  it_parses "1 + 2",
+    bi(:+,
+      num("1"),
+      num("2"))
+  it_parses "1 - 2",
+    bi(:-,
+      num("1"),
+      num("2"))
+  it_parses "1 + 2 * 3",
+    bi(:+,
+      num("1"),
+      bi(:*, num("2"), num("3")))
+  it_parses "1 - 2 / 3",
+    bi(:-,
+      num("1"),
+      bi(:/, num("2"), num("3")))
 end

@@ -24,7 +24,11 @@ module Holycc
     end
 
     def to_s(io)
-      io.puts "[#{line}:#{col}-#{col + value.size}][#{type}, '#{value}']"
+      io.print "[#{line}:#{col}-#{col + value.size}][#{type}, '#{value}']"
+    end
+
+    def inspect(io)
+      to_s(io)
     end
   end
 end
