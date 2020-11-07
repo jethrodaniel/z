@@ -21,6 +21,7 @@ module Holycc
         io.print "s(:#{name}, #{@value})"
       end
       def ==(o)
+        return false unless o.is_a?(NumberLiteral)
         value == o.value
       end
     end
@@ -33,7 +34,12 @@ module Holycc
       def to_s(io)
         io.print "s(:#{name}, :#{@type}, #{left}, #{right})"
       end
+      def ==(o)
+        return false unless o.is_a?(BinOp)
+        type == o.type &&
+        left == o.left &&
+        right == o.right
+      end
     end
-
   end
 end
