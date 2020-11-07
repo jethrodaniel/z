@@ -3,31 +3,11 @@ require "./node"
 
 # Simple calculator grammar for now
 #
-# expr   -> term LEFT_PAREN PLUS term RIGHT_PAREN
-#         | term LEFT_PAREN MIN  term RIGHT_PAREN
-#         | term
-# term   -> factor LEFT_PAREN DIV factor RIGHT_PAREN
-#         | factor LEFT_PAREN MUL factor RIGHT_PAREN
-#         | factor
-
-# factor -> LEFT_PAREN expr RIGHT_PAREN
-#         | number
-# number -> INT
-#
-#
-#
+# ```
 # expr    = mul ("+" mul | "-" mul)*
 # mul     = primary ("*" primary | "/" primary)*
 # primary = num | "(" expr ")"
-#
-#
-# Recursive descent works like so
-#
-# For each rule, create a procedure that attempts to match a non-terminal
-# production.
-# a -> b c
-#    | d
-# b -> ckk
+# ```
 module Holycc
   class Parser
     class Error < Exception
@@ -44,7 +24,6 @@ module Holycc
 
     def parse
       @tokens = @lex.tokens
-      # @toens << Token.new(0, 0, T::EOF, "\0") unles
       _root
     end
 
@@ -104,7 +83,6 @@ module Holycc
 
     ##
 
-    # private def consume(*types : Array(T), msg : String)
     private def consume(type : T, msg : String? = "")
       unless accept type
         error "expected a #{type}, got `#{curr.value}`"
