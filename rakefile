@@ -1,5 +1,3 @@
-require 'rake/clean'
-
 SRCS = Dir.glob('src/**/*.cr')
 EXES = Dir.glob('exe/*.cr')
 BINS = EXES.map { |f| f.sub('.cr', '').sub('exe', 'bin') }
@@ -11,7 +9,10 @@ BINS.each do |bin|
     sh bin
   end
 end
-CLEAN << BINS
+
+task :clean do
+  sh 'rm -rfv tmp bin'
+end
 
 task :install do
 	sh 'shards install'
@@ -27,3 +28,4 @@ task :fmt do
 	  sh "crystal tool format #{f}"
   end
 end
+task :lint => :fmt
