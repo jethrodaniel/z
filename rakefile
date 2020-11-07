@@ -10,16 +10,16 @@ BINS.each do |bin|
   end
 end
 
-task install: :fmt do
+task :install do
 	sh 'shards install'
 	sh 'shards build'
 end
 
 task spec: :install do
-	sh 'crystal spec'
+	sh 'crystal spec -v'
 end
 
-task :fmt do |t|
+task :fmt do
   SRCS.each do |f|
 	  sh "crystal tool format #{f}"
   end
