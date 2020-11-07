@@ -4,7 +4,7 @@ SRCS = Dir.glob('src/**/*.cr')
 EXES = Dir.glob('exe/*.cr')
 BINS = EXES.map { |f| f.sub('.cr', '').sub('exe', 'bin') }
 
-task default: %i[spec install]
+task default: %i[clean spec install]
 
 BINS.each do |bin|
   task File.basename(bin) => :install do

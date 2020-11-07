@@ -16,3 +16,5 @@ targets:
     main: exe/lexer.cr
   parser:
     main: exe/parser.cr
+  compiler:
+    main: exe/compiler.cr
