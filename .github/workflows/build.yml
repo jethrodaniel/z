@@ -14,6 +14,7 @@ jobs:
 
     - name: install build tools
       run: |
+        apt update -y
         apt install -y rake
 
     - name: build and run tests
