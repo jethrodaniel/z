@@ -51,7 +51,9 @@ module Holycc
       stop
     end
 
-    def tokens; to_a; end
+    def tokens
+      to_a
+    end
 
     private def next_char
       c = @reader.next_char

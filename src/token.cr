@@ -1,14 +1,14 @@
 module Holycc
   class Token
     enum Type
-      EOF          # \0
-      PLUS         # +
-      MIN          # -
-      DIV          # /
-      MUL          # *
-      INT          # 124
-      LEFT_PAREN   # (
-      RIGHT_PAREN  # )
+      EOF         # \0
+      PLUS        # +
+      MIN         # -
+      DIV         # /
+      MUL         # *
+      INT         # 124
+      LEFT_PAREN  # (
+      RIGHT_PAREN # )
     end
 
     property :line, :col, :type, :value

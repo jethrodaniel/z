@@ -16,9 +16,9 @@ require "./node"
 #
 #
 #
-#expr    = mul ("+" mul | "-" mul)*
-#mul     = primary ("*" primary | "/" primary)*
-#primary = num | "(" expr ")"
+# expr    = mul ("+" mul | "-" mul)*
+# mul     = primary ("*" primary | "/" primary)*
+# primary = num | "(" expr ")"
 #
 #
 # Recursive descent works like so

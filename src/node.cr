@@ -1,4 +1,3 @@
-
 module Holycc
   module Ast
     abstract class Node
@@ -15,30 +14,38 @@ module Holycc
 
     class NumberLiteral < Node
       property :value
+
       def initialize(@value : String)
       end
+
       def to_s(io)
         io.print "s(:#{name}, #{@value})"
       end
+
       def ==(o)
         return false unless o.is_a?(NumberLiteral)
         value == o.value
       end
     end
+
     class Nop < Node
     end
+
     class BinOp < Node
       property :type, :left, :right
+
       def initialize(@type : Symbol, @left : Node, @right : Node)
       end
+
       def to_s(io)
         io.print "s(:#{name}, :#{@type}, #{left}, #{right})"
       end
+
       def ==(o)
         return false unless o.is_a?(BinOp)
         type == o.type &&
-        left == o.left &&
-        right == o.right
+          left == o.left &&
+          right == o.right
       end
     end
   end

@@ -8,7 +8,7 @@ Following along with Rui Ueyama's 9cc, but implementing Terry David's HolyC.
 
 ```
 git clone --recursive git@github.com:jethrodaniel/holycc
-cd holycc && make
+cd holycc && rake
 ```
 
 If you forget the `--recursive`, check out the submodule like so
@@ -20,6 +20,7 @@ git submodule update --init --progress --depth=1
 ## prerequisites
 
 - crystal 0.35 or greater
+- rake (ruby) for building
 
 ## license
 
