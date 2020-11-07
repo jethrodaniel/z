@@ -5,11 +5,25 @@ def it_compiles(str, _asm : String, code : Int32)
     cc = Holycc::Compiler.new(str)
     a = cc.compile
     a.should eq _asm
+
+    # todo: get executable working from here
+    #
+    # File.open("asm.S", "w") { |f| f.puts cc.compile }
+    # cmd = "gcc asm.S && cat asm.S && ./a.out"
+    # status = Process.run(
+    #   cmd, nil,
+    #   shell: true,
+    #   # input: Process::Redirect::Inherit,
+    #   # output: Process::Redirect::Inherit,
+    #   # error: Process::Redirect::Inherit,
+    #   env: {"PATH" => Dir.current}
+    # ).exit_status
+    # status.should eq code
   end
 end
 
 describe Holycc::Compiler do
-  it_compiles "1 + 2 * 3", <<-A, 2
+  it_compiles "1 + 2 * 3", <<-A, 7
   .intel_syntax noprefix  # Use Intel/nasm syntax, not Att/gnu
   .globl main             # standard C entry `_start` expects `main`
 
