@@ -13,11 +13,16 @@ def num(val : String)
   N::NumberLiteral.new(val)
 end
 
+def bi(sym : Symbol, left : N::Node, right : N::Node)
+  N::BinOp.new(sym, left, right)
+end
+
 describe Holycc::Parser do
   it_parses "1",   num("1")
   it_parses "(1)", num("1")
-  it_parses "1 + 2", N::BinOp.new(:+, num("1"), num("2"))
-  it_parses "1 - 2", N::BinOp.new(:-, num("1"), num("2"))
-  it_parses "1 + 2 * 3", N::BinOp.new(:+, num("1"), N::BinOp.new(:*, num("2"), num("3")))
-  it_parses "1 - 2 / 3", N::BinOp.new(:-, num("1"), N::BinOp.new(:/, num("2"), num("3")))
+  it_parses "((1))", num("1")
+  it_parses "1 + 2", bi(:+, num("1"), num("2"))
+  it_parses "1 - 2", bi(:-, num("1"), num("2"))
+  it_parses "1 + 2 * 3", bi(:+, num("1"), bi(:*, num("2"), num("3")))
+  it_parses "1 - 2 / 3", bi(:-, num("1"), bi(:/, num("2"), num("3")))
 end
