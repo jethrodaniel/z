@@ -1,3 +1,5 @@
+require 'rake/clean'
+
 SRCS = Dir.glob('src/**/*.cr')
 EXES = Dir.glob('exe/*.cr')
 BINS = EXES.map { |f| f.sub('.cr', '').sub('exe', 'bin') }
@@ -9,6 +11,7 @@ BINS.each do |bin|
     sh bin
   end
 end
+CLEAN << BINS
 
 task :install do
 	sh 'shards install'
