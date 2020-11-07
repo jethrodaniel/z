@@ -58,8 +58,6 @@ module Holycc
     end
 
     private def _expr
-      # _factor
-
       n = _mul
 
       loop do
@@ -101,11 +99,7 @@ module Holycc
       if accept T::INT
         return Ast::NumberLiteral.new(prev.value)
       end
-      if eof?
-        error "expected a number, got EOF"
-      else
-        error "expected a number, got `#{curr.value}`"
-      end
+      error "expected a number, got `#{curr.value}`"
     end
 
     ##
@@ -139,7 +133,8 @@ module Holycc
 
     private def curr
       error "no tokens available for #curr" if @tokens.size.zero?
-      error "pos #{@pos} out of range for #curr" if eof? # rm
+      # return Token.new(0, 0, T::EOF, "\0") if eof?
+      return prev if eof?
       @tokens[@pos]
     end
 
