@@ -12,8 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: shards install
+    - name: install build tools
+      run: sudo apt install -y rake
 
-    - name: Run tests
-      run: crystal spec
+    - name: build and run tests
+      run: rake
