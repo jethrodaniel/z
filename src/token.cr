@@ -16,6 +16,8 @@ module Holycc
       GT          # >
       GE          # >=
       ASSIGN      # =
+      IDENT       # a = ..., etc
+      SEMI        # ;
     end
 
     property :line, :col, :type, :value

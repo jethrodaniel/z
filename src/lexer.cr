@@ -36,6 +36,8 @@ module Holycc
           return add_token T::LEFT_PAREN, c.to_s
         when ')'
           return add_token T::RIGHT_PAREN, c.to_s
+        when ';'
+          return add_token T::SEMI, c.to_s
         when '='
           if @reader.peek_next_char == '='
             next_char
@@ -67,6 +69,8 @@ module Holycc
         when '\0'
           break
         when ' ' # skip
+        when 'a'..'z'
+          return add_token T::IDENT, c.to_s
         else
           error "unexpected character `#{c}`"
         end

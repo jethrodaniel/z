@@ -74,8 +74,8 @@ module Holycc
           io.puts "\tcmp rax, rdi  # if rax == rdi, set flag"
           io.puts "\tsetle al      # set al to 1 if prev cmp was <=, else 0"
           io.puts "\tmovzb rax, al # set rest of rax to al's value"
-        # when :>
-        # when :>=
+          # when :>
+          # when :>=
         end
         io.puts "\tpush rax"
       end

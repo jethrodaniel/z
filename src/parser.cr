@@ -4,13 +4,16 @@ require "./node"
 # Simple calculator grammar for now
 #
 # ```
-# expr       = equality
+# program    = stmt*
+# stmt       = expr ";"
+# expr       = assign
+# assign     = equality ("=" assign)?
 # equality   = relational ("==" relational | "!=" relational)*
 # relational = add ("<" add | "<=" add | ">" add | ">=" add)*
 # add        = mul ("+" mul | "-" mul)*
 # mul        = unary ("*" unary | "/" unary)*
 # unary      = ("+" | "-")? primary
-# primary    = num | "(" expr ")"1j
+# primary    = num | ident | "(" expr ")"
 # ```
 module Holycc
   class Parser
@@ -35,13 +38,27 @@ module Holycc
 
     private def _root
       return Ast::Nop.new if eof?
-      e = _expr
+      n = _stmt
       error "expected EOF, got `#{curr.value}`" unless eof?
-      e
+      n
+    end
+
+    private def _stmt
+      n = _expr
+      consume T::SEMI
+      n
     end
 
     private def _expr
-      _equality
+      _assign
+    end
+
+    private def _assign
+      n = _equality
+      if accept T::ASSIGN
+        n = Ast::BinOp.new(:"=", n, _assign)
+      end
+      n
     end
 
     private def _equality

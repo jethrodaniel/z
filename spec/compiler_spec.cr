@@ -29,7 +29,7 @@ def it_compiles(str, code : Int32)
 end
 
 describe Holycc::Compiler do
-  it_compiles "1 + 2 * 3", <<-A, 7
+  it_compiles "1 + 2 * 3;", <<-A, 7
   .intel_syntax noprefix  # Use Intel/nasm syntax, not Att/gnu
   .globl main             # standard C entry `_start` expects `main`
 
@@ -49,17 +49,17 @@ describe Holycc::Compiler do
   	ret
 
   A
-  it_compiles "1 + -1", 0
-  it_compiles "1 + 2 - 3", 0
-  it_compiles "4 / 2", 2
-  it_compiles "2 * 4", 8
-  it_compiles "5+6*7", 47
-  it_compiles "5*(9-6)", 15
-  it_compiles "(3+5)/2", 4
-  it_compiles "1 == 1", 1
-  it_compiles "1 != 1", 0
-  it_compiles "1 <= 1", 1
-  it_compiles "1 < 1",  0
-  it_compiles "1 < 2",  1
-  it_compiles "10 + 1 < 2",  0
+  it_compiles "1 + -1;", 0
+  it_compiles "1 + 2 - 3;", 0
+  it_compiles "4 / 2;", 2
+  it_compiles "2 * 4;", 8
+  it_compiles "5+6*7;", 47
+  it_compiles "5*(9-6);", 15
+  it_compiles "(3+5)/2;", 4
+  it_compiles "1 == 1;", 1
+  it_compiles "1 != 1;", 0
+  it_compiles "1 <= 1;", 1
+  it_compiles "1 < 1;",  0
+  it_compiles "1 < 2;",  1
+  it_compiles "10 + 1 < 2;", 0
 end

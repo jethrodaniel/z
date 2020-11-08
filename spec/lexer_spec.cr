@@ -36,4 +36,6 @@ describe Holycc::Lexer do
   it_lexes "==", t(1, 1, T::EQ, "==")
   it_lexes "!=", t(1, 1, T::NE, "!=")
   it_lexes "=", t(1, 1, T::ASSIGN, "=")
+  it_lexes "z", t(1, 1, T::IDENT, "z")
+  it_lexes ";", t(1, 1, T::SEMI, ";")
 end
