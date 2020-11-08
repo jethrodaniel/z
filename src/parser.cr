@@ -5,7 +5,8 @@ require "./node"
 #
 # ```
 # expr    = mul ("+" mul | "-" mul)*
-# mul     = primary ("*" primary | "/" primary)*
+# mul     = unary ("*" unary | "/" unary)*
+# unary   = ("+" | "-")? primary
 # primary = num | "(" expr ")"
 # ```
 module Holycc
@@ -51,17 +52,27 @@ module Holycc
     end
 
     private def _mul
-      n = _primary
+      n = _unary
 
       loop do
         if accept T::MUL
-          n = Ast::BinOp.new(:*, n, _primary)
+          n = Ast::BinOp.new(:*, n, _unary)
         elsif accept T::DIV
-          n = Ast::BinOp.new(:/, n, _primary)
+          n = Ast::BinOp.new(:/, n, _unary)
         else
           return n
         end
       end
+    end
+
+    private def _unary
+      if accept T::PLUS
+        return _primary
+      elsif accept T::MIN
+        return Ast::BinOp.new(:-, Ast::NumberLiteral.new("0"), _primary)
+      end
+
+      _primary
     end
 
     private def _primary
