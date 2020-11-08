@@ -6,19 +6,17 @@ def it_compiles(str, _asm : String, code : Int32)
     a = cc.compile
     a.should eq _asm
 
-    # todo: get executable working from here
-    #
-    # File.open("asm.S", "w") { |f| f.puts cc.compile }
-    # cmd = "gcc asm.S && cat asm.S && ./a.out"
-    # status = Process.run(
-    #   cmd, nil,
-    #   shell: true,
-    #   # input: Process::Redirect::Inherit,
-    #   # output: Process::Redirect::Inherit,
-    #   # error: Process::Redirect::Inherit,
-    #   env: {"PATH" => Dir.current}
-    # ).exit_status
-    # status.should eq code
+    File.open("asm.S", "w") { |f| f.puts a }
+    `gcc asm.S && cat asm.S && ./a.out`
+
+    # todo: solve this nonsense
+    # https://github.com/crystal-lang/crystal/blob/5999ae29beacf4cfd54e232ca83c1a46b79f26a5/src/process/status.cr#L52
+    # https://stackoverflow.com/a/808995/7132678
+    status = $?.exit_status
+    status = (status >> 8) & 0xff
+    status.should eq code
+
+    %w[asm.S a.out].each { |f| File.delete f }
   end
 end
 
