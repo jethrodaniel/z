@@ -37,7 +37,19 @@ module Holycc
         when ')'
           return add_token T::RIGHT_PAREN, c.to_s
         when '='
-          return add_token T::EQ, c.to_s
+          if @reader.peek_next_char == '='
+            next_char
+            return add_token T::EQ, "=="
+          else
+            return add_token T::ASSIGN, "="
+          end
+        when '!'
+          if @reader.peek_next_char == '='
+            next_char
+            return add_token T::NE, "!="
+          else
+            raise "! is unsupported"
+          end
         when '<'
           if @reader.peek_next_char == '='
             next_char

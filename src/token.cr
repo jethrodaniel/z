@@ -15,6 +15,7 @@ module Holycc
       LE          # <=
       GT          # >
       GE          # >=
+      ASSIGN      # =
     end
 
     property :line, :col, :type, :value

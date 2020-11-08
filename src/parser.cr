@@ -41,7 +41,21 @@ module Holycc
     end
 
     private def _expr
-      _relational
+      _equality
+    end
+
+    private def _equality
+      n = _relational
+
+      loop do
+        if accept T::EQ
+          n = Ast::BinOp.new(:==, n, _relational)
+        elsif accept T::NE
+          n = Ast::BinOp.new(:!=, n, _relational)
+        else
+          return n
+        end
+      end
     end
 
     private def _relational

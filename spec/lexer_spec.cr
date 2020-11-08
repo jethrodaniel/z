@@ -33,5 +33,7 @@ describe Holycc::Lexer do
   it_lexes "<", t(1, 1, T::LT, "<")
   it_lexes ">=", t(1, 1, T::GE, ">=")
   it_lexes ">", t(1, 1, T::GT, ">")
-  it_lexes "=", t(1, 1, T::EQ, "=")
+  it_lexes "==", t(1, 1, T::EQ, "==")
+  it_lexes "!=", t(1, 1, T::NE, "!=")
+  it_lexes "=", t(1, 1, T::ASSIGN, "=")
 end

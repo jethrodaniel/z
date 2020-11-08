@@ -55,4 +55,5 @@ describe Holycc::Parser do
   it_parses "1 < 2", bi(:<, num("1"), num("2"))
   it_parses "1 >= 2", bi(:>=, num("1"), num("2"))
   it_parses "1 > 2", bi(:>, num("1"), num("2"))
+  it_parses "1 == 2", bi(:==, num("1"), num("2"))
 end
