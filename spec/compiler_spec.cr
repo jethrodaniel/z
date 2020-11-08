@@ -1,9 +1,10 @@
 require "./spec_helper"
 
-def it_compiles(str, code : Int32)
+def _compiles_cmp_run(str, _asm : String, code : Int32)
   it str do
     cc = Holycc::Compiler.new(str)
     a = cc.compile
+    a.should eq(_asm) unless _asm == ""
 
     File.open("asm.S", "w") { |f| f.puts a }
     `gcc asm.S && cat asm.S && ./a.out`
@@ -19,25 +20,12 @@ def it_compiles(str, code : Int32)
   end
 end
 
-
 def it_compiles(str, _asm : String, code : Int32)
-  it str do
-    cc = Holycc::Compiler.new(str)
-    a = cc.compile
-    a.should eq _asm
+  _compiles_cmp_run(str, _asm, code)
+end
 
-    File.open("asm.S", "w") { |f| f.puts a }
-    `gcc asm.S && cat asm.S && ./a.out`
-
-    # todo: solve this nonsense
-    # https://github.com/crystal-lang/crystal/blob/5999ae29beacf4cfd54e232ca83c1a46b79f26a5/src/process/status.cr#L52
-    # https://stackoverflow.com/a/808995/7132678
-    status = $?.exit_status
-    status = (status >> 8) & 0xff
-    status.should eq code
-
-    %w[asm.S a.out].each { |f| File.delete f }
-  end
+def it_compiles(str, code : Int32)
+  _compiles_cmp_run(str, "", code)
 end
 
 describe Holycc::Compiler do
