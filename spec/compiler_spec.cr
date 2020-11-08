@@ -73,4 +73,5 @@ describe Holycc::Compiler do
   it_compiles "1 <= 1", 1
   it_compiles "1 < 1",  0
   it_compiles "1 < 2",  1
+  it_compiles "10 + 1 < 2",  0
 end
