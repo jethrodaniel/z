@@ -1,5 +1,25 @@
 require "./spec_helper"
 
+def it_compiles(str, code : Int32)
+  it str do
+    cc = Holycc::Compiler.new(str)
+    a = cc.compile
+
+    File.open("asm.S", "w") { |f| f.puts a }
+    `gcc asm.S && cat asm.S && ./a.out`
+
+    # todo: solve this nonsense
+    # https://github.com/crystal-lang/crystal/blob/5999ae29beacf4cfd54e232ca83c1a46b79f26a5/src/process/status.cr#L52
+    # https://stackoverflow.com/a/808995/7132678
+    status = $?.exit_status
+    status = (status >> 8) & 0xff
+    status.should eq code
+
+    %w[asm.S a.out].each { |f| File.delete f }
+  end
+end
+
+
 def it_compiles(str, _asm : String, code : Int32)
   it str do
     cc = Holycc::Compiler.new(str)
@@ -41,4 +61,8 @@ describe Holycc::Compiler do
   	ret
 
   A
+  it_compiles "1 + -1", 0
+  it_compiles "1 + 2 - 3", 0
+  it_compiles "4 / 2", 2
+  it_compiles "2 * 4", 8
 end
