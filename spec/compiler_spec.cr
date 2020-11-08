@@ -65,4 +65,7 @@ describe Holycc::Compiler do
   it_compiles "1 + 2 - 3", 0
   it_compiles "4 / 2", 2
   it_compiles "2 * 4", 8
+  it_compiles "5+6*7", 47
+  it_compiles "5*(9-6)", 15
+  it_compiles "(3+5)/2", 4
 end
