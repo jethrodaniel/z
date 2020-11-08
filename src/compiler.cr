@@ -58,8 +58,25 @@ module Holycc
         when :/
           io.puts "\tcqo           # x86_64 div sucks"
           io.puts "\tidiv rdi"
+        when :==
+          io.puts "\tcmp rax, rdi  # if rax == rdi, set flag"
+          io.puts "\tsete al       # set al to 1 if prev cmp was ==, else 0"
+          io.puts "\tmovzb rax, al # set rest of rax to al's value"
+        when :!=
+          io.puts "\tcmp rax, rdi  # if rax == rdi, set flag"
+          io.puts "\tsetne al      # set al to 1 if prev cmp was !=, else 0"
+          io.puts "\tmovzb rax, al # set rest of rax to al's value"
+        when :<
+          io.puts "\tcmp rax, rdi  # if rax == rdi, set flag"
+          io.puts "\tsetl al       # set al to 1 if prev cmp was <, else 0"
+          io.puts "\tmovzb rax, al # set rest of rax to al's value"
+        when :<=
+          io.puts "\tcmp rax, rdi  # if rax == rdi, set flag"
+          io.puts "\tsetle al      # set al to 1 if prev cmp was <=, else 0"
+          io.puts "\tmovzb rax, al # set rest of rax to al's value"
+        # when :>
+        # when :>=
         end
-
         io.puts "\tpush rax"
       end
     end
