@@ -5,7 +5,6 @@ def it_lexes(str, expected : Holycc::Token | Array(Holycc::Token))
     lex = Holycc::Lexer.new(str)
     t = lex.tokens
     if expected.is_a? Holycc::Token
-      t.size.should eq 1
       t.first.should eq expected
     else
       t.should eq expected
@@ -30,4 +29,9 @@ describe Holycc::Lexer do
     t(1, 7, T::MUL, "*"),
     t(1, 9, T::INT, "3")
   ]
+  it_lexes "<=", t(1, 1, T::LE, "<=")
+  it_lexes "<", t(1, 1, T::LT, "<")
+  it_lexes ">=", t(1, 1, T::GE, ">=")
+  it_lexes ">", t(1, 1, T::GT, ">")
+  it_lexes "=", t(1, 1, T::EQ, "=")
 end

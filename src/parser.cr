@@ -4,10 +4,13 @@ require "./node"
 # Simple calculator grammar for now
 #
 # ```
-# expr    = mul ("+" mul | "-" mul)*
-# mul     = unary ("*" unary | "/" unary)*
-# unary   = ("+" | "-")? primary
-# primary = num | "(" expr ")"
+# expr       = equality
+# equality   = relational ("==" relational | "!=" relational)*
+# relational = add ("<" add | "<=" add | ">" add | ">=" add)*
+# add        = mul ("+" mul | "-" mul)*
+# mul        = unary ("*" unary | "/" unary)*
+# unary      = ("+" | "-")? primary
+# primary    = num | "(" expr ")"1j
 # ```
 module Holycc
   class Parser
@@ -37,6 +40,25 @@ module Holycc
       e
     end
 
+    # private def _expr
+    # end
+
+    # private def _relational
+    #   n = _add
+
+    #   loop do
+    #     if accept T::LT
+    #       n = Ast::BinOp.new(:+, n, _mul)
+    #     elsif accept T::MIN
+    #       n = Ast::BinOp.new(:-, n, _mul)
+    #     else
+    #       return n
+    #     end
+    #   end
+
+    # end
+
+    # private def _add
     private def _expr
       n = _mul
 

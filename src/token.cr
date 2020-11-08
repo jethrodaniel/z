@@ -9,6 +9,12 @@ module Holycc
       INT         # 124
       LEFT_PAREN  # (
       RIGHT_PAREN # )
+      EQ          # ==
+      NE          # !=
+      LT          # <
+      LE          # <=
+      GT          # >
+      GE          # >=
     end
 
     property :line, :col, :type, :value

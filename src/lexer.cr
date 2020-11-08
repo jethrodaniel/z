@@ -36,6 +36,22 @@ module Holycc
           return add_token T::LEFT_PAREN, c.to_s
         when ')'
           return add_token T::RIGHT_PAREN, c.to_s
+        when '='
+          return add_token T::EQ, c.to_s
+        when '<'
+          if @reader.peek_next_char == '='
+            next_char
+            return add_token T::LE, "<="
+          else
+            return add_token T::LT, c.to_s
+          end
+        when '>'
+          if @reader.peek_next_char == '='
+            next_char
+            return add_token T::GE, ">="
+          else
+            return add_token T::GT, c.to_s
+          end
         when '\0'
           break
         when ' ' # skip
