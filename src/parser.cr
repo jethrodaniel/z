@@ -136,16 +136,12 @@ module Holycc
         e = _expr
         consume T::RIGHT_PAREN
         return e
-      end
-
-      _number
-    end
-
-    private def _number
-      if accept T::INT
+      elsif accept T::INT
         return Ast::NumberLiteral.new(prev.value)
+      elsif accept T::IDENT
+        return Ast::Ident.new(prev.value)
       end
-      error "expected a number, got `#{curr.value}`"
+      error "expected a parenthesized list, and ident, or a number, got `#{curr.value}`"
     end
 
     ##

@@ -28,6 +28,22 @@ module Holycc
       end
     end
 
+    class Ident < Node
+      property :value
+
+      def initialize(@value : String)
+      end
+
+      def to_s(io)
+        io.print "s(:#{name}, #{@value})"
+      end
+
+      def ==(o)
+        return false unless o.is_a?(Ident)
+        value == o.value
+      end
+    end
+
     class Nop < Node
     end
 

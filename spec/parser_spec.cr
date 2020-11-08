@@ -13,6 +13,10 @@ def num(val : String)
   N::NumberLiteral.new(val)
 end
 
+def ident(val : String)
+  N::Ident.new(val)
+end
+
 def bi(sym : Symbol, left : N::Node, right : N::Node)
   N::BinOp.new(sym, left, right)
 end
@@ -47,5 +51,6 @@ describe Holycc::Parser do
   it_parses "1 >= 2;", bi(:>=, num("1"), num("2"))
   it_parses "1 > 2;",  bi(:>,  num("1"), num("2"))
   it_parses "1 == 2;", bi(:==, num("1"), num("2"))
-  it_parses "1== 2;",  bi(:==, num("1"), num("2"))
+  it_parses "1 == 2;", bi(:==, num("1"), num("2"))
+  it_parses "a = 5;", bi(:"=", ident("a"), num("5"))
 end
