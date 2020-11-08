@@ -38,6 +38,8 @@ module Holycc
 
     private def compile_node(node : Ast::Node, io)
       case node
+      when Ast::Program
+        node.statements.each { |n| compile_node(n, io) }
       when Ast::NumberLiteral
         io.puts "\tpush #{node.value}        # push `#{node.value}` onto the stack"
         return
@@ -49,6 +51,9 @@ module Holycc
         io.puts "\tpop rax       # pop a value from the stack into rax"
 
         case node.type
+        when :"="
+          io.puts "\tadd rax, rdi  # add rdi to rax"
+
         when :+
           io.puts "\tadd rax, rdi  # add rdi to rax"
         when :-

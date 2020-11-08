@@ -38,9 +38,18 @@ module Holycc
 
     private def _root
       return Ast::Nop.new if eof?
-      n = _stmt
-      error "expected EOF, got `#{curr.value}`" unless eof?
-      n
+      # n = _stmt
+      # error "expected EOF, got `#{curr.value}`" unless eof?
+      # n
+      _program
+    end
+
+    private def _program
+      stmts = [] of Ast::Node
+      until eof?
+        stmts << _stmt
+      end
+      Ast::Program.new(stmts)
     end
 
     private def _stmt
