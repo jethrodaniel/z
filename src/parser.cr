@@ -40,26 +40,29 @@ module Holycc
       e
     end
 
-    # private def _expr
-    # end
-
-    # private def _relational
-    #   n = _add
-
-    #   loop do
-    #     if accept T::LT
-    #       n = Ast::BinOp.new(:+, n, _mul)
-    #     elsif accept T::MIN
-    #       n = Ast::BinOp.new(:-, n, _mul)
-    #     else
-    #       return n
-    #     end
-    #   end
-
-    # end
-
-    # private def _add
     private def _expr
+      _relational
+    end
+
+    private def _relational
+      n = _add
+
+      loop do
+        if accept T::LT
+          n = Ast::BinOp.new(:<, n, _add)
+        elsif accept T::LE
+          n = Ast::BinOp.new(:<=, n, _add)
+        elsif accept T::GE
+          n = Ast::BinOp.new(:>=, n, _add)
+        elsif accept T::GT
+          n = Ast::BinOp.new(:>, n, _add)
+        else
+          return n
+        end
+      end
+    end
+
+    private def _add
       n = _mul
 
       loop do
