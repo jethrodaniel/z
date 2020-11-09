@@ -30,9 +30,17 @@ end
 
 describe Holycc::Compiler do
   it_compiles "1 + 2 * 3;", <<-A, 7
-  .intel_syntax noprefix  # Use Intel/nasm syntax, not Att/gnu
-  .globl main             # standard C entry `_start` expects `main`
+  # arch: x86_64
 
+  # Use intel/nasm syntax, not att/gnu
+  .intel_syntax noprefix
+
+  # `main()`
+  #
+  # This is the same `main` that the  standard C entry `_start`
+  # expects.
+  #
+  .globl main
   main:
   	push 1        # push `1` onto the stack
   	push 2        # push `2` onto the stack

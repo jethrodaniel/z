@@ -2,6 +2,10 @@ require "./parser"
 require "./node"
 
 module Holycc
+  # = Compiler
+  #
+  # The compiler outputs assembly code from the AST.
+  #
   class Compiler
     class Error < Exception
     end
@@ -21,9 +25,17 @@ module Holycc
     private def compile(node : Ast::Node)
       String.build do |io|
         io.puts <<-A
-        .intel_syntax noprefix  # Use Intel/nasm syntax, not Att/gnu
-        .globl main             # standard C entry `_start` expects `main`
+        # arch: x86_64
 
+        # Use intel/nasm syntax, not att/gnu
+        .intel_syntax noprefix
+
+        # `main()`
+        #
+        # This is the same `main` that the  standard C entry `_start`
+        # expects.
+        #
+        .globl main
         main:
         A
 
@@ -43,6 +55,12 @@ module Holycc
       when Ast::NumberLiteral
         io.puts "\tpush #{node.value}        # push `#{node.value}` onto the stack"
         return
+      when Ast::Lvar
+        compile_lvar(node, io)
+        io.puts "pop rax"
+        io.puts "mov rax, [rax]"
+        io.puts "push rax"
+        return
       when Ast::BinOp
         compile_node(node.left, io)
         compile_node(node.right, io)
@@ -52,8 +70,7 @@ module Holycc
 
         case node.type
         when :"="
-          io.puts "\tadd rax, rdi  # add rdi to rax"
-
+          io.puts "todo"
         when :+
           io.puts "\tadd rax, rdi  # add rdi to rax"
         when :-
@@ -84,6 +101,12 @@ module Holycc
         end
         io.puts "\tpush rax"
       end
+    end
+
+    private def compile_lvar(node : Ast::Lvar, io)
+      io.puts "\tmov rax, rbp     # save old base pointer value"
+      io.puts "\tsub rax, #{node.offset}"
+      io.puts "\tpush rax"
     end
 
     private def error(msg : String)

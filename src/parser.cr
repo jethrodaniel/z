@@ -66,7 +66,8 @@ module Holycc
         if n.is_a?(Ast::Ident)
           return Ast::BinOp.new(:"=", Ast::Lvar.new(n), _assign)
         else
-          error "expected lvar value to be an ident"
+          # error "expected lvar value to be an ident"
+          error "expected left variable, got `#{curr.value}`"
         end
       end
       n
