@@ -2,6 +2,7 @@ module Holycc
   module Ast
     abstract class Node
       class Error < Exception; end
+
       property :offset
 
       def name
@@ -38,7 +39,6 @@ module Holycc
         statements == o.statements
       end
     end
-
 
     class NumberLiteral < Node
       property :value

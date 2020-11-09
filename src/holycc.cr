@@ -4,4 +4,5 @@ end
 
 require "./lexer"
 require "./parser"
+require "./asm"
 require "./compiler"
