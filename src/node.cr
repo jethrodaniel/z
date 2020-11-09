@@ -2,6 +2,7 @@ module Holycc
   module Ast
     abstract class Node
       class Error < Exception; end
+      property :offset
 
       def name
         {{ @type }}.to_s.split("::").last.underscore
@@ -68,6 +69,25 @@ module Holycc
       def ==(o)
         return false unless o.is_a?(Ident)
         value == o.value
+      end
+    end
+
+    class Lvar < Node
+      property :value
+      getter :offset
+
+      @value : String
+      @offset : Int32
+
+      def initialize(value : Ident)
+        @value = value.value
+        @offset = (@value[0] - 'a' + 1) * 8
+      end
+
+      def ==(o)
+        return false unless o.is_a?(Lvar)
+        value == o.value &&
+          offset == o.offset
       end
     end
 

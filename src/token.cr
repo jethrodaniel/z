@@ -18,6 +18,7 @@ module Holycc
       ASSIGN      # =
       IDENT       # a = ..., etc
       SEMI        # ;
+      LVAR        # _left variable_
     end
 
     property :line, :col, :type, :value

@@ -38,9 +38,6 @@ module Holycc
 
     private def _root
       return Ast::Nop.new if eof?
-      # n = _stmt
-      # error "expected EOF, got `#{curr.value}`" unless eof?
-      # n
       _program
     end
 
@@ -64,8 +61,13 @@ module Holycc
 
     private def _assign
       n = _equality
+
       if accept T::ASSIGN
-        n = Ast::BinOp.new(:"=", n, _assign)
+        if n.is_a?(Ast::Ident)
+          return Ast::BinOp.new(:"=", Ast::Lvar.new(n), _assign)
+        else
+          error "expected lvar value to be an ident"
+        end
       end
       n
     end
