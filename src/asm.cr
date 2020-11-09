@@ -1,18 +1,5 @@
 module Holycc
-  # == x86_64
-  #
-  # To declare the entry point `main`.
-  #
-  # ```
-  # .globl main # allow the linker to call `main`
-  # main:
-  #   # procedure body
-  # ```
-  #
-  # This is only the entry point by convention, as most compilers call
-  # `_start`, which sets up the environment, then calls `main`.
-  #
-  # == usage
+  # DSL to output assembly
   #
   # ```
   # Asm.new do
@@ -23,19 +10,17 @@ module Holycc
   # ```
   module Asm
     struct Builder
-      # Creates a new Asm::Builder, yields with with `with ... yield`
-      # and then returns the resulting string.
-      def self.build
-        new.build do |builder|
-          with builder yield builder
-        end
-      end
-
       def initialize
         @str = IO::Memory.new
         @indent = 0
         @indent_size = 2
         puts ".intel_syntax noprefix"
+      end
+
+      def self.build
+        new.build do |builder|
+          with builder yield builder
+        end
       end
 
       def build
