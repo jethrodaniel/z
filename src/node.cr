@@ -1,115 +1,118 @@
 module Holycc
   module Ast
+    abstract class Visitor
+      macro visit(type)
+        def visit(node : {{type}}, io : IO)
+          # children = node.children
+          {{yield}}
+        end
+      end
+
+      macro visit(*types)
+        {% for type in types %}
+          visit {{type}} do
+            {{yield}}
+          end
+        {% end %}
+      end
+
+      private def name(node)
+        node.class.name.split("::").last.underscore
+      end
+    end
+  end
+end
+
+module Holycc
+  module Ast
+    class Printer < Visitor
+      visit Program do
+        io.print "s(:#{name(node)}, #{node.statements})"
+      end
+
+      visit Lvar, Ident, NumberLiteral do
+        io.print "s(:#{name(node)}, #{node.value})"
+      end
+
+      visit BinOp do
+        io.print "s(:#{name(node)}, #{node.left}, #{node.right})"
+      end
+
+      visit Nop do
+        io.print "s(:#{name(node)}"
+      end
+    end
+  end
+end
+
+module Holycc
+  module Ast
     abstract class Node
       class Error < Exception; end
-
-      property :offset
 
       def name
         {{ @type }}.to_s.split("::").last.underscore
       end
 
-      def to_s(io)
-        io.print "s(:#{name})"
+      def accept(visitor : Visitor, io : IO)
+        visitor.visit self, io
       end
+
+      # def children
+      #   vars = {{ @type.instance_vars }}
+      #   node_vars = [] of Node
+      #   vars.each do |var|
+      #     node_vars << var if var.is_a? Node
+      #   end
+      #   node_vars
+      # end
     end
 
-    class Program < Node
-      property :statements
-      @statements : Array(Node) = [] of Node
+    macro ast_node(name, *properties)
+      class {{name.id}} < Node
+        {% for property in properties %}
+          property {{property.var}} : {{property.type}}
+        {% end %}
 
-      def initialize(@statements : Array(Node))
-      end
-
-      def initialize(statement : Node)
-        @statements << statement
-      end
-
-      def to_s(io)
-        io.print "s(:#{name}, "
-        statements.each.with_index do |s, i|
-          io.print(s)
-          io.print ", " unless i == statements.size - 1
+        def initialize({{
+                         *properties.map do |field|
+                           "@#{field.id}".id
+                         end
+                       }})
         end
-        io.print ")"
-      end
 
-      def ==(o)
-        return false unless o.is_a?(Program)
-        statements == o.statements
-      end
-    end
+        def ==(o)
+          return false unless o.is_a?({{name.id}})
+          {% for prop in properties %}
+            return false unless {{prop.var}} == o.{{prop.var}}
+          {% end %}
+          true
+        end
 
-    class NumberLiteral < Node
-      property :value
-
-      def initialize(@value : String)
-      end
-
-      def to_s(io)
-        io.print "s(:#{name}, #{@value})"
-      end
-
-      def ==(o)
-        return false unless o.is_a?(NumberLiteral)
-        value == o.value
+        def to_s(io)
+          accept(Printer.new, io)
+        end
       end
     end
 
-    class Ident < Node
-      property :value
+    ast_node Program,
+      statements : Array(Node)
 
-      def initialize(@value : String)
-      end
+    ast_node NumberLiteral,
+      value : String
 
-      def to_s(io)
-        io.print "s(:#{name}, #{@value})"
-      end
+    ast_node Ident,
+      value : String
 
-      def ==(o)
-        return false unless o.is_a?(Ident)
-        value == o.value
-      end
-    end
+    ast_node Lvar,
+      value : String,
+      offset : Int32
 
-    class Lvar < Node
-      property :value
-      getter :offset
+    ast_node Nop
 
-      @value : String
-      @offset : Int32
-
-      def initialize(value : Ident)
-        @value = value.value
-        @offset = (@value[0] - 'a' + 1) * 8
-      end
-
-      def ==(o)
-        return false unless o.is_a?(Lvar)
-        value == o.value &&
-          offset == o.offset
-      end
-    end
-
-    class Nop < Node
-    end
-
-    class BinOp < Node
-      property :type, :left, :right
-
-      def initialize(@type : Symbol, @left : Node, @right : Node)
-      end
-
-      def to_s(io)
-        io.print "s(:#{name}, :#{@type}, #{left}, #{right})"
-      end
-
-      def ==(o)
-        return false unless o.is_a?(BinOp)
-        type == o.type &&
-          left == o.left &&
-          right == o.right
-      end
-    end
+    ast_node BinOp,
+      type : Symbol,
+      left : Node,
+      right : Node
   end
 end

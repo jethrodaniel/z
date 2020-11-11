@@ -34,6 +34,8 @@ MIT
 
 Thanks, y'all.
 
+- https://github.com/charly-lang/charly
+
 TempleOS
 
 - https://templeos.org/

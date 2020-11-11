@@ -64,7 +64,8 @@ module Holycc
 
       if accept T::ASSIGN
         if n.is_a?(Ast::Ident)
-          return Ast::BinOp.new(:"=", Ast::Lvar.new(n), _assign)
+          offset = (n.value[0] - 'a' + 1) * 8
+          return Ast::BinOp.new(:"=", Ast::Lvar.new(n.value, offset), _assign)
         else
           # error "expected lvar value to be an ident"
           error "expected left variable, got `#{curr.value}`"

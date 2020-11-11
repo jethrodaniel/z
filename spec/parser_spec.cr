@@ -17,8 +17,8 @@ def ident(val : String)
   N::Ident.new(val)
 end
 
-def lvar(ident : N::Ident)
-  N::Lvar.new(ident)
+def lvar(value : String, offset : Int32)
+  N::Lvar.new(value, offset)
 end
 
 def bi(sym : Symbol, left : N::Node, right : N::Node)
@@ -30,7 +30,7 @@ def prog(*statements : Array(N::Node))
 end
 
 def prog(statement : N::Node)
-  N::Program.new(statement)
+  N::Program.new([statement] of N::Node)
 end
 
 describe Holycc::Parser do
@@ -60,7 +60,7 @@ describe Holycc::Parser do
   it_parses "1 > 2;",  prog(bi(:>,  num("1"), num("2")))
   it_parses "1 == 2;", prog(bi(:==, num("1"), num("2")))
   it_parses "1 == 2;", prog(bi(:==, num("1"), num("2")))
-  it_parses "a = 5;",  prog(bi(:"=", lvar(ident("a")), num("5")))
+  it_parses "a = 5;",  prog(bi(:"=", lvar("a", 8), num("5")))
   it_parses "42;",     prog(num("42"))
-  it_parses "a=b=2;",  prog(bi(:"=", lvar(ident("a")), bi(:"=", lvar(ident("b")), num("2"))))
+  it_parses "a=b=2;",  prog(bi(:"=", lvar("a", 8), bi(:"=", lvar("b", 16), num("2"))))
 end
