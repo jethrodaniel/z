@@ -1,5 +1,5 @@
 require "./parser"
-require "./node"
+require "./ast"
 
 module Holycc
   # = Compiler

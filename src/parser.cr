@@ -1,5 +1,5 @@
 require "./lexer"
-require "./node"
+require "./ast"
 
 # Simple calculator grammar for now
 #
