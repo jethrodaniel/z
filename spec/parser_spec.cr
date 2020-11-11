@@ -1,37 +1,14 @@
 require "./spec_helper"
+require "../src/ast/shorthand"
 
-alias N = Holycc::Ast
-
-def it_parses(str, node : N::Node)
+def it_parses(str, node : Holycc::Ast::Node)
   it str do
     parser = Holycc::Parser.new(str)
     parser.parse.should eq node
   end
 end
 
-def num(val : String)
-  N::NumberLiteral.new(val)
-end
-
-def ident(val : String)
-  N::Ident.new(val)
-end
-
-def lvar(value : String, offset : Int32)
-  N::Lvar.new(value, offset)
-end
-
-def bi(sym : Symbol, left : N::Node, right : N::Node)
-  N::BinOp.new(sym, left, right)
-end
-
-def prog(*statements : Array(N::Node))
-  N::Program.new(statements)
-end
-
-def prog(statement : N::Node)
-  N::Program.new([statement] of N::Node)
-end
+include Holycc::Ast::Shorthand
 
 describe Holycc::Parser do
   it_parses "1;",     prog(num("1"))
