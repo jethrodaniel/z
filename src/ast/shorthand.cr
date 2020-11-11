@@ -1,6 +1,10 @@
 module Holycc
   module Ast
     module Shorthand
+      def nop
+        Nop.new
+      end
+
       def num(val : String)
         NumberLiteral.new(val)
       end

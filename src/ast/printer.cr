@@ -18,7 +18,7 @@ module Holycc
       end
 
       visit Nop do
-        io.print "s(:#{name(node)}"
+        io.print "s(:#{name(node)})"
       end
     end
   end
