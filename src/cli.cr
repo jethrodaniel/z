@@ -18,7 +18,7 @@ module Z
 
           Usage: z [...options] -f progfile
           Usage: z [...options] [--] 'program'
-        MSG
+          MSG
 
         parser.on "-v", "--version", "Show version" do
           puts "version #{Z::VERSION}"
@@ -42,11 +42,8 @@ module Z
       end
 
       abort <<-ERR if ARGV.empty? && !opts[:file]
-        oof, missing 'program'. Run again with
-
-        #{$0} 'program'\tor
-        #{$0} -f progfile
-      ERR
+        [error] oof, missing 'program'. See `z -h` for usage.
+        ERR
 
       opts
     end
