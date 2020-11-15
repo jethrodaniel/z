@@ -10,15 +10,6 @@ module Holycc
       def accept(visitor : Visitor, io : IO)
         visitor.visit self, io
       end
-
-      # def children
-      #   vars = {{ @type.instance_vars }}
-      #   node_vars = [] of Node
-      #   vars.each do |var|
-      #     node_vars << var if var.is_a? Node
-      #   end
-      #   node_vars
-      # end
     end
 
     macro ast_node(name, *properties)

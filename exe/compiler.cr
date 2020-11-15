@@ -1,17 +1,11 @@
-require "../src/code_gen"
+require "../src/compiler"
 
 code = ARGV[0]
 
 begin
   if code
-    # cc = Holycc::Compiler.new(code)
-    # puts cc.compile
-    parser = Holycc::Parser.new(code)
-    node = parser.parse
-    printer = Holycc::CodeGen.new
-    output = IO::Memory.new
-    node.accept(printer, output)
-    puts output
+    cc = Holycc::Compiler.new(code)
+    puts cc.compile
   end
 rescue e : Holycc::Lexer::Error | Holycc::Parser::Error
   abort e.message
