@@ -17,6 +17,13 @@ If you forget the `--recursive`, check out the submodule like so
 git submodule update --init --progress --depth=1
 ```
 
+## usage
+
+```
+$ ./bin/z '2*10-4/4-(3*5)-(5+4)+45-20+2+10*2;'
+42
+```
+
 ## prerequisites
 
 - crystal 0.35 or greater

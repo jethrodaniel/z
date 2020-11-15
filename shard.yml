@@ -1,20 +1,10 @@
-name: holycc
+name: z
 version: 0.1.0
-
 authors:
   - Mark Delk <jethrodaniel@gmail.com>
-
-description: |
-  HolyC compiler
-
+description:  compiler experiments 
 license: MIT
-
 crystal: 0.35.1
-
 targets:
-  lexer:
-    main: exe/lexer.cr
-  parser:
-    main: exe/parser.cr
-  compiler:
-    main: exe/compiler.cr
+  z:
+    main: exe/z.cr

@@ -24,7 +24,7 @@ task spec: :install do
 end
 
 task :fmt do
-  SRCS.each do |f|
+  (SRCS + EXES).each do |f|
 	  sh "crystal tool format #{f}"
   end
 end
