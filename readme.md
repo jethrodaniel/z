@@ -22,6 +22,8 @@ git submodule update --init --progress --depth=1
 ```
 $ ./bin/z '2*10-4/4-(3*5)-(5+4)+45-20+2+10*2;'
 42
+./bin/z -f sample/math.z 
+42
 ```
 
 ## prerequisites

@@ -68,7 +68,7 @@ module Z
           end
         when '\0'
           break
-        when ' ' # skip
+        when ' ', '\n' # skip
         when 'a'..'z'
           return add_token T::IDENT, c.to_s
         else
