@@ -1,16 +1,16 @@
 require "./spec_helper"
 require "../src/ast/shorthand"
 
-def it_parses(str, node : Holycc::Ast::Node)
+def it_parses(str, node : Z::Ast::Node)
   it str do
-    parser = Holycc::Parser.new(str)
+    parser = Z::Parser.new(str)
     parser.parse.should eq node
   end
 end
 
-include Holycc::Ast::Shorthand
+include Z::Ast::Shorthand
 
-describe Holycc::Parser do
+describe Z::Parser do
   it_parses "1;",     prog(num("1"))
   it_parses "(1);",   prog(num("1"))
   it_parses "((1));", prog(num("1"))

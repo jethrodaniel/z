@@ -1,4 +1,4 @@
-module Holycc
+module Z
   module Ast
     module Shorthand
       def nop

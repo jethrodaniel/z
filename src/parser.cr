@@ -15,7 +15,7 @@ require "./ast"
 # unary      = ("+" | "-")? primary
 # primary    = num | ident | "(" expr ")"
 # ```
-module Holycc
+module Z
   class Parser
     class Error < Exception
     end

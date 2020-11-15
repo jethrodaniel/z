@@ -1,4 +1,4 @@
-require "../src/holycc"
+require "../src/z"
 
 puts "[lexer] 'q' to exit"
 prompt = "lex> "
@@ -7,13 +7,13 @@ print prompt
 while line = gets
   exit if line == "q"
 
-  lex = Holycc::Lexer.new(line)
+  lex = Z::Lexer.new(line)
 
   begin
     lex.each do |token|
       puts "=> #{token}"
     end
-  rescue e : Holycc::Lexer::Error
+  rescue e : Z::Lexer::Error
     puts e.message
   end
 

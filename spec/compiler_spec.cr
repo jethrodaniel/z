@@ -2,7 +2,7 @@ require "./spec_helper"
 
 def _compiles_cmp_run(str, _asm : String, code : Int32)
   it str do
-    cc = Holycc::Compiler.new(str)
+    cc = Z::Compiler.new(str)
     a = cc.compile
     a.should eq(_asm) unless _asm == ""
 
@@ -28,7 +28,7 @@ def it_compiles(str, code : Int32)
   _compiles_cmp_run(str, "", code)
 end
 
-describe Holycc::Compiler do
+describe Z::Compiler do
   it_compiles "1 + 2 * 3;", <<-A, 7
 // x86_64 assembly
 

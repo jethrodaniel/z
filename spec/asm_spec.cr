@@ -1,8 +1,8 @@
 require "./spec_helper"
 
-describe Holycc::Asm do
+describe Z::Asm do
   it "build" do
-    a = Holycc::Asm::Builder.build do
+    a = Z::Asm::Builder.build do
       global :main
       label :main do
         push 42

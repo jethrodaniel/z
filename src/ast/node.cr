@@ -1,4 +1,4 @@
-module Holycc
+module Z
   module Ast
     abstract class Node
       class Error < Exception; end

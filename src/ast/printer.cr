@@ -1,7 +1,7 @@
 require "./node"
 require "./visitor"
 
-module Holycc
+module Z
   module Ast
     class Printer < Visitor
       visit Program do

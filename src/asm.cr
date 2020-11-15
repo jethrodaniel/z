@@ -1,4 +1,4 @@
-module Holycc
+module Z
   # DSL to output assembly
   #
   # ```

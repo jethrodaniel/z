@@ -1,6 +1,6 @@
 require "./node"
 
-module Holycc
+module Z
   module Ast
     abstract class Visitor
       macro visit(type)

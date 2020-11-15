@@ -1,15 +1,15 @@
 require "./spec_helper"
 
-alias T = Holycc::Token::Type
+alias T = Z::Token::Type
 
 def token(line, col, type, value)
-  Holycc::Token.new(line, col, type, value)
+  Z::Token.new(line, col, type, value)
 end
 
-describe Holycc::Lexer do
+describe Z::Lexer do
   context "#next" do
     it "returns the next token" do
-      lex = Holycc::Lexer.new("1 + 2")
+      lex = Z::Lexer.new("1 + 2")
       t = token(1, 1, T::INT, "1")
       lex.next.should eq t
       t = token(1, 3, T::PLUS, "+")
@@ -22,14 +22,14 @@ describe Holycc::Lexer do
 
  context "#tokens" do
     it "returns all the tokens" do
-      lex = Holycc::Lexer.new("9001")
+      lex = Z::Lexer.new("9001")
       t = token(1, 1, T::INT, "9001")
       lex.tokens.should eq([t])
     end
   end
 end
 
-describe Holycc::Token do
+describe Z::Token do
   it ".new" do
     t = token(1, 1, T::INT, "1")
     t.line.should eq 1

@@ -2,7 +2,7 @@ require "./ast"
 require "./parser"
 require "./code_gen"
 
-module Holycc
+module Z
   # = Compiler
   #
   # The compiler outputs assembly code from the AST.

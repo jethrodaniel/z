@@ -1,6 +1,6 @@
 require "./token"
 
-module Holycc
+module Z
   class Lexer
     class Error < Exception
     end

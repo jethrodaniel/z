@@ -1,4 +1,4 @@
-module Holycc
+module Z
   class Token
     enum Type
       EOF         # \0

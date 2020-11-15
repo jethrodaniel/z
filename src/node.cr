@@ -1,4 +1,4 @@
-module Holycc
+module Z
   module Ast
     abstract class Visitor
       macro visit(type)
@@ -23,7 +23,7 @@ module Holycc
   end
 end
 
-module Holycc
+module Z
   module Ast
     class Printer < Visitor
       visit Program do
@@ -45,7 +45,7 @@ module Holycc
   end
 end
 
-module Holycc
+module Z
   module Ast
     abstract class Node
       class Error < Exception; end

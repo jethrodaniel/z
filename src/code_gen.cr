@@ -2,7 +2,7 @@ require "./ast/node"
 require "./ast/visitor"
 require "./parser"
 
-module Holycc
+module Z
     class CodeGen < Ast::Visitor
       visit Ast::Program do
         args = node.statements.map(&.to_s).join(", ")
