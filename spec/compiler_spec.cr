@@ -30,33 +30,49 @@ end
 
 describe Holycc::Compiler do
   it_compiles "1 + 2 * 3;", <<-A, 7
-  # arch: x86_64
+// x86_64 assembly
 
-  # Use intel/nasm syntax, not att/gnu
-  .intel_syntax noprefix
+// Use intel/nasm syntax, not att/gnu
+.intel_syntax noprefix
 
-  # `main()`
-  #
-  # This is the same `main` that the  standard C entry `_start`
-  # expects.
-  #
-  .globl main
-  main:
-  	push 1        # push `1` onto the stack
-  	push 2        # push `2` onto the stack
-  	push 3        # push `3` onto the stack
-  	pop rdi       # pop a value from the stack into rdi
-  	pop rax       # pop a value from the stack into rax
-  	imul rax, rdi # multiply rax by rdi
-  	push rax
-  	pop rdi       # pop a value from the stack into rdi
-  	pop rax       # pop a value from the stack into rax
-  	add rax, rdi  # add rdi to rax
-  	push rax
-  	pop rax
-  	ret
+// allow loader to find `main`
+.globl main
 
-  A
+// s(:program, s(:bin_op, :+, s(:number_literal, 1), s(:bin_op, :*, s(:number_literal, 2), s(:number_literal, 3))))
+main:
+	// s(:bin_op, :+, s(:number_literal, 1), s(:bin_op, :*, s(:number_literal, 2), s(:number_literal, 3)))
+	// s(:number_literal, 1)
+	// push `1` onto the stack
+	push 1
+	// s(:bin_op, :*, s(:number_literal, 2), s(:number_literal, 3))
+	// s(:number_literal, 2)
+	// push `2` onto the stack
+	push 2
+	// s(:number_literal, 3)
+	// push `3` onto the stack
+	push 3
+	// pop a value from the stack into `rdi`
+	pop rdi
+	// pop a value from the stack into `rax`
+	pop rax
+	// multiply rax by rdi
+	imul rax, rdi
+	// push our function return value
+	push rax
+	// pop a value from the stack into `rdi`
+	pop rdi
+	// pop a value from the stack into `rax`
+	pop rax
+	// add `rdi` to `rax`
+	add rax, rdi
+	// push our function return value
+	push rax
+	// pop our return value
+	pop rax
+	// pop the stack and jump to that address (i.e, return from function)
+	ret
+
+A
   it_compiles "1 + -1;", 0
   it_compiles "1 + 2 - 3;", 0
   it_compiles "4 / 2;", 2
