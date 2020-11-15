@@ -5,7 +5,6 @@ module Holycc
     abstract class Visitor
       macro visit(type)
         def visit(node : {{type}}, io : IO)
-          # children = node.children
           {{yield}}
         end
       end
