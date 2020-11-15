@@ -47,11 +47,63 @@ module Holycc
           \t# add `rdi` to `rax``
           \tadd rax, rdi
           ASM
+        when :-
+          io.puts <<-ASM
+            \t# subtract rdi from rax
+            \tsub rax, rdi
+          ASM
+        when :*
+          io.puts <<-ASM
+            \t# multiply rax by rdi
+            \timul rax, rdi
+          ASM
+        when :/
+          io.puts <<-ASM
+            \t# x86_64 div sucks
+            \tcqo
+            \tidiv rdi"
+            ASM
+        when :==
+          io.puts <<-ASM
+            \t# if rax == rdi, set flag"
+            \tcmp rax, rdi
+            \t# set al to 1 if prev cmp was ==, else 0 (first 8 bits)"
+            \tsete al
+            \t# set rest of rax to al's value (the other 54 bits)"
+            \tmovzb rax, al
+            ASM
+        when :!=
+          io.puts <<-ASM
+            \t# if rax != rdi, set flag"
+            \tcmp rax, rdi
+            \t# set al to 1 if prev cmp was !=, else 0 (first 8 bits)"
+            \tsetne al
+            \t# set rest of rax to al's value (the other 54 bits)"
+            \tmovzb rax, al
+            ASM
+        when :<
+          io.puts <<-ASM
+            \t# if rax < rdi, set flag
+            \tcmp rax, rdi
+            \t# set al to 1 if prev cmp was <, else 0
+            \tsetl al
+            \t# set rest of rax to al's value
+            \tmovzb rax, al
+          ASM
+        when :<=
+          io.puts <<-ASM
+            \t# if rax <= rdi, set flag
+            \tcmp rax, rdi
+            \t# set al to 1 if prev cmp was <=, else 0
+            \tsetl al
+            \t# set rest of rax to al's value
+            \tmovzb rax, al
+          ASM
         end
         io.puts  <<-ASM
-          \t# push our return value into `rax`
+          \t# push our function return value
           \tpush rax
-        ASM
+          ASM
       end
 
       visit Ast::Lvar, Ast::Ident do
