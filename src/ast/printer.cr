@@ -13,6 +13,10 @@ module Z
         io.print "s(:#{name(node)}, #{node.value})"
       end
 
+      visit Assignment do
+        io.print "s(:#{name(node)}, #{node.left}, #{node.right})"
+      end
+
       visit BinOp do
         io.print "s(:#{name(node)}, :#{node.type}, #{node.left}, #{node.right})"
       end

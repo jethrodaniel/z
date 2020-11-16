@@ -58,5 +58,9 @@ module Z
       type : Symbol,
       left : Node,
       right : Node
+
+    ast_node Assignment,
+      left : Node,
+      right : Node
   end
 end

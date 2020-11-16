@@ -63,11 +63,9 @@ module Z
       n = _equality
 
       if accept T::ASSIGN
-        if n.is_a?(Ast::Ident)
-          offset = (n.value[0] - 'a' + 1) * 8
-          return Ast::BinOp.new(:"=", Ast::Lvar.new(n.value, offset), _assign)
+        if n.is_a?(Ast::Lvar)
+          return Ast::Assignment.new(n, _assign)
         else
-          # error "expected lvar value to be an ident"
           error "expected left variable, got `#{curr.value}`"
         end
       end
@@ -152,7 +150,8 @@ module Z
       elsif accept T::INT
         return Ast::NumberLiteral.new(prev.value)
       elsif accept T::IDENT
-        return Ast::Ident.new(prev.value)
+        offset = (prev.value[0] - 'a' + 1) * 8
+        return Ast::Lvar.new(prev.value, offset)
       end
       error "expected a parenthesized list, and ident, or a number, got `#{curr.value}`"
     end
