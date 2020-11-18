@@ -44,6 +44,7 @@ MIT
 Thanks, y'all.
 
 - https://github.com/charly-lang/charly
+- https://github.com/mint-lang/mint
 - https://github.com/cia-foundation/TempleOS
 - http://scheme2006.cs.uchicago.edu/11-ghuloum.pdf
 - https://www.sigbus.info/compilerbook
