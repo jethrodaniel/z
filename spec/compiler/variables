@@ -1,11 +1,11 @@
 a=42;
 --------------------------------------------------------------------------------
 .intel_syntax noprefix
-.globl	main
+.globl main
 main:
-	push	rbp
-	mov	rbp, rsp
-	mov	DWORD PTR [rbp-4], 5
-	mov	eax, DWORD PTR [rbp-4]
-	pop	rbp
-	ret
+  push	rbp
+  mov	rbp, rsp
+  mov	DWORD PTR [rbp-4], 42
+  mov	eax, DWORD PTR [rbp-4]
+  pop	rbp
+  ret

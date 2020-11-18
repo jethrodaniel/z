@@ -93,41 +93,42 @@ module Z
         .intel_syntax noprefix
         .globl main
         main:
+          push rbp
+          mov rbp, rsp
         ASM
-        # \tpush rbp
-        # \tmov rbp, rsp
-        # \tsub rsp, 208\n\n
+      #  sub rsp, 208\n\n
       node.statements.each do |s|
         visit(s, io)
-        # io.puts "\tpop rax"
+        # io.puts " pop rax"
       end
-        # \tmov rsp, rbp
+      #  mov rsp, rbp
       io.puts <<-ASM
-        pop\trax
+        pop rbp
         ret
       ASM
     end
 
-    private def gen_lvar(node, io)
+    private def local_variables(node, io)
       io.puts <<-ASM
-        mov\trax,\trbp
-        sub\trax,\t#{node.offset}
-        push\trax
+      ASM
+    end
+
+    private def load(node, io)
+      io.puts <<-ASM
       ASM
     end
 
     visit Ast::Lvar do
-      gen_lvar(node, io)
       io.puts <<-ASM
-        pop\trax
-        mov\trax,\t[rax]
-        push\trax
+        pop rax
+        mov QWORD PTR [rbp-#{node.offset}], rax
+        mov rax, QWORD PTR [rbp-#{node.offset}]
       ASM
     end
 
     visit Ast::NumberLiteral do
       io.puts <<-ASM
-        push\t#{node.value}
+        push #{node.value}
       ASM
     end
 
@@ -135,14 +136,8 @@ module Z
       unless (node.left).is_a?(Ast::Lvar)
         raise Compiler::Error.new("expected a lvar on left hand side of `=`")
       end
-      gen_lvar(node.left.as(Ast::Lvar), io)
       visit(node.right, io)
-      io.puts <<-ASM
-        pop\trdi
-        pop\trax
-        mov\t[rax],\trdi
-        push\trdi
-      ASM
+      visit(node.left, io)
     end
 
     visit Ast::BinOp do
@@ -150,44 +145,44 @@ module Z
       visit(node.right, io)
 
       io.puts <<-ASM
-        pop\trdi
-        pop\trax
+        pop rdi
+        pop rax
       ASM
       case node.type
       when :+
-        io.puts "  add\trax,\trdi"
+        io.puts "  add rax, rdi"
       when :-
-        io.puts "  sub\trax,\trdi"
+        io.puts "  sub rax, rdi"
       when :*
-        io.puts "  imul\trax,\trdi"
+        io.puts "  imul rax, rdi"
       when :/
         io.puts <<-ASM
           cqo
-          idiv\trdi
+          idiv rdi
         ASM
       when :==
         io.puts <<-ASM
-          cmp\trax,\trdi
-          sete\tal
-          movzb\trax,\tal
+          cmp rax, rdi
+          sete al
+          movzb rax, al
         ASM
       when :!=
         io.puts <<-ASM
-          cmp\trax,\trdi
-          setne\tal
-          movzb\trax,\tal
+          cmp rax, rdi
+          setne al
+          movzb rax, al
         ASM
       when :<
         io.puts <<-ASM
-          cmp\trax,\trdi
-          setl\tal
-          movzb\trax,\tal
+          cmp rax, rdi
+          setl al
+          movzb rax, al
         ASM
       when :<=
         io.puts <<-ASM
-          cmp rax,\trdi
-          setle\tal
-          movzb\trax,\tal
+          cmp rax, rdi
+          setle al
+          movzb rax, al
         ASM
       end
       io.puts "  push rax"
