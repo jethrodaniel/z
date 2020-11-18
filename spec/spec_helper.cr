@@ -16,11 +16,10 @@ def diff(a, b)
 
   Process.run("git", [
     "--no-pager", "diff", "--no-index", "--color=always",
-    "-ws-error-highlight=all",
     file1.path, file2.path,
   ], output: io)
 
-  io.to_s.inspect
+  io.to_s
 ensure
   file1.try &.delete
   file2.try &.delete

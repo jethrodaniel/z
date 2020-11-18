@@ -1,0 +1,36 @@
+1+3*2+1-(2+(4));
+--------------------------------------------------------------------------------
+.intel_syntax noprefix
+.globl main
+main:
+  push rbp
+  mov rbp, rsp
+  push 1
+  push 3
+  push 2
+  pop rdi
+  pop rax
+  imul rax, rdi
+  push rax
+  pop rdi
+  pop rax
+  add rax, rdi
+  push rax
+  push 1
+  pop rdi
+  pop rax
+  add rax, rdi
+  push rax
+  push 2
+  push 4
+  pop rdi
+  pop rax
+  add rax, rdi
+  push rax
+  pop rdi
+  pop rax
+  sub rax, rdi
+  push rax
+  pop rax
+  pop rbp
+  ret

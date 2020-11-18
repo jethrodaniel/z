@@ -3,6 +3,9 @@
 .intel_syntax noprefix
 .globl main
 main:
-  push	42
-  pop	rax
+  push rbp
+  mov rbp, rsp
+  push 42
+  pop rax
+  pop rbp
   ret

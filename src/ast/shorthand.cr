@@ -17,6 +17,10 @@ module Z
         Lvar.new(value, offset)
       end
 
+      def assign(left : Node, right : Node)
+        Assignment.new(left, right)
+      end
+
       def bi(sym : Symbol, left : Node, right : Node)
         BinOp.new(sym, left, right)
       end

@@ -103,26 +103,17 @@ module Z
       end
       #  mov rsp, rbp
       io.puts <<-ASM
+        pop rax
         pop rbp
         ret
-      ASM
-    end
-
-    private def local_variables(node, io)
-      io.puts <<-ASM
-      ASM
-    end
-
-    private def load(node, io)
-      io.puts <<-ASM
       ASM
     end
 
     visit Ast::Lvar do
       io.puts <<-ASM
         pop rax
-        mov QWORD PTR [rbp-#{node.offset}], rax
-        mov rax, QWORD PTR [rbp-#{node.offset}]
+        mov [rbp-#{node.offset}], rax
+        mov rax, [rbp-#{node.offset}]
       ASM
     end
 

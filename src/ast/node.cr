@@ -33,8 +33,11 @@ module Z
           true
         end
 
-        def to_s(io)
+        def inspect(io)
           accept(Printer.new, io)
+        end
+        def to_s(io)
+          inspect(io)
         end
       end
     end
