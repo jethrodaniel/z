@@ -1,4 +1,5 @@
 SRCS = Dir.glob('src/**/*.cr')
+SPECS = Dir.glob('spec/**/*.cr')
 EXES = Dir.glob('exe/*.cr')
 BINS = EXES.map { |f| f.sub('.cr', '').sub('exe', 'bin') }
 
@@ -24,7 +25,7 @@ task spec: :install do
 end
 
 task :fmt do
-  (SRCS + EXES).each do |f|
+  (SRCS + EXES + SPECS).each do |f|
 	  sh "crystal tool format #{f}"
   end
 end
