@@ -9,12 +9,12 @@ module Z
         NumberLiteral.new(val)
       end
 
-      def ident(val : String)
-        Ident.new(val)
-      end
-
       def lvar(value : String, offset : Int32)
         Lvar.new(value, offset)
+      end
+
+      def ident(value : String, offset : Int32)
+        Ident.new(value, offset)
       end
 
       def assign(left : Node, right : Node)

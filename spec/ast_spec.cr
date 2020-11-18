@@ -20,10 +20,10 @@ end
 
 describe Z::Ast::Visitor do
   it_prints num("1"), "s(:number_literal, 1)"
-  it_prints ident("a"), "s(:ident, a)"
+  it_prints ident("a", 8), "s(:ident, a)"
   it_prints nop(), "s(:nop)"
   it_prints lvar("a", 8), "s(:lvar, a)"
-  it_prints prog(bi(:"=", lvar("a", 8), bi(:"=", lvar("b", 16), num("2")))), <<-STR
-    s(:program, s(:bin_op, :=, s(:lvar, a), s(:bin_op, :=, s(:lvar, b), s(:number_literal, 2))))
+  it_prints prog(assign(lvar("a", 8), assign(lvar("b", 16), num("2")))), <<-STR
+    s(:program, s(:assignment, s(:lvar, a), s(:assignment, s(:lvar, b), s(:number_literal, 2))))
     STR
 end

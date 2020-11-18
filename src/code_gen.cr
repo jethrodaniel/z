@@ -117,6 +117,13 @@ module Z
       ASM
     end
 
+    visit Ast::Ident do
+      io.puts <<-ASM
+        mov rax, [rbp-#{node.offset}]
+        push rax
+      ASM
+    end
+
     visit Ast::NumberLiteral do
       io.puts <<-ASM
         push #{node.value}

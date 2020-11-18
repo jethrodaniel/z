@@ -49,7 +49,8 @@ module Z
       value : String
 
     ast_node Ident,
-      value : String
+      value : String,
+      offset : Int32
 
     ast_node Lvar,
       value : String,

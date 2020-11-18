@@ -63,7 +63,8 @@ module Z
       n = _equality
 
       if accept T::ASSIGN
-        if n.is_a?(Ast::Lvar)
+        if n.is_a?(Ast::Ident)
+          n = Ast::Lvar.new(n.value, n.offset)
           return Ast::Assignment.new(n, _assign)
         else
           error "expected left variable, got `#{curr.value}`"
@@ -151,7 +152,7 @@ module Z
         return Ast::NumberLiteral.new(prev.value)
       elsif accept T::IDENT
         offset = (prev.value[0] - 'a' + 1) * 8
-        return Ast::Lvar.new(prev.value, offset)
+        return Ast::Ident.new(prev.value, offset)
       end
       error "expected a parenthesized list, and ident, or a number, got `#{curr.value}`"
     end
