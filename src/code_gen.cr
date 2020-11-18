@@ -186,11 +186,6 @@ module Z
       io.puts "  push rax"
     end
 
-    # visit Ast::Lvar, Ast::Ident do
-    visit Ast::Ident do
-      io.puts "s(:#{name(node)}, #{node.value})"
-    end
-
     visit Ast::Nop do
       io.puts "s(:#{name(node)})"
     end
