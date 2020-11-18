@@ -56,7 +56,7 @@ module Z
   #    decremented by 12 to make space for these local variables:
   #
   #    ```
-  #    sub rsp, 12
+  # sub rsp, 12
   #    ```
   #
   #    As with parameters, local variables will be located at known offsets
