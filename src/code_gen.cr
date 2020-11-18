@@ -99,7 +99,7 @@ module Z
       #  sub rsp, 208\n\n
       node.statements.each do |s|
         visit(s, io)
-        # io.puts " pop rax"
+        # io.puts "  pop rax"
       end
       #  mov rsp, rbp
       io.puts <<-ASM
