@@ -20,7 +20,7 @@ describe Z::Lexer do
     end
   end
 
- context "#tokens" do
+  context "#tokens" do
     it "returns all the tokens" do
       lex = Z::Lexer.new("9001")
       t = token(1, 1, T::INT, "9001")
@@ -38,4 +38,3 @@ describe Z::Token do
     t.value.should eq "1"
   end
 end
-

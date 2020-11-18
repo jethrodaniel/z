@@ -27,7 +27,7 @@ describe Z::Lexer do
     t(1, 3, T::PLUS, "+"),
     t(1, 5, T::INT, "2"),
     t(1, 7, T::MUL, "*"),
-    t(1, 9, T::INT, "3")
+    t(1, 9, T::INT, "3"),
   ]
   it_lexes "<=", t(1, 1, T::LE, "<=")
   it_lexes "<", t(1, 1, T::LT, "<")

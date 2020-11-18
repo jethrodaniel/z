@@ -6,7 +6,7 @@ describe Z::Asm do
       global :main
       label :main do
         push 42
-  	    pop :rax
+        pop :rax
         ret
       end
     end

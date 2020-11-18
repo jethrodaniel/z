@@ -90,83 +90,59 @@ module Z
     visit Ast::Program do
       args = node.statements.map(&.to_s).join(", ")
       io.puts <<-ASM
-        // Use intel/nasm syntax, not att/gnu
         .intel_syntax noprefix
-
-        // Allow loader to find `main`. By default, glibc will start at
-        // `_start` and will attempt to link and call `main`.
         .globl main
-
-        // int main()
         main:
-        \t//--- prologue ---
-        \t// push current base pointer value onto the stack
-        \tpush rbp
-        \t// move current stack pointer into `rbp`
-        \tmov rbp, rsp
-        \t// add space for 26 1-byte variables
-        \tsub rsp, 208\n\n
         ASM
+        # \tpush rbp
+        # \tmov rbp, rsp
+        # \tsub rsp, 208\n\n
       node.statements.each do |s|
         visit(s, io)
         # io.puts "\tpop rax"
       end
+        # \tmov rsp, rbp
       io.puts <<-ASM
-        \n\t//--- epilogue ---
-        \t// set stack pointer back to the original base pointer value
-        \tmov rsp, rbp
-        \t// pop our return value off the stack and into `rax`
-        \tpop rax
-        \t// return from function
-        \tret
-        ASM
+        pop\trax
+        ret
+      ASM
     end
 
     private def gen_lvar(node, io)
       io.puts <<-ASM
-        \t// push the address of a left-hand side variable onto the stack.
-        \tmov rax, rbp
-        \tsub rax, #{node.offset}
-        \tpush rax
-        ASM
+        mov\trax,\trbp
+        sub\trax,\t#{node.offset}
+        push\trax
+      ASM
     end
 
     visit Ast::Lvar do
       gen_lvar(node, io)
       io.puts <<-ASM
-        \t//-- load
-        \t// load the value of a variable, popping the address from the stack
-        \tpop rax
-        \tmov rax, [rax]
-        \tpush rax
-        ASM
+        pop\trax
+        mov\trax,\t[rax]
+        push\trax
+      ASM
     end
 
     visit Ast::NumberLiteral do
       io.puts <<-ASM
-        \t// push `#{node.value}` onto the stack
-        \tpush #{node.value}
-        ASM
+        push\t#{node.value}
+      ASM
     end
 
     visit Ast::Assignment do
-        unless (node.left).is_a?(Ast::Lvar)
-          raise Compiler::Error.new("expected a lvar on left hand side of `=`")
-        end
-        gen_lvar(node.left.as(Ast::Lvar), io)
-        visit(node.right, io)
-        io.puts <<-ASM
-          \t//-- store
-          \t// pop a value from the stack into `rdi`
-          \tpop rdi
-          \t// pop a value from the stack into `rax`
-          \tpop rax
-          \t// load the value in `rdi` into the address in `rax`
-          \tmov [rax], rdi
-          \t// push `rdi` onto the stack
-          \tpush rdi
-          ASM
-
+      unless (node.left).is_a?(Ast::Lvar)
+        raise Compiler::Error.new("expected a lvar on left hand side of `=`")
+      end
+      gen_lvar(node.left.as(Ast::Lvar), io)
+      visit(node.right, io)
+      io.puts <<-ASM
+        pop\trdi
+        pop\trax
+        mov\t[rax],\trdi
+        push\trdi
+      ASM
     end
 
     visit Ast::BinOp do
@@ -174,74 +150,47 @@ module Z
       visit(node.right, io)
 
       io.puts <<-ASM
-        \t// pop a value from the stack into `rdi`
-        \tpop rdi
-        \t// pop a value from the stack into `rax`
-        \tpop rax
-        ASM
+        pop\trdi
+        pop\trax
+      ASM
       case node.type
       when :+
-        io.puts <<-ASM
-          \t// add `rdi` to `rax`
-          \tadd rax, rdi
-          ASM
+        io.puts "  add\trax,\trdi"
       when :-
-        io.puts <<-ASM
-          \t// subtract rdi from rax
-          \tsub rax, rdi
-          ASM
+        io.puts "  sub\trax,\trdi"
       when :*
-        io.puts <<-ASM
-          \t// multiply rax by rdi
-          \timul rax, rdi
-          ASM
+        io.puts "  imul\trax,\trdi"
       when :/
         io.puts <<-ASM
-          \t// x86_64 div sucks
-          \tcqo
-          \tidiv rdi
-          ASM
+          cqo
+          idiv\trdi
+        ASM
       when :==
         io.puts <<-ASM
-          \t// if rax == rdi, set flag"
-          \tcmp rax, rdi
-          \t// set al to 1 if prev cmp was ==, else 0 (first 8 bits)"
-          \tsete al
-          \t// set rest of rax to al's value (the other 54 bits)"
-          \tmovzb rax, al
-          ASM
+          cmp\trax,\trdi
+          sete\tal
+          movzb\trax,\tal
+        ASM
       when :!=
         io.puts <<-ASM
-          \t// if rax != rdi, set flag"
-          \tcmp rax, rdi
-          \t// set al to 1 if prev cmp was !=, else 0 (first 8 bits)"
-          \tsetne al
-          \t// set rest of rax to al's value (the other 54 bits)"
-          \tmovzb rax, al
-          ASM
+          cmp\trax,\trdi
+          setne\tal
+          movzb\trax,\tal
+        ASM
       when :<
         io.puts <<-ASM
-          \t// if rax < rdi, set flag
-          \tcmp rax, rdi
-          \t// set al to 1 if prev cmp was <, else 0
-          \tsetl al
-          \t// set rest of rax to al's value
-          \tmovzb rax, al
-          ASM
+          cmp\trax,\trdi
+          setl\tal
+          movzb\trax,\tal
+        ASM
       when :<=
         io.puts <<-ASM
-          \t// if rax <= rdi, set flag
-          \tcmp rax, rdi
-          \t// set al to 1 if prev cmp was <=, else 0
-          \tsetle al
-          \t// set rest of rax to al's value
-          \tmovzb rax, al
-          ASM
+          cmp rax,\trdi
+          setle\tal
+          movzb\trax,\tal
+        ASM
       end
-      io.puts <<-ASM
-       \t// push our function return value
-       \tpush rax
-       ASM
+      io.puts "  push rax"
     end
 
     # visit Ast::Lvar, Ast::Ident do
