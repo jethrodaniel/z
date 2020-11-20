@@ -1,3 +1,6 @@
 [submodule "third_party/libevent"]
 	path = third_party/libevent
 	url = https://github.com/libevent/libevent
+[submodule "third_party/nasm"]
+	path = third_party/nasm
+	url = https://github.com/netwide-assembler/nasm

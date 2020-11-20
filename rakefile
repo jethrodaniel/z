@@ -49,3 +49,20 @@ task :sample => %w[sample/main.c] do |t|
   ].join(" ")
   sh "gcc #{flags} #{t.source}"
 end
+
+## asm
+
+nasm = 'third_party/nasm/nasm'
+desc 'build local nasm'
+task :nasm => nasm do
+	sh "#{nasm} -v"
+end
+
+file nasm do
+  Dir.chdir 'third_party/nasm' do
+	  sh 'sh autogen.sh'
+	  sh 'sh configure'
+    sh 'make'
+    sh 'make strip'
+  end
+end
