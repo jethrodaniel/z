@@ -24,29 +24,35 @@ module Z
   # Print AST in graphviz's `dot` format
   module Ast
     class Dot < Visitor
-      @count : Int32 = 1
+      @parent : UInt64 = 1
+
+      macro id
+        # node.object_id.to_s(16)
+        node.object_id
+      end
+
+      macro label
+        "  #{id} [label=\"#{name(node)}\"];"
+      end
+
       visit Program do
         io.puts "digraph G {"
         io.puts "  #{name(node)} -> statements;"
 
-        @count = 1
-
         node.statements.each_with_index(1) do |stmt, i|
-          @label = "statement_#{@count}"
-          io.puts "  statements -> #{@label};"
-          @count += 1
+          io.puts "  statements -> #{stmt.object_id}; // statement"
+          # io.puts "  #{stmt.object_id} [label=\"statement\"];"
 
           stmt.accept(self, io)
-          io.puts ";"
+
           io.puts unless i == node.statements.size - 1
         end
         io.puts "}"
       end
 
       visit Lvar, Ident, NumberLiteral do
-        id = "#{name(node)}_#{@count}"
-        io.puts "  #{@label} -> #{id};"
-        io.print "  #{id} -> #{node.value}"
+        io.puts "  #{id};"
+        io.puts "  #{id} [label=\"#{name(node)}, #{node.value}\"];"
       end
 
       visit Assignment do
@@ -55,12 +61,13 @@ module Z
       end
 
       visit BinOp do
-        id = "#{name(node)}_#{@count}"
-        io.puts "  #{@label} -> #{id};"
-        @label = "bin_op_#{@count}"
+        io.puts "  #{id};"
+        io.puts "  #{id} [label=\"#{name(node)}, #{node.type}\"];"
+
+        io.print "  #{id} ->"
         node.left.accept(self, io)
-        @count += 1
-        io.puts ";"
+
+        io.print "  #{id} ->"
         node.right.accept(self, io)
       end
 
