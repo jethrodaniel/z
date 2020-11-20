@@ -22,6 +22,8 @@ module Z
       run_lexer(input)
     elsif opts[:parse]
       run_parser(input)
+    elsif opts[:dot]
+      run_dot(input)
     elsif opts[:compile]
       run_compiler(input)
     else
@@ -39,7 +41,14 @@ module Z
     puts parser.parse
   end
 
-  private def self.run_compiler(input)
+  # ./bin/z -d '1+5;' |tee ast.gv && dot -Tpng ast.gv -o ast.png && firefox ast.png
+  private def self.run_dot(input)
+    parser = Z::Parser.new(input)
+    node = parser.parse
+    puts node.accept(Ast::Dot.new, STDOUT)
+  end
+
+ private def self.run_compiler(input)
     cc = Z::Compiler.new(input)
     puts cc.compile
   end

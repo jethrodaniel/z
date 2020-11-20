@@ -10,6 +10,7 @@ module Z
         :parse   => false,
         :compile => false,
         :file    => false,
+        :dot     => false
       }
 
       OptionParser.parse do |parser|
@@ -28,6 +29,7 @@ module Z
           puts parser
           exit
         end
+        parser.on("-d", "--dot", "Output graphviz") { opts[:dot] = true }
         parser.on("-l", "--lex", "Run lexer") { opts[:lex] = true }
         parser.on("-p", "--parse", "Run parser") { opts[:parse] = true }
         parser.on("-c", "--compile", "Run compiler") { opts[:compile] = true }
