@@ -1,6 +1,10 @@
-# https://graphviz.org/doc/info/lang.html
+# = dot
 #
-# ```
+# Output an AST in got format
+#
+# - https://graphviz.org/doc/info/lang.html
+# - http://www.graphviz.org/pdf/dotguide.pdf
+#
 # digraph G {
 #     main -> parse -> execute;
 #     main -> init;
@@ -24,10 +28,7 @@ module Z
   # Print AST in graphviz's `dot` format
   module Ast
     class Dot < Visitor
-      @parent : UInt64 = 1
-
       macro id
-        # node.object_id.to_s(16)
         node.object_id
       end
 
@@ -37,6 +38,8 @@ module Z
 
       visit Program do
         io.puts "digraph G {"
+        # io.puts "rankdir=LR;\n"
+        io.puts "ratio=\"auto\";\n"
         io.puts "  #{name(node)} -> statements;"
 
         node.statements.each_with_index(1) do |stmt, i|
@@ -56,7 +59,13 @@ module Z
       end
 
       visit Assignment do
+        io.puts "  #{id};"
+        io.puts "  #{id} [label=\"#{name(node)}, =\"];"
+
+        io.print "  #{id} ->"
         node.left.accept(self, io)
+
+        io.print "  #{id} ->"
         node.right.accept(self, io)
       end
 
