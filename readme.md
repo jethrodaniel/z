@@ -7,14 +7,8 @@ Following along with Rui Ueyama's 9cc ([book][9cc-book], [repo][9cc]).
 ## install
 
 ```
-git clone --recursive git@github.com:jethrodaniel/z
+git clone https://github.com/jethrodaniel/z
 cd z && rake
-```
-
-If you forget the `--recursive`, check out the submodule like so
-
-```
-git submodule update --init --progress --depth=1
 ```
 
 ## usage
