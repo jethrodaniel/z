@@ -38,12 +38,11 @@ module Z
 
       visit Program do
         io.puts "digraph G {"
-        io.puts "ratio=\"auto\";\n"
+        io.puts "  ratio=\"auto\";\n"
         io.puts "  #{name(node)} -> statements;"
 
         node.statements.each_with_index(1) do |stmt, i|
-          io.puts "  statements -> #{stmt.object_id}; // statement"
-          # io.puts "  #{stmt.object_id} [label=\"statement\"];"
+          io.puts "  statements -> #{stmt.object_id};"
 
           stmt.accept(self, io)
 
