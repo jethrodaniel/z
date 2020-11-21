@@ -38,7 +38,6 @@ module Z
 
       visit Program do
         io.puts "digraph G {"
-        # io.puts "rankdir=LR;\n"
         io.puts "ratio=\"auto\";\n"
         io.puts "  #{name(node)} -> statements;"
 

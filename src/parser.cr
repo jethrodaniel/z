@@ -154,7 +154,7 @@ module Z
         offset = (prev.value[0] - 'a' + 1) * 8
         return Ast::Ident.new(prev.value, offset)
       end
-      error "expected a parenthesized list, and ident, or a number, got `#{curr.value}`"
+      error "expected a parenthesized list, an ident, or a number, got `#{curr.value}`"
     end
 
     ##
@@ -187,7 +187,6 @@ module Z
 
     private def curr
       error "no tokens available for #curr" if @tokens.size.zero?
-      # return Token.new(0, 0, T::EOF, "\0") if eof?
       return prev if eof?
       @tokens[@pos]
     end
