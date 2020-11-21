@@ -22,8 +22,20 @@ git submodule update --init --progress --depth=1
 ```
 $ ./bin/z '2*10-4/4-(3*5)-(5+4)+45-20+2+10*2;'
 42
-./bin/z -f sample/math.z 
+$ ./bin/z -f sample/math.z 
 42
+$ ./bin/z -h
+z compiler.
+
+Usage: z [...options] -f progfile
+Usage: z [...options] [--] 'program'
+    -v, --version                    Show version
+    -h, --help                       Show help
+    -d, --dot                        Output graphviz
+    -l, --lex                        Run lexer
+    -p, --parse                      Run parser
+    -c, --compile                    Run compiler
+    -f FILE, --file FILE             Use FILE as input
 ```
 
 ## prerequisites
