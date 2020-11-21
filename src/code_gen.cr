@@ -95,15 +95,15 @@ module Z
         main:
           push rbp
           mov rbp, rsp
+          sub rsp, 208
         ASM
-      #  sub rsp, 208\n\n
       node.statements.each do |s|
         visit(s, io)
         # io.puts "  pop rax"
       end
-      #  mov rsp, rbp
       io.puts <<-ASM
         pop rax
+        mov rsp, rbp
         pop rbp
         ret
       ASM

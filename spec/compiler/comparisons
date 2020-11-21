@@ -5,6 +5,7 @@
 main:
   push rbp
   mov rbp, rsp
+  sub rsp, 208
   push 1
   push 1
   pop rdi
@@ -50,6 +51,7 @@ main:
   sub rax, rdi
   push rax
   pop rax
+  mov rsp, rbp
   pop rbp
   ret
 --------------------------------------------------------------------------------

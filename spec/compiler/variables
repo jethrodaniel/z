@@ -1,17 +1,30 @@
-a=42;5;
+a=5;b=7;a+b;
 --------------------------------------------------------------------------------
 .intel_syntax noprefix
 .globl main
 main:
   push rbp
   mov rbp, rsp
-  push 42
+  sub rsp, 208
+  push 5
   pop rax
   mov [rbp-8], rax
   mov rax, [rbp-8]
-  push 5
+  push 7
   pop rax
+  mov [rbp-16], rax
+  mov rax, [rbp-16]
+  mov rax, [rbp-8]
+  push rax
+  mov rax, [rbp-16]
+  push rax
+  pop rdi
+  pop rax
+  add rax, rdi
+  push rax
+  pop rax
+  mov rsp, rbp
   pop rbp
   ret
 --------------------------------------------------------------------------------
-5
+12
