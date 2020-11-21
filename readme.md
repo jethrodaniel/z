@@ -2,7 +2,7 @@
 
 ![](https://github.com/jethrodaniel/z/workflows/ci/badge.svg)
 
-Following along with Rui Ueyama's 9cc.
+Following along with Rui Ueyama's 9cc ([book][9cc-book], [repo][9cc]).
 
 ## install
 
@@ -60,8 +60,10 @@ Thanks, y'all.
 - https://github.com/cia-foundation/TempleOS
 - http://scheme2006.cs.uchicago.edu/11-ghuloum.pdf
 - https://www.sigbus.info/compilerbook
-- https://github.com/KENNN/compiler-book
-- https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=https%3A%2F%2Fwww.sigbus.info%2Fcompilerbook
+  - english: https://translate.google.com/translate?hl=en&sl=ja&tl=en&u=https%3A%2F%2Fwww.sigbus.info%2Fcompilerbook
 - https://github.com/rui314/chibicc
 - unix history repo
   - https://github.com/dspinellis/unix-history-repo/blob/Research-V2-Snapshot-Development/c/nc0/c00.c
+
+[9cc-book]: https://www.sigbus.info/compilerbook
+[9cc]: https://github.com/rui314/chibicc
