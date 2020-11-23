@@ -1,3 +1,5 @@
+require "set"
+
 require "./lexer"
 require "./ast/node"
 
@@ -21,12 +23,13 @@ module Z
     end
 
     alias T = Token::Type
-    @tokens : Array(Token)
+    @tokens : Array(Token) = [] of Token
+    @locals : Hash(String, Int32) = {} of String => Int32
+    @offset : Int32 = 0
+    @pos : Int32 = 0
 
     def initialize(@code : String)
       @lex = Lexer.new(@code)
-      @tokens = [] of Token
-      @pos = 0
     end
 
     def parse
@@ -151,8 +154,8 @@ module Z
       elsif accept T::INT
         return Ast::NumberLiteral.new(prev.value)
       elsif accept T::IDENT
-        offset = (prev.value[0] - 'a' + 1) * 8
-        return Ast::Ident.new(prev.value, offset)
+        @locals[prev.value] ||= (@offset += 8)
+        return Ast::Ident.new(prev.value, @locals[prev.value])
       end
       error "expected a parenthesized list, an ident, or a number, got `#{curr.value}`"
     end

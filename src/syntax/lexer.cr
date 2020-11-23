@@ -9,6 +9,8 @@ module Z
 
     alias T = Token::Type
 
+    IDENT_CHARS = ('A'..'z').to_a + ('0'..'9').to_a + ['_']
+
     def initialize(@code : String)
       @reader = Char::Reader.new(@code)
       @line = 1
@@ -70,7 +72,11 @@ module Z
           break
         when ' ', '\n' # skip
         when 'a'..'z'
-          return add_token T::IDENT, c.to_s
+          v = c.to_s
+          while @reader.has_next? && IDENT_CHARS.includes? @reader.peek_next_char
+            v += next_char
+          end
+          return add_token T::IDENT, v.to_s
         else
           error "unexpected character `#{c}`"
         end
