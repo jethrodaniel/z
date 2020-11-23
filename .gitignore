@@ -1,5 +1,1 @@
-*.o
-*.out
 bin/
-test/run
-tmp
