@@ -16,7 +16,6 @@
 #     execute -> compare;
 # }
 # ```
-#
 # ```
 # dot -Tpng ast.gv -o ast.png
 # ```

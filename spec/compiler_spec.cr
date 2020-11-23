@@ -1,10 +1,10 @@
 require "./spec_helper"
 
-  # it_compiles "1 == 1;", 1
-  # it_compiles "1 != 1;", 0
-  # it_compiles "1 <= 1;", 1
-  # it_compiles "1 < 1;", 0
-  # it_compiles "1 < 2;", 1
+# it_compiles "1 == 1;", 1
+# it_compiles "1 != 1;", 0
+# it_compiles "1 <= 1;", 1
+# it_compiles "1 < 1;", 0
+# it_compiles "1 < 2;", 1
 
 Dir
   .glob("./spec/compiler/**/*")
