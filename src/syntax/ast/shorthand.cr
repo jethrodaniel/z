@@ -25,12 +25,12 @@ module Z
         BinOp.new(sym, left, right)
       end
 
-      def prog(*statements : Array(Node))
-        Program.new(statements)
+      def prog(*statements : Array(Node), offset : Int32 = 0)
+        Program.new(statements, offset)
       end
 
-      def prog(statement : Node)
-        Program.new([statement] of Node)
+      def prog(statement : Node, offset = 0)
+        Program.new([statement] of Node, offset)
       end
     end
   end

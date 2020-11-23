@@ -5,7 +5,7 @@
 main:
   push rbp
   mov rbp, rsp
-  sub rsp, 208
+  sub rsp, 0
   push 42
   pop rax
   mov rsp, rbp

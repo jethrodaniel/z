@@ -5,7 +5,7 @@ foo=5;bar=c=7;foo+bar+c;
 main:
   push rbp
   mov rbp, rsp
-  sub rsp, 208
+  sub rsp, 24
   push 5
   pop rax
   mov [rbp-8], rax

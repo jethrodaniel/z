@@ -46,7 +46,8 @@ module Z
     end
 
     ast_node Program,
-      statements : Array(Node)
+      statements : Array(Node),
+      offset : Int32
 
     ast_node NumberLiteral,
       value : String

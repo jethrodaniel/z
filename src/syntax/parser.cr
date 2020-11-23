@@ -49,7 +49,7 @@ module Z
       until eof?
         stmts << _stmt
       end
-      Ast::Program.new(stmts)
+      Ast::Program.new(stmts, @offset)
     end
 
     private def _stmt

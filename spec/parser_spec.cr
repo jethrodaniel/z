@@ -37,8 +37,8 @@ describe Z::Parser do
   it_parses "1 > 2;", prog(bi(:>, num("1"), num("2")))
   it_parses "1 == 2;", prog(bi(:==, num("1"), num("2")))
   it_parses "1 == 2;", prog(bi(:==, num("1"), num("2")))
-  it_parses "a = 5;", prog(assign(lvar("a", 8), num("5")))
+  it_parses "a = 5;", prog(assign(lvar("a", 8), num("5")), 8)
   it_parses "42;", prog(num("42"))
-  it_parses "a=b=2;", prog(assign(lvar("a", 8), assign(lvar("b", 16), num("2"))))
-  it_parses "a = 5;", prog(assign(lvar("a", 8), num("5")))
+  it_parses "a=b=2;", prog(assign(lvar("a", 8), assign(lvar("b", 16), num("2"))), 16)
+  it_parses "a = 5;", prog(assign(lvar("a", 8), num("5")), 8)
 end

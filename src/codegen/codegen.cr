@@ -88,14 +88,13 @@ module Z
   #
   class CodeGen < Ast::Visitor
     visit Ast::Program do
-      args = node.statements.map(&.to_s).join(", ")
       io.puts <<-ASM
         .intel_syntax noprefix
         .globl main
         main:
           push rbp
           mov rbp, rsp
-          sub rsp, 208
+          sub rsp, #{node.offset}
         ASM
       node.statements.each do |s|
         visit(s, io)
