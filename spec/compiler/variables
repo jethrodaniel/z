@@ -1,4 +1,4 @@
-a=5;b=7;a+b;
+a=5;b=c=7;a+b+c;
 --------------------------------------------------------------------------------
 .intel_syntax noprefix
 .globl main
@@ -10,13 +10,25 @@ main:
   pop rax
   mov [rbp-8], rax
   mov rax, [rbp-8]
+  push rax
   push 7
+  pop rax
+  mov [rbp-24], rax
+  mov rax, [rbp-24]
+  push rax
   pop rax
   mov [rbp-16], rax
   mov rax, [rbp-16]
+  push rax
   mov rax, [rbp-8]
   push rax
   mov rax, [rbp-16]
+  push rax
+  pop rdi
+  pop rax
+  add rax, rdi
+  push rax
+  mov rax, [rbp-24]
   push rax
   pop rdi
   pop rax
@@ -27,4 +39,4 @@ main:
   pop rbp
   ret
 --------------------------------------------------------------------------------
-12
+19

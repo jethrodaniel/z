@@ -99,7 +99,6 @@ module Z
         ASM
       node.statements.each do |s|
         visit(s, io)
-        # io.puts "  pop rax"
       end
       io.puts <<-ASM
         pop rax
@@ -114,6 +113,7 @@ module Z
         pop rax
         mov [rbp-#{node.offset}], rax
         mov rax, [rbp-#{node.offset}]
+        push rax
       ASM
     end
 
