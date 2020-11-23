@@ -34,7 +34,11 @@ module Z
         out io, ")"
       end
 
-      visit Lvar, Ident, NumberLiteral do
+      visit Lvar, Ident do
+        out io, "s(:#{name(node)}, #{node.value}@#{node.offset})"
+      end
+
+      visit NumberLiteral do
         out io, "s(:#{name(node)}, #{node.value})"
       end
 

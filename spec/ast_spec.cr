@@ -19,12 +19,12 @@ describe Z::Ast::Visitor do
   it_prints "a=5;b=c=4;4+4;3+4-5*(4+2);", <<-Z
     s(:program,
       s(:assignment,
-        s(:lvar, a),
+        s(:lvar, a@8),
         s(:number_literal, 5)
       s(:assignment,
-        s(:lvar, b),
+        s(:lvar, b@16),
         s(:assignment,
-          s(:lvar, c),
+          s(:lvar, c@24),
           s(:number_literal, 4)
       s(:bin_op,
         +,
