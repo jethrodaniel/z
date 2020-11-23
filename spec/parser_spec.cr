@@ -1,5 +1,5 @@
 require "./spec_helper"
-require "../src/ast/shorthand"
+require "../src/syntax/ast/shorthand"
 
 def it_parses(str, node : Z::Ast::Node)
   it str do
@@ -40,4 +40,5 @@ describe Z::Parser do
   it_parses "a = 5;", prog(assign(lvar("a", 8), num("5")))
   it_parses "42;", prog(num("42"))
   it_parses "a=b=2;", prog(assign(lvar("a", 8), assign(lvar("b", 16), num("2"))))
+  it_parses "a = 5;", prog(assign(lvar("a", 8), num("5")))
 end

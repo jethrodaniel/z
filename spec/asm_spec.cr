@@ -1,5 +1,7 @@
 require "./spec_helper"
 
+require "../src/asm"
+
 describe Z::Asm do
   it "build" do
     a = Z::Asm::Builder.build do

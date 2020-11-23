@@ -1,6 +1,6 @@
-require "./ast/node"
-require "./ast/visitor"
-require "./parser"
+require "../syntax/ast/node"
+require "../syntax/ast/visitor"
+require "../syntax/parser"
 
 module Z
   # = x86_64 calling conventions

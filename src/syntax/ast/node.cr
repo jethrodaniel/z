@@ -1,49 +1,4 @@
-module Z
-  module Ast
-    abstract class Visitor
-      macro visit(type)
-        def visit(node : {{type}}, io : IO)
-          # children = node.children
-          {{yield}}
-        end
-      end
-
-      macro visit(*types)
-        {% for type in types %}
-          visit {{type}} do
-            {{yield}}
-          end
-        {% end %}
-      end
-
-      private def name(node)
-        node.class.name.split("::").last.underscore
-      end
-    end
-  end
-end
-
-module Z
-  module Ast
-    class Printer < Visitor
-      visit Program do
-        io.print "s(:#{name(node)}, #{node.statements})"
-      end
-
-      visit Lvar, Ident, NumberLiteral do
-        io.print "s(:#{name(node)}, #{node.value})"
-      end
-
-      visit BinOp do
-        io.print "s(:#{name(node)}, #{node.left}, #{node.right})"
-      end
-
-      visit Nop do
-        io.print "s(:#{name(node)}"
-      end
-    end
-  end
-end
+require "./printer"
 
 module Z
   module Ast
@@ -57,15 +12,6 @@ module Z
       def accept(visitor : Visitor, io : IO)
         visitor.visit self, io
       end
-
-      # def children
-      #   vars = {{ @type.instance_vars }}
-      #   node_vars = [] of Node
-      #   vars.each do |var|
-      #     node_vars << var if var.is_a? Node
-      #   end
-      #   node_vars
-      # end
     end
 
     macro ast_node(name, *properties)
@@ -89,8 +35,12 @@ module Z
           true
         end
 
-        def to_s(io)
+        def inspect(io)
           accept(Printer.new, io)
+        end
+
+        def to_s(io)
+          inspect(io)
         end
       end
     end
@@ -102,7 +52,8 @@ module Z
       value : String
 
     ast_node Ident,
-      value : String
+      value : String,
+      offset : Int32
 
     ast_node Lvar,
       value : String,
@@ -112,6 +63,10 @@ module Z
 
     ast_node BinOp,
       type : Symbol,
+      left : Node,
+      right : Node
+
+    ast_node Assignment,
       left : Node,
       right : Node
   end

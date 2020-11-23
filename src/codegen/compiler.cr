@@ -1,6 +1,6 @@
-require "./ast"
-require "./parser"
-require "./code_gen"
+require "../syntax/ast/node"
+require "../syntax/parser"
+require "./codegen"
 
 module Z
   # = Compiler
