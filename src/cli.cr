@@ -6,19 +6,23 @@ module Z
   module CLI
     def self.parse_opts
       opts = Hash(Symbol, Bool | String){
-        :lex     => false,
-        :parse   => false,
-        :compile => false,
-        :file    => false,
-        :dot     => false
+        :lex         => false,
+        :parse       => false,
+        :compile     => false,
+        :file        => false,
+        :dot         => false,
+        :interactive => false,
       }
 
       OptionParser.parse do |parser|
         parser.banner = <<-MSG
           z compiler.
+          Usage:
 
-          Usage: z [...options] -f progfile
-          Usage: z [...options] [--] 'program'
+            z [...options]
+            z [...options] -f progfile
+            z [...options] [--] 'program'
+
           MSG
 
         parser.on "-v", "--version", "Show version" do
@@ -42,11 +46,7 @@ module Z
           exit(1)
         end
       end
-
-      abort <<-ERR if ARGV.empty? && !opts[:file]
-        [error] oof, missing 'program'. See `z -h` for usage.
-        ERR
-
+      opts[:interactive] = true if ARGV.empty?
       opts
     end
   end
