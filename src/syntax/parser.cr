@@ -175,10 +175,22 @@ module Z
       elsif accept T::IDENT
         ident = prev
         if accept T::LEFT_PAREN
-          if accept T::RIGHT_PAREN
-            return Ast::FnCall.new(ident.value)
-          else
-            error "expected a closing parenthesis for call to `#{ident.value}()`"
+          params = [] of Ast::FnArg
+          loop do
+            if accept T::RIGHT_PAREN
+              return Ast::FnCall.new(ident.value, params)
+            elsif p = accept T::IDENT
+              @locals[prev.value] ||= (@offset += 8)
+              p = Ast::Ident.new(prev.value, @locals[prev.value])
+              params << Ast::FnArg.new(p)
+            elsif p = accept T::INT
+              p = Ast::NumberLiteral.new(prev.value)
+              params << Ast::FnArg.new(p)
+            elsif p = accept T::COMMA
+              # skip
+            else
+              error "expected a closing parenthesis for call to `#{ident.value}()`"
+            end
           end
         end
         @locals[prev.value] ||= (@offset += 8)
@@ -195,10 +207,12 @@ module Z
       end
     end
 
-    private def accept(type)
-      if match? type
-        @pos += 1
-        prev
+    private def accept(*types)
+      types.each do |type|
+        if match? type
+          @pos += 1
+          return prev
+        end
       end
     end
 

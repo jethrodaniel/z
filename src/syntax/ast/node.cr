@@ -62,7 +62,11 @@ module Z
       value : Node
 
     ast_node FnCall,
-      name : String
+      name : String,
+      args : Array(FnArg)
+
+    ast_node FnArg,
+      value : Node
 
     ast_node NumberLiteral,
       value : String

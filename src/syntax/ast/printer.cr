@@ -58,7 +58,14 @@ module Z
       end
 
       visit FnCall do
-        out io, "s(:#{name(node)}, #{node.name})"
+        out io, "s(:#{name(node)}, #{node.name},\n"
+        indent
+        node.args.each_with_index do |arg, i|
+          visit(arg, io)
+          io.puts unless i == node.args.size - 1
+        end
+        dedent
+        io.print ")"
       end
 
       visit Expr, Return do
@@ -67,6 +74,14 @@ module Z
 
         node.value.accept(self, io)
 
+        dedent
+        io.print ")"
+      end
+
+      visit FnArg do
+        out io, "s(:#{name(node)},\n"
+        indent
+        visit(node.value, io)
         dedent
         io.print ")"
       end

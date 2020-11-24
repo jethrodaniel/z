@@ -22,6 +22,7 @@ module Z
       SEMI        # ;
       LVAR        # _left variable_
       RETURN      # return
+      COMMA       # ,
     end
 
     property :line, :col, :type, :value

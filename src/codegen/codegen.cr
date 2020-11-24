@@ -120,6 +120,11 @@ module Z
       ASM
     end
 
+    visit Ast::FnArg do
+      io.puts <<-ASM
+      ASM
+    end
+
     visit Ast::Stmt do
       node.expr.accept(self, io)
     end

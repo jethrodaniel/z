@@ -50,8 +50,8 @@ module Z
         io.puts "}"
       end
 
-      visit Block do
-        # TODO
+      visit Block, FnArg do
+        raise "#{name(node)} not supported yet"
       end
 
       visit Stmt do

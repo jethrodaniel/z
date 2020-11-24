@@ -44,6 +44,8 @@ module Z
           return add_token T::RIGHT_BRACE, c.to_s
         when ';'
           return add_token T::SEMI, c.to_s
+        when ','
+          return add_token T::COMMA, c.to_s
         when '='
           if @reader.peek_next_char == '='
             next_char

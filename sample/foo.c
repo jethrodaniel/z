@@ -1,5 +1,6 @@
 #include <stdio.h>
 
-void foo() {
-  printf("OK\n");
+void f(int a, int b)
+{
+  printf("%i\n", a + b);
 }

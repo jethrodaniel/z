@@ -1,0 +1,32 @@
+f(a);f(a, b, 42);
+--------------------------------------------------------------------------------
+s(:program,
+  s(:stmt,
+    s(:expr,
+      s(:fn_call, f,
+        s(:fn_arg,
+          s(:ident, a@8)))))
+  s(:stmt,
+    s(:expr,
+      s(:fn_call, f,
+        s(:fn_arg,
+          s(:ident, a@8))
+        s(:fn_arg,
+          s(:ident, b@16))
+        s(:fn_arg,
+          s(:number_literal, 42))))))
+--------------------------------------------------------------------------------
+.intel_syntax noprefix
+.globl main
+main:
+  push rbp
+  mov rbp, rsp
+  sub rsp, 16
+  call f
+  call f
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+--------------------------------------------------------------------------------
+1
