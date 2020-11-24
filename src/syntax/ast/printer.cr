@@ -34,6 +34,19 @@ module Z
         out io, ")"
       end
 
+      visit Block do
+        out io, "s(:#{name(node)},\n"
+        indent
+
+        node.statements.each_with_index do |stmt, i|
+          stmt.accept(self, io)
+          io.puts unless i == node.statements.size - 1
+        end
+
+        dedent
+        out io, ")"
+      end
+
       visit Stmt do
         out io, "s(:#{name(node)},\n"
         indent

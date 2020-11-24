@@ -38,6 +38,10 @@ module Z
           return add_token T::LEFT_PAREN, c.to_s
         when ')'
           return add_token T::RIGHT_PAREN, c.to_s
+        when '{'
+          return add_token T::LEFT_BRACE, c.to_s
+        when '}'
+          return add_token T::RIGHT_BRACE, c.to_s
         when ';'
           return add_token T::SEMI, c.to_s
         when '='

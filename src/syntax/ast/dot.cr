@@ -50,6 +50,10 @@ module Z
         io.puts "}"
       end
 
+      visit Block do
+        # TODO
+      end
+
       visit Stmt do
         node.expr.accept(self, io)
       end

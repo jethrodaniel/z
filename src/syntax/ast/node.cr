@@ -49,6 +49,9 @@ module Z
       statements : Array(Node),
       offset : Int32
 
+    ast_node Block,
+      statements : Array(Node) # Stmt
+
     ast_node Stmt,
       expr : Node
 

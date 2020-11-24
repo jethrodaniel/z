@@ -9,10 +9,10 @@ require "./ast/node"
 # program    = stmt*
 # stmt       = expr ";"
 #            | "return" expr ";"
+#            | "{" stmt* "}"
 #            #| "if" "(" expr ")" stmt ("else" stmt)?
 #            #| "while" "(" expr ")" stmt
 #            #| "for" "(" expr? ";" expr? ";" expr? ")" stmt
-#            #| "{" stmt* "}"
 # expr       = assign
 # assign     = equality ("=" assign)?
 # equality   = relational ("==" relational | "!=" relational)*
@@ -61,8 +61,19 @@ module Z
     end
 
     private def _stmt
-      if n = accept T::RETURN
+      if accept T::RETURN
         n = Ast::Stmt.new(Ast::Return.new(_expr))
+      elsif accept T::LEFT_BRACE
+        stmts = [] of Ast::Node
+
+        while stmt = _stmt
+          stmts << stmt
+          return Ast::Block.new(stmts) if accept T::RIGHT_BRACE
+        end
+        # unless accept T::RIGHT_BRACE
+        #   error "expected a closing brace for block"
+        # end
+        return Ast::Block.new(stmts)
       else
         n = Ast::Stmt.new(_expr)
       end

@@ -107,6 +107,13 @@ module Z
       ASM
     end
 
+    visit Ast::Block do
+      node.statements.each do |s|
+        visit(s, io)
+      end
+      io.puts "  pop rax"
+    end
+
     visit Ast::FnCall do
       io.puts <<-ASM
         call #{node.name}
