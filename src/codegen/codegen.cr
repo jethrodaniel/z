@@ -107,6 +107,14 @@ module Z
       ASM
     end
 
+    visit Ast::Stmt do
+      node.expr.accept(self, io)
+    end
+
+    visit Ast::Expr do
+      node.value.accept(self, io)
+    end
+
     visit Ast::Lvar do
       io.puts <<-ASM
         pop rax

@@ -50,6 +50,14 @@ module Z
         io.puts "}"
       end
 
+      visit Stmt do
+        node.expr.accept(self, io)
+      end
+
+      visit Expr do
+        node.value.accept(self, io)
+      end
+
       visit Lvar, Ident, NumberLiteral do
         io.puts "  #{id};"
         io.puts "  #{id} [label=\"#{name(node)}, #{node.value}\"];"

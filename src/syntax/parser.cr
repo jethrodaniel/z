@@ -53,13 +53,14 @@ module Z
     end
 
     private def _stmt
-      n = _expr
+      # if accept T::RETURN
+      n = Ast::Stmt.new(_expr)
       consume T::SEMI
       n
     end
 
     private def _expr
-      _assign
+      Ast::Expr.new(_assign)
     end
 
     private def _assign

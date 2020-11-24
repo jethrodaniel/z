@@ -1,44 +1,81 @@
 require "./spec_helper"
-require "../src/syntax/ast/shorthand"
 
-def it_parses(str, node : Z::Ast::Node)
-  it str do
-    parser = Z::Parser.new(str)
-    parser.parse.should eq node
+def it_parses(code, expected)
+  it code do
+    printer = Z::Ast::Printer.new
+    output = IO::Memory.new
+    node = Z::Parser.new(code).parse
+    node.to_s.should eq expected
   end
 end
 
-include Z::Ast::Shorthand
-
 describe Z::Parser do
-  it_parses "1;", prog(num("1"))
-  it_parses "(1);", prog(num("1"))
-  it_parses "((1));", prog(num("1"))
-  it_parses "1 + 2;", prog(bi(:+, num("1"), num("2")))
-  it_parses "1 - 2;", prog(bi(:-, num("1"), num("2")))
-  it_parses "1 + 2 * 3;",
-    prog(
-      bi(:+,
-        num("1"),
-        bi(:*, num("2"), num("3"))))
-  it_parses "1 - 2 / 3;",
-    prog(
-      bi(:-,
-        num("1"),
-        bi(:/, num("2"), num("3"))))
-  it_parses "+1;", prog(num("1"))
-  it_parses "+ 1;", prog(num("1"))
-  it_parses "- 1;", prog(bi(:-, num("0"), num("1")))
-  it_parses "-1;", prog(bi(:-, num("0"), num("1")))
-  it_parses "1 <= 2;", prog(bi(:<=, num("1"), num("2")))
-  it_parses "1 <= 2;", prog(bi(:<=, num("1"), num("2")))
-  it_parses "1 < 2;", prog(bi(:<, num("1"), num("2")))
-  it_parses "1 >= 2;", prog(bi(:>=, num("1"), num("2")))
-  it_parses "1 > 2;", prog(bi(:>, num("1"), num("2")))
-  it_parses "1 == 2;", prog(bi(:==, num("1"), num("2")))
-  it_parses "1 == 2;", prog(bi(:==, num("1"), num("2")))
-  it_parses "a = 5;", prog(assign(lvar("a", 8), num("5")), 8)
-  it_parses "42;", prog(num("42"))
-  it_parses "a=b=2;", prog(assign(lvar("a", 8), assign(lvar("b", 16), num("2"))), 16)
-  it_parses "a = 5;", prog(assign(lvar("a", 8), num("5")), 8)
+  it_parses "(1==1)+(2<=3)+(3<3)-(1!=0);", <<-Z
+    s(:program,
+      s(:stmt,
+        s(:expr,
+          s(:bin_op,
+            -,
+            s(:bin_op,
+              +,
+              s(:bin_op,
+                +,
+                s(:expr,
+                  s(:bin_op,
+                    ==,
+                    s(:number_literal, 1),
+                    s(:number_literal, 1)),
+                s(:expr,
+                  s(:bin_op,
+                    <=,
+                    s(:number_literal, 2),
+                    s(:number_literal, 3)),
+              s(:expr,
+                s(:bin_op,
+                  <,
+                  s(:number_literal, 3),
+                  s(:number_literal, 3)),
+            s(:expr,
+              s(:bin_op,
+                !=,
+                s(:number_literal, 1),
+                s(:number_literal, 0)))))
+    Z
+  it_parses "a=5;b=c=4;4+4;3+4-5*(4+2);", <<-Z
+    s(:program,
+      s(:stmt,
+        s(:expr,
+          s(:assignment,
+            s(:lvar, a@8),
+            s(:number_literal, 5)))
+      s(:stmt,
+        s(:expr,
+          s(:assignment,
+            s(:lvar, b@16),
+            s(:assignment,
+              s(:lvar, c@24),
+              s(:number_literal, 4)))
+      s(:stmt,
+        s(:expr,
+          s(:bin_op,
+            +,
+            s(:number_literal, 4),
+            s(:number_literal, 4)))
+      s(:stmt,
+        s(:expr,
+          s(:bin_op,
+            -,
+            s(:bin_op,
+              +,
+              s(:number_literal, 3),
+              s(:number_literal, 4),
+            s(:bin_op,
+              *,
+              s(:number_literal, 5),
+              s(:expr,
+                s(:bin_op,
+                  +,
+                  s(:number_literal, 4),
+                  s(:number_literal, 2)))))
+    Z
 end

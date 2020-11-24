@@ -34,6 +34,26 @@ module Z
         out io, ")"
       end
 
+      visit Stmt do
+        out io, "s(:#{name(node)},\n"
+        indent
+
+        node.expr.accept(self, io)
+
+        dedent
+        io.print ")"
+      end
+
+      visit Expr do
+        out io, "s(:#{name(node)},\n"
+        indent
+
+        node.value.accept(self, io)
+
+        dedent
+        io.print ")"
+      end
+
       visit Lvar, Ident do
         out io, "s(:#{name(node)}, #{node.value}@#{node.offset})"
       end

@@ -49,6 +49,15 @@ module Z
       statements : Array(Node),
       offset : Int32
 
+    ast_node Stmt,
+      expr : Node
+
+    ast_node Expr,
+      value : Node
+
+    # ast_node Return,
+    #   value : Node
+
     ast_node NumberLiteral,
       value : String
 
