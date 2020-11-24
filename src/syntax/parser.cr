@@ -22,7 +22,7 @@ require "./ast/node"
 # unary      = ("+" | "-")? primary
 # primary    = num
 #            | ident
-#            | ident "(" ")" # foo()
+#            | ident "(" ( ident ",")* ")"
 #            | "(" expr ")"
 # ```
 module Z
@@ -65,14 +65,10 @@ module Z
         n = Ast::Stmt.new(Ast::Return.new(_expr))
       elsif accept T::LEFT_BRACE
         stmts = [] of Ast::Node
-
         while stmt = _stmt
           stmts << stmt
           return Ast::Block.new(stmts) if accept T::RIGHT_BRACE
         end
-        # unless accept T::RIGHT_BRACE
-        #   error "expected a closing brace for block"
-        # end
         return Ast::Block.new(stmts)
       else
         n = Ast::Stmt.new(_expr)
