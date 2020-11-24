@@ -58,6 +58,9 @@ module Z
     ast_node Return,
       value : Node
 
+    ast_node FnCall,
+      name : String
+
     ast_node NumberLiteral,
       value : String
 

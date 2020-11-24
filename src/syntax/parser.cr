@@ -9,6 +9,10 @@ require "./ast/node"
 # program    = stmt*
 # stmt       = expr ";"
 #            | "return" expr ";"
+#            #| "if" "(" expr ")" stmt ("else" stmt)?
+#            #| "while" "(" expr ")" stmt
+#            #| "for" "(" expr? ";" expr? ";" expr? ")" stmt
+#            #| "{" stmt* "}"
 # expr       = assign
 # assign     = equality ("=" assign)?
 # equality   = relational ("==" relational | "!=" relational)*
@@ -16,7 +20,10 @@ require "./ast/node"
 # add        = mul ("+" mul | "-" mul)*
 # mul        = unary ("*" unary | "/" unary)*
 # unary      = ("+" | "-")? primary
-# primary    = num | ident | "(" expr ")"
+# primary    = num
+#            | ident
+#            | ident "(" ")" # foo()
+#            | "(" expr ")"
 # ```
 module Z
   class Parser
@@ -159,6 +166,14 @@ module Z
       elsif accept T::INT
         return Ast::NumberLiteral.new(prev.value)
       elsif accept T::IDENT
+        ident = prev
+        if accept T::LEFT_PAREN
+          if accept T::RIGHT_PAREN
+            return Ast::FnCall.new(ident.value)
+          else
+            error "expected a closing parenthesis for call to `#{ident.value}()`"
+          end
+        end
         @locals[prev.value] ||= (@offset += 8)
         return Ast::Ident.new(prev.value, @locals[prev.value])
       end

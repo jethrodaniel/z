@@ -107,6 +107,12 @@ module Z
       ASM
     end
 
+    visit Ast::FnCall do
+      io.puts <<-ASM
+        call #{node.name}
+      ASM
+    end
+
     visit Ast::Stmt do
       node.expr.accept(self, io)
     end

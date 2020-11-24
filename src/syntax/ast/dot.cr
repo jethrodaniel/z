@@ -54,6 +54,10 @@ module Z
         node.expr.accept(self, io)
       end
 
+      visit FnCall do
+        io.puts "s(:#{name(node)}, #{node.name})"
+      end
+
       visit Expr, Return do
         node.value.accept(self, io)
       end

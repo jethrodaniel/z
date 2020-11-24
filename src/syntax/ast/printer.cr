@@ -44,6 +44,10 @@ module Z
         io.print ")"
       end
 
+      visit FnCall do
+        out io, "s(:#{name(node)}, #{node.name})"
+      end
+
       visit Expr, Return do
         out io, "s(:#{name(node)},\n"
         indent
