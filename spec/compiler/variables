@@ -1,5 +1,28 @@
 foo=5;bar=c=7;foo+bar+c;
 --------------------------------------------------------------------------------
+s(:program,
+  s(:stmt,
+    s(:expr,
+      s(:assignment,
+        s(:lvar, foo@8),
+        s(:number_literal, 5)))
+  s(:stmt,
+    s(:expr,
+      s(:assignment,
+        s(:lvar, bar@16),
+        s(:assignment,
+          s(:lvar, c@24),
+          s(:number_literal, 7)))
+  s(:stmt,
+    s(:expr,
+      s(:bin_op,
+        +,
+        s(:bin_op,
+          +,
+          s(:ident, foo@8),
+          s(:ident, bar@16),
+        s(:ident, c@24))))
+--------------------------------------------------------------------------------
 .intel_syntax noprefix
 .globl main
 main:

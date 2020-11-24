@@ -36,7 +36,7 @@ module Z
         end
 
         def inspect(io)
-          accept(Printer.new, io)
+          accept(Printer.new, io).to_s
         end
 
         def to_s(io)

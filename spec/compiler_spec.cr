@@ -12,15 +12,26 @@ Dir
   .sort!
   .each do |file|
     it file do
-      sample, expected, exit_code = File.read(file).split("-" * 80).map(&.lstrip)
-      result = Z::Compiler.new(sample).compile
+      source, ast, _asm, exit_code = File.read(file).split("-" * 80).map(&.strip)
+
+      node = Z::Parser.new(source).parse
       begin
-        result.should eq(expected)
+        ast.should eq(node.to_s)
       rescue error
-        fail diff(expected, result)
+        p ast
+        p node.to_s
+        fail diff(ast, node.to_s)
       end
-      f = File.tempfile("z.S") { |f| f.puts result }
-      res = `gcc #{f.path} && ./a.out; echo $?`
+
+      result = Z::Compiler.new(source).compile
+      begin
+        result.should eq(_asm)
+      rescue error
+        fail diff(_asm, result)
+      end
+
+      f = File.tempfile("z.S") { |f| f.print result }
+      res = `gcc #{f.path} && ./a.out; echo $?`.strip
       puts "=> #{res}"
       res.should eq(exit_code)
     end

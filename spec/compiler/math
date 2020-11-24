@@ -1,5 +1,27 @@
 1+3*2+1-(2+(4));
 --------------------------------------------------------------------------------
+s(:program,
+  s(:stmt,
+    s(:expr,
+      s(:bin_op,
+        -,
+        s(:bin_op,
+          +,
+          s(:bin_op,
+            +,
+            s(:number_literal, 1),
+            s(:bin_op,
+              *,
+              s(:number_literal, 3),
+              s(:number_literal, 2),
+          s(:number_literal, 1),
+        s(:expr,
+          s(:bin_op,
+            +,
+            s(:number_literal, 2),
+            s(:expr,
+              s(:number_literal, 4))))))
+--------------------------------------------------------------------------------
 .intel_syntax noprefix
 .globl main
 main:

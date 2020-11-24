@@ -1,5 +1,35 @@
 (1==1)+(2<=3)+(3<3)-(1!=0);
 --------------------------------------------------------------------------------
+s(:program,
+  s(:stmt,
+    s(:expr,
+      s(:bin_op,
+        -,
+        s(:bin_op,
+          +,
+          s(:bin_op,
+            +,
+            s(:expr,
+              s(:bin_op,
+                ==,
+                s(:number_literal, 1),
+                s(:number_literal, 1)),
+            s(:expr,
+              s(:bin_op,
+                <=,
+                s(:number_literal, 2),
+                s(:number_literal, 3)),
+          s(:expr,
+            s(:bin_op,
+              <,
+              s(:number_literal, 3),
+              s(:number_literal, 3)),
+        s(:expr,
+          s(:bin_op,
+            !=,
+            s(:number_literal, 1),
+            s(:number_literal, 0)))))
+--------------------------------------------------------------------------------
 .intel_syntax noprefix
 .globl main
 main:

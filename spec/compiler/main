@@ -6,6 +6,39 @@ foo = bar = 42;
 return foo + bar;
 return bar = 7;
 --------------------------------------------------------------------------------
+s(:program,
+  s(:stmt,
+    s(:expr,
+      s(:assignment,
+        s(:lvar, foo@8),
+        s(:assignment,
+          s(:lvar, bar@16),
+          s(:number_literal, 42)))
+  s(:block,
+    s(:stmt,
+      s(:expr,
+        s(:assignment,
+          s(:lvar, foo@8),
+          s(:number_literal, 10)))
+    s(:stmt,
+      s(:expr,
+        s(:assignment,
+          s(:lvar, baz@24),
+          s(:number_literal, 10)))  )
+  s(:stmt,
+    s(:return,
+      s(:expr,
+        s(:bin_op,
+          +,
+          s(:ident, foo@8),
+          s(:ident, bar@16))))
+  s(:stmt,
+    s(:return,
+      s(:expr,
+        s(:assignment,
+          s(:lvar, bar@16),
+          s(:number_literal, 7)))))
+--------------------------------------------------------------------------------
 .intel_syntax noprefix
 .globl main
 main:

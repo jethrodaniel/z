@@ -22,7 +22,7 @@ module Z
       printer = CodeGen.new
       output = IO::Memory.new
       node.accept(printer, output)
-      output.to_s
+      output.to_s.strip
     end
 
     private def error(msg : String)
