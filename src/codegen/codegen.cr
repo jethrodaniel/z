@@ -115,6 +115,16 @@ module Z
       node.value.accept(self, io)
     end
 
+    visit Ast::Return do
+      node.value.accept(self, io)
+      io.puts <<-ASM
+        pop rax
+        mov rsp, rbp
+        pop rbp
+        ret
+      ASM
+    end
+
     visit Ast::Lvar do
       io.puts <<-ASM
         pop rax
@@ -194,7 +204,7 @@ module Z
     end
 
     visit Ast::Nop do
-      io.puts "s(:#{name(node)})"
+      # pass
     end
   end
 end

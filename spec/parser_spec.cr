@@ -10,6 +10,15 @@ def it_parses(code, expected)
 end
 
 describe Z::Parser do
+  it_parses "return a = b;", <<-Z
+    s(:program,
+      s(:stmt,
+        s(:return,
+          s(:expr,
+            s(:assignment,
+              s(:lvar, a@8),
+              s(:ident, b@16)))))
+    Z
   it_parses "(1==1)+(2<=3)+(3<3)-(1!=0);", <<-Z
     s(:program,
       s(:stmt,

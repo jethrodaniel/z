@@ -54,7 +54,7 @@ module Z
         node.expr.accept(self, io)
       end
 
-      visit Expr do
+      visit Expr, Return do
         node.value.accept(self, io)
       end
 

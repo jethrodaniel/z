@@ -46,7 +46,7 @@ module Z
           exit(1)
         end
       end
-      opts[:interactive] = true if ARGV.empty?
+      opts[:interactive] = true if ARGV.empty? && !opts[:file]
       opts
     end
   end

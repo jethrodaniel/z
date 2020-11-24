@@ -8,6 +8,7 @@ require "./ast/node"
 # ```
 # program    = stmt*
 # stmt       = expr ";"
+#            | "return" expr ";"
 # expr       = assign
 # assign     = equality ("=" assign)?
 # equality   = relational ("==" relational | "!=" relational)*
@@ -53,8 +54,11 @@ module Z
     end
 
     private def _stmt
-      # if accept T::RETURN
-      n = Ast::Stmt.new(_expr)
+      if n = accept T::RETURN
+        n = Ast::Stmt.new(Ast::Return.new(_expr))
+      else
+        n = Ast::Stmt.new(_expr)
+      end
       consume T::SEMI
       n
     end

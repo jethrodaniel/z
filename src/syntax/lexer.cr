@@ -76,7 +76,11 @@ module Z
           while @reader.has_next? && IDENT_CHARS.includes? @reader.peek_next_char
             v += next_char
           end
-          return add_token T::IDENT, v.to_s
+          if v.to_s == "return"
+            return add_token T::RETURN, v.to_s
+          else
+            return add_token T::IDENT, v.to_s
+          end
         else
           error "unexpected character `#{c}`"
         end

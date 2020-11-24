@@ -19,6 +19,7 @@ module Z
       IDENT       # a = ..., etc
       SEMI        # ;
       LVAR        # _left variable_
+      RETURN      # return
     end
 
     property :line, :col, :type, :value

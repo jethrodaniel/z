@@ -44,7 +44,7 @@ module Z
         io.print ")"
       end
 
-      visit Expr do
+      visit Expr, Return do
         out io, "s(:#{name(node)},\n"
         indent
 
