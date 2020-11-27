@@ -7,6 +7,7 @@ require "./syntax/parser"
 require "./syntax/ast/dot"
 require "./codegen/compiler"
 require "./cli"
+require "./line_editor"
 
 module Z
   def self.start
@@ -36,6 +37,11 @@ module Z
   private def self.repl(opts)
     puts "z compiler, v#{Z::VERSION}. `q` to quit.\n\n"
     prompt = "(z) "
+
+    loop do
+      line = LineEditor.readline("(z)")
+      puts "=> #{line}"
+    end
 
     loop do
       print prompt

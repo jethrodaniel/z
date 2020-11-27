@@ -9,6 +9,7 @@ module Z
 
     alias T = Token::Type
 
+    # identifiers start with a letter, then zero or more of these
     IDENT_CHARS = ('A'..'z').to_a + ('0'..'9').to_a + ['_']
 
     def initialize(@code : String)
