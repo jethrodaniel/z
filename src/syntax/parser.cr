@@ -48,7 +48,7 @@ module Z
     ##
 
     private def _root
-      return Ast::Nop.new if eof?
+      return Ast::Program.new([Ast::Nop.new] of Ast::Node, @offset) if eof?
       _program
     end
 
