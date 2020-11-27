@@ -1,41 +1,71 @@
 require "./z"
 
 module Z
-  module LineEditor
-    def self.readline(prompt)
+  class LineEditor
+    @line : Int32 = 0
+    @col : Int32 = 0
+
+    HELP = <<-MSG
+    line-editor help
+    ---------------------------------
+    ^l          clear screen
+    home        move to beginning of line
+    delete      delete a character\n\n
+    MSG
+
+    def initialize(@prompt = "input>")
+    end
+
+    def readline
+      print @prompt, ' '
       loop do
         buf = [] of Char
         loop do
           c = STDIN.raw(&.read_char).not_nil!
-          buf << c
 
-          if c.control?
-            handle_control_char(c)
+          if !c.control?
+            # print c.inspect
+            print c
+            buf << c
+          else
             case c
             when '\u{7f}' # delete
-              print '\b', ' ', '\b'
+              unless buf.empty?
+                buf.pop
+                print '\b', ' ', '\b'
+              end
             when '\r' # enter
-              puts "\nline => #{buf.join}"
-              buf = [] of Char
+              puts
+              return buf.join.to_s
+            when '\e'
+              esc = [c] of Char
+              loop do
+                c = STDIN.raw(&.read_char).not_nil!
+                # puts " -> #{c.inspect}"
+                break if c == '~'
+                esc << c
+              end
+              case esc.join
+              when "\e[1" # home
+                print "\033[1G"
+                return
+              # when "\e[4" # end
+              #   print "\033[1G"
+              #   buf.each { |c| print c }
+              #   return
+              else
+                puts "\nesc => #{esc.map(&.inspect).join}"
+              end
+            when '\f' # ^l
+              buf.size.times {
+                print '\b', ' ', '\b'
+              }
             else
               puts "\nunknown => #{c.inspect}"
             end
-
-            next
           end
-
-          print c
-          case c
-          when '\r' # enter
-            puts "=> #{buf.map(&.inspect).join}"
-            buf = [] of Char
-          end
-          exit if c == 'q'
         end
       end
-    end
-
-    private def self.handle_control_char(c)
     end
   end
 end
