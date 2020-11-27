@@ -40,9 +40,9 @@ module Z
 
     loop do
       input = ed.readline
-      puts "=> #{input}"
-      exit if input == "q"
-      next
+      # puts "=> #{input}"
+      # exit if input == "q"
+      # next
 
       # puts "=> #{line}"
       case input

@@ -7,11 +7,11 @@ module Z
     @buf : Array(Char) = [] of Char
 
     HELP = <<-MSG
-    line-editor help
-    ---------------------------------
+    \nline-editor help
+    ----------------------------------------
     ^l          clear screen
-    home        move to beginning of line
-    delete      delete a character\n\n
+    ~~home      move to beginning of line~~
+    ~~delete    delete a character~~\n\n
     MSG
 
     def initialize(@prompt = "input>")
@@ -19,7 +19,7 @@ module Z
 
     def readline
       print @prompt, ' '
-      @buf = [] of Char
+      @buf.clear
       loop do
         c = STDIN.raw(&.read_char).not_nil!
 
@@ -56,6 +56,7 @@ module Z
             @buf.size.times {
               print '\b', ' ', '\b'
             }
+            @buf.clear
           else
             puts "\nunknown => #{c.inspect}"
           end
