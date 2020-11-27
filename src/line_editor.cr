@@ -5,13 +5,13 @@ module Z
     @line : Int32 = 0
     @col : Int32 = 0
     @buf : Array(Char) = [] of Char
+    @hist : Array(Array(Char)) = [] of Array(Char)
 
     HELP = <<-MSG
     \nline-editor help
     ----------------------------------------
-    ^l          clear screen
-    ~~home      move to beginning of line~~
-    ~~delete    delete a character~~\n\n
+    ^l        clear screen
+    home        ""\n\n
     MSG
 
     def initialize(@prompt = "input>")
@@ -23,7 +23,6 @@ module Z
       loop do
         c = STDIN.raw(&.read_char).not_nil!
 
-        # handle_control_char
         if !c.control?
           # print c.inspect
           print c
@@ -35,28 +34,19 @@ module Z
               @buf.pop
               print '\b', ' ', '\b'
             end
+          when '\u{3}' # ^c
+            puts "^C"
+            return
+          when '\u{4}' # ^d
+            puts "^D"
+            return
           when '\r' # enter
             puts
             return @buf.join.to_s
-          when '\e' # TODO: handle ANSI escapes
-            esc = [c] of Char
-            loop do
-              c = STDIN.raw(&.read_char).not_nil!
-              # puts " -> #{c.inspect}"
-              break if c == '~'
-              esc << c
-            end
-            # case esc.join
-            # when "\e[1" # home
-            # when "\e[4" # end
-            # else
-            #   puts "\nesc => #{esc.map(&.inspect).join}"
-            # end
+          when '\e'
+            handle_escape_char(c)
           when '\f' # ^l
-            @buf.size.times {
-              print '\b', ' ', '\b'
-            }
-            @buf.clear
+            clear_line
           else
             puts "\nunknown => #{c.inspect}"
           end
@@ -64,7 +54,28 @@ module Z
       end
     end
 
-    private def handle_control_char(c)
+    private def clear_line(clear_prompt = false)
+      if clear_prompt
+        (@buf.size + @prompt.size + 1).times { print '\b', ' ', '\b' }
+      else
+        @buf.size.times { print '\b', ' ', '\b' }
+      end
+      @buf.clear
+    end
+
+    private def handle_escape_char(c)
+      esc = ['\e'] of Char
+      loop do
+        c = STDIN.raw(&.read_char).not_nil!
+        esc << c
+        # puts "\n -> #{c.inspect}, esc: #{esc.map(&.inspect).join}\n"
+        case esc.join
+        when "\e[[11~"
+          return clear_line
+          # when "\e[[44~" # end
+        end
+        esc << c
+      end
     end
   end
 end
