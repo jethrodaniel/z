@@ -1,0 +1,13 @@
+set -x
+gcc -masm=intel \
+    -O0 \
+    -Wall \
+    -Wextra \
+    -fno-asynchronous-unwind-tables \
+    -fno-exceptions \
+    -fno-ident \
+    -finhibit-size-directive \
+    -Wl,-z,noexecstack \
+    $@
+    #-o /dev/stdout \
+    #-S \

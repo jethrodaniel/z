@@ -1,6 +1,11 @@
 #include <stdio.h>
 
-void f(int a, int b)
+void f()
+{
+  printf("yo!\n");
+}
+
+void g(int a, int b)
 {
   printf("%i\n", a + b);
 }

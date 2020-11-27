@@ -14,11 +14,13 @@ module Z
     home        ""\n\n
     MSG
 
+    EXIT = '\u{11}'
+
     def initialize(@prompt = "input>")
     end
 
     def readline
-      print @prompt, ' '
+      print "#{@prompt} "
       @buf.clear
       loop do
         c = STDIN.raw(&.read_char).not_nil!
@@ -42,11 +44,15 @@ module Z
             return
           when '\r' # enter
             puts
+            @hist << @buf.dup
             return @buf.join.to_s
           when '\e'
-            handle_escape_char(c)
+            handle_escape_char
+            next
           when '\f' # ^l
             clear_line
+          when '\u{11}' # ^q
+            return EXIT
           else
             puts "\nunknown => #{c.inspect}"
           end
@@ -63,18 +69,30 @@ module Z
       @buf.clear
     end
 
-    private def handle_escape_char(c)
+    private def handle_escape_char
       esc = ['\e'] of Char
-      loop do
+      4.times do
         c = STDIN.raw(&.read_char).not_nil!
         esc << c
         # puts "\n -> #{c.inspect}, esc: #{esc.map(&.inspect).join}\n"
         case esc.join
-        when "\e[[11~"
+        when "\e[1~" # home
           return clear_line
-          # when "\e[[44~" # end
+        when "\e[A" # up
+          clear_line
+          # p @hist
+          @hist.last.each { |c| print c }
+          return
+        when "\e[B" # down
+          puts "down"
+          return
+        when "\e[C" # right
+          puts "right"
+          return
+        when "\e[D" # left
+          puts "left"
+          return
         end
-        esc << c
       end
     end
   end

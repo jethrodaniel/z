@@ -35,25 +35,29 @@ module Z
   end
 
   private def self.repl(opts)
-    puts "z compiler, v#{Z::VERSION}. `q` to quit.\n\n"
+    puts "z compiler, v#{Z::VERSION}. `^q` to quit, `?` for help.\n\n"
     ed = LineEditor.new("(z)")
 
     loop do
-      input = ed.readline
-      # puts "=> #{input}"
-      # exit if input == "q"
+      print "(z) "
+      # input = ed.readline
+
+      # # puts "=> #{line}"
+      # case input
+      # when LineEditor::EXIT
+      #   puts
+      #   exit
+      # when "?"
+      #   puts LineEditor::HELP
+      #   next
+      # else
+      #   puts "=> #{input.inspect}"
+      # end
       # next
 
-      # puts "=> #{line}"
-      case input
-      when nil, ""
-        next
-      when "q"
-        exit
-      when "?"
-        puts LineEditor::HELP
-        next
-      end
+      input = gets.not_nil!.strip
+      p input
+      exit if input == "q"
 
       begin
         if opts[:lex]
