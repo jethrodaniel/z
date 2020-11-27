@@ -57,7 +57,10 @@ module Z
           run(input)
         end
       rescue e
-        puts "#{e.class} #{e.message}"
+        puts "[#{e.class}] #{e.message}"
+        e.backtrace.each_with_index(1) do |line, index|
+          puts "#{index.to_s.rjust(5, ' ')}\t#{line}"
+        end
       end
     end
   end
