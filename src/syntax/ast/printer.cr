@@ -26,12 +26,12 @@ module Z
         indent
 
         node.statements.each_with_index do |stmt, i|
-          stmt.accept(self, io)
+          visit(stmt, io)
           io.puts unless i == node.statements.size - 1
         end
 
         dedent
-        out io, ")"
+        io.print ")"
       end
 
       visit Block do
@@ -39,19 +39,19 @@ module Z
         indent
 
         node.statements.each_with_index do |stmt, i|
-          stmt.accept(self, io)
+          visit(stmt, io)
           io.puts unless i == node.statements.size - 1
         end
 
         dedent
-        out io, ")"
+        io.print ")"
       end
 
       visit Stmt do
         out io, "s(:#{name(node)},\n"
         indent
 
-        node.expr.accept(self, io)
+        visit(node.expr, io)
 
         dedent
         io.print ")"
@@ -72,7 +72,7 @@ module Z
         out io, "s(:#{name(node)},\n"
         indent
 
-        node.value.accept(self, io)
+        visit(node.value, io)
 
         dedent
         io.print ")"
@@ -97,13 +97,13 @@ module Z
       visit Assignment do
         out io, "s(:#{name(node)},\n"
         indent
-        node.left.accept(self, io)
+        visit(node.left, io)
 
         dedent
         io.puts ","
         indent
 
-        node.right.accept(self, io)
+        visit(node.right, io)
         dedent
       end
 
@@ -111,13 +111,13 @@ module Z
         out io, "s(:#{name(node)},\n"
         indent
         out io, "#{node.type},\n"
-        node.left.accept(self, io)
+        visit(node.left, io)
 
         dedent
         io.puts ","
         indent
 
-        node.right.accept(self, io)
+        visit(node.right, io)
         dedent
       end
 

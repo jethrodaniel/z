@@ -115,14 +115,18 @@ module Z
     end
 
     visit Ast::FnCall do
+      node.args.each do |arg|
+        visit(arg, io)
+      end
       io.puts <<-ASM
         call #{node.name}
       ASM
     end
 
+    # TOOD: pass first 6 args via x86_64 calling convention
     visit Ast::FnArg do
-      io.puts <<-ASM
-      ASM
+      # io.puts <<-ASM
+      # ASM
     end
 
     visit Ast::Stmt do

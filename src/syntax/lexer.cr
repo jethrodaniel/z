@@ -31,7 +31,16 @@ module Z
         when '-'
           return add_token T::MIN, c.to_s
         when '/'
-          return add_token T::DIV, c.to_s
+          if @reader.has_next? && @reader.peek_next_char == '/'
+            next_char
+            while @reader.has_next?
+              break if @reader.peek_next_char == '\n'
+              next_char
+            end
+            break unless @reader.has_next?
+          else
+            return add_token T::DIV, c.to_s
+          end
         when '*'
           return add_token T::MUL, c.to_s
         when '('
@@ -90,6 +99,7 @@ module Z
         else
           error "unexpected character `#{c}`"
         end
+
         if @reader.has_next?
           next_char
         else
