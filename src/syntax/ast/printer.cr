@@ -58,6 +58,11 @@ module Z
       end
 
       visit FnCall do
+        if node.args.empty?
+          out io, "s(:#{name(node)}, #{node.name})"
+          return
+        end
+
         out io, "s(:#{name(node)}, #{node.name},\n"
         indent
         node.args.each_with_index do |arg, i|
