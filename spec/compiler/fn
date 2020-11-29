@@ -22,7 +22,18 @@ main:
   push rbp
   mov rbp, rsp
   sub rsp, 16
+  mov rax, [rbp-8]
+  push rax
+  pop rdi
   call f
+  mov rax, [rbp-8]
+  push rax
+  pop rdi
+  mov rax, [rbp-16]
+  push rax
+  pop rsi
+  push 42
+  pop rdx
   call f
   pop rax
   mov rsp, rbp

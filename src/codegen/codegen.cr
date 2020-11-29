@@ -115,18 +115,25 @@ module Z
     end
 
     visit Ast::FnCall do
-      node.args.each do |arg|
+      regs = {
+        1 => :rdi,
+        2 => :rsi,
+        3 => :rdx,
+        4 => :rcx,
+        5 => :r8,
+        6 => :r9,
+      }
+      node.args.each_with_index(1) do |arg, index|
         visit(arg, io)
+        io.puts "  pop #{regs[index]}"
       end
       io.puts <<-ASM
         call #{node.name}
       ASM
     end
 
-    # TOOD: pass first 6 args via x86_64 calling convention
     visit Ast::FnArg do
-      # io.puts <<-ASM
-      # ASM
+      visit(node.value, io)
     end
 
     visit Ast::Stmt do
