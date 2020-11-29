@@ -124,6 +124,11 @@ module Z
         6 => :r9,
       }
       node.args.each_with_index(1) do |arg, index|
+        # todo: pass remaining args on stack, pop after call
+        if index > 6
+          raise "More than 6 args to a fn call isn't supported " \
+                "yet (`#{node.name}`)\n"
+        end
         visit(arg, io)
         io.puts "  pop #{regs[index]}"
       end
