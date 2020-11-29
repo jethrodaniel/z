@@ -132,6 +132,9 @@ module Z
         visit(arg, io)
         io.puts "  pop #{regs[index]}"
       end
+      # todo: align stack to 16 bytes
+      # and esp 0xfffffff0
+      # https://medium.com/@_neerajpal/explained-difference-between-x86-x64-disassembly-49e9678e1ae2
       io.puts <<-ASM
         call #{node.name}
       ASM
