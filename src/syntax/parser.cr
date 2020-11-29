@@ -6,7 +6,8 @@ require "./ast/node"
 # Simple calculator grammar for now
 #
 # ```
-# program    = stmt*
+# program    = fn*
+# fn         = ident "(" (indent ",")* ")" "{" stmt* "}"
 # stmt       = expr ";"
 #            | "return" expr ";"
 #            | "{" stmt* "}"
@@ -55,9 +56,30 @@ module Z
     private def _program
       stmts = [] of Ast::Node
       until eof?
-        stmts << _stmt
+        stmts << _fn
       end
       Ast::Program.new(stmts, @offset)
+    end
+
+    private def _fn
+      name = accept T::IDENT
+      error "expected a fn name" unless name
+      error "missing `(` after fn name" unless accept T::LEFT_PAREN
+
+      params = [] of Ast::FnParam
+      while param = accept T::IDENT
+        params << Ast::FnParam.new(param.value)
+        if accept T::COMMA
+          next
+        else
+          error "expected a `,` and another fn param, or a `)`"
+        end
+      end
+      error "missing `)` after fn params" unless accept T::RIGHT_PAREN
+      error "missing `{` after fn `#{name.value}`" unless accept T::LEFT_BRACE
+      error "missing `}` after fn `#{name.value}`" unless accept T::RIGHT_BRACE
+      stmts = [] of Ast::Node
+      Ast::Fn.new(name.value, params, stmts)
     end
 
     private def _stmt

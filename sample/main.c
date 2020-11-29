@@ -2,7 +2,6 @@
 
 f(); // it'd be nice to drop the parens for no/default args, like HolyC
 
-
 a = b = 5;
 b = b + 1;
 

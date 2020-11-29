@@ -57,6 +57,26 @@ module Z
         io.print ")"
       end
 
+      visit Fn do
+        if node.params.empty?
+          out io, "s(:#{name(node)}, #{node.name})"
+          return
+        end
+
+        out io, "s(:#{name(node)}, #{node.name},\n"
+        indent
+        node.params.each_with_index do |arg, i|
+          visit(arg, io)
+          io.puts unless i == node.params.size - 1
+        end
+        dedent
+        io.print ")"
+      end
+
+      visit FnParam do
+        out io, "s(:#{name(node)}, #{node.name})"
+      end
+
       visit FnCall do
         if node.args.empty?
           out io, "s(:#{name(node)}, #{node.name})"

@@ -107,6 +107,10 @@ module Z
       ASM
     end
 
+    visit Ast::Fn, Ast::FnParam do
+      raise "#{name(node)} not supported yet"
+    end
+
     visit Ast::Block do
       node.statements.each do |s|
         visit(s, io)

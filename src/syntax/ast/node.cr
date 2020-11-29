@@ -49,6 +49,15 @@ module Z
       statements : Array(Node),
       offset : Int32
 
+    ast_node Fn,
+      name : String,
+      params : Array(FnParam),
+      statements : Array(Node)
+
+    ast_node FnParam,
+      name : String
+    # : type
+
     ast_node Block,
       statements : Array(Node) # Stmt
 

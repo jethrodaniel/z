@@ -2,11 +2,6 @@ require "./z"
 
 module Z
   class LineEditor
-    @line : Int32 = 0
-    @col : Int32 = 0
-    @buf : Array(Char) = [] of Char
-    @hist : Array(Array(Char)) = [] of Array(Char)
-
     HELP = <<-MSG
     \nline-editor help
     ----------------------------------------
