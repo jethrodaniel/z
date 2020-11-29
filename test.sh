@@ -1,3 +1,4 @@
+set -x
 gcc -S sample/foo.c 
 gcc -c foo.s 
 ./bin/z -c -f sample/main.c  > z.s
