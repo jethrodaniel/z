@@ -8,3 +8,5 @@ crystal: 0.35.1
 targets:
   z:
     main: exe/z.cr
+  input:
+    main: exe/input.cr
