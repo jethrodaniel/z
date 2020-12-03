@@ -36,10 +36,12 @@ module Z
 
   private def self.repl(opts)
     puts "z compiler, v#{Z::VERSION}. `q` to quit, `?` for help.\n\n"
-    ed = LineEditor.new("(z) ")
+    # ed = LineEditor.new("(z) ")
+    prompt = "(z) "
 
     loop do
-      input = ed.readline
+      print prompt
+      input = gets
 
       case input
       when nil, "q"

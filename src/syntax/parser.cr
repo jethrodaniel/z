@@ -71,14 +71,25 @@ module Z
         params << Ast::FnParam.new(param.value)
         if accept T::COMMA
           next
+        elsif accept T::RIGHT_PAREN
+          break
         else
           error "expected a `,` and another fn param, or a `)`"
         end
       end
-      error "missing `)` after fn params" unless accept T::RIGHT_PAREN
+      if params.empty?
+        error "missing `)` after fn params" unless accept T::RIGHT_PAREN
+      end
       error "missing `{` after fn `#{name.value}`" unless accept T::LEFT_BRACE
-      error "missing `}` after fn `#{name.value}`" unless accept T::RIGHT_BRACE
+
       stmts = [] of Ast::Node
+      loop do
+        break if accept T::RIGHT_BRACE
+        stmt = _stmt
+        stmts << stmt if stmt
+      end
+
+      # error "missing `}` after fn `#{name.value}`" unless accept T::RIGHT_BRACE
       Ast::Fn.new(name.value, params, stmts)
     end
 

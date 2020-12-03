@@ -58,17 +58,24 @@ module Z
       end
 
       visit Fn do
-        if node.params.empty?
-          out io, "s(:#{name(node)}, #{node.name})"
-          return
-        end
+        # if node.params.empty?
+        #   out io, "s(:#{name(node)}, #{node.name})"
+        #   return
+        # end
 
         out io, "s(:#{name(node)}, #{node.name},\n"
         indent
+
         node.params.each_with_index do |arg, i|
           visit(arg, io)
-          io.puts unless i == node.params.size - 1
+          io.puts
         end
+
+        node.statements.each_with_index do |stmt, i|
+          visit(stmt, io)
+          io.puts unless i == node.statements.size - 1
+        end
+
         dedent
         io.print ")"
       end

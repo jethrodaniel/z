@@ -1,14 +1,11 @@
-// functions called here are assumed to be defined elsewhere
+f(x) {
+  a = b = 5;
+  t = b + 1;
+}
 
-f(); // it'd be nice to drop the parens for no/default args, like HolyC
-
-a = b = 5;
-b = b + 1;
-
-g(24, 18); // 42
-g(1, 2);   // 3
-g(3, 4);   // 7
-g(a, b);   // 11
-
-f();
-f();
+fib(n) {
+  //if (n <= 1)
+  //  return n;
+  //fib1(n-1) + fib2(n-2); 
+  fib(n);
+}
