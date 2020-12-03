@@ -6,6 +6,15 @@ f(x) {
 fib(n) {
   //if (n <= 1)
   //  return n;
-  //fib1(n-1) + fib2(n-2); 
-  fib(n);
+  fib(n-1) + fib(n-2); 
+  f();
+}
+
+f() {}
+f(x) {}
+f(x, y) {}
+f(x, y, z) {
+  f(1);
+  f(1, 2);
+  f(1, 2, 3);
 }

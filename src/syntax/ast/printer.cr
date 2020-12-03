@@ -58,22 +58,22 @@ module Z
       end
 
       visit Fn do
-        # if node.params.empty?
-        #   out io, "s(:#{name(node)}, #{node.name})"
-        #   return
-        # end
+        if node.params.empty? && node.statements.empty?
+          out io, "s(:#{name(node)}, #{node.name})"
+          return
+        end
 
         out io, "s(:#{name(node)}, #{node.name},\n"
         indent
 
         node.params.each_with_index do |arg, i|
           visit(arg, io)
-          io.puts
+          io.puts "," if i < node.params.size - 1 || node.statements.size > 0
         end
 
         node.statements.each_with_index do |stmt, i|
           visit(stmt, io)
-          io.puts unless i == node.statements.size - 1
+          io.puts "," unless i == node.statements.size - 1
         end
 
         dedent
@@ -140,9 +140,8 @@ module Z
       end
 
       visit BinOp do
-        out io, "s(:#{name(node)},\n"
+        out io, "s(:#{name(node)}, #{node.type},\n"
         indent
-        out io, "#{node.type},\n"
         visit(node.left, io)
 
         dedent

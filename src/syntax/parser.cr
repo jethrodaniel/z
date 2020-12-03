@@ -212,15 +212,10 @@ module Z
           loop do
             if accept T::RIGHT_PAREN
               return Ast::FnCall.new(ident.value, params)
-            elsif p = accept T::IDENT
-              @locals[prev.value] ||= (@offset += 8)
-              p = Ast::Ident.new(prev.value, @locals[prev.value])
-              params << Ast::FnArg.new(p)
-            elsif p = accept T::INT
-              p = Ast::NumberLiteral.new(prev.value)
-              params << Ast::FnArg.new(p)
             elsif p = accept T::COMMA
               # skip
+            elsif e = _expr
+              params << Ast::FnArg.new(e)
             else
               error "expected a closing parenthesis for call to `#{ident.value}()`"
             end
