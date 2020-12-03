@@ -22,7 +22,7 @@ module Z
       end
 
       visit Program do
-        out io, "s(:#{name(node)},\n"
+        out io, "(#{name(node)},\n"
         indent
 
         node.statements.each_with_index do |stmt, i|
@@ -35,7 +35,7 @@ module Z
       end
 
       visit Block do
-        out io, "s(:#{name(node)},\n"
+        out io, "(#{name(node)},\n"
         indent
 
         node.statements.each_with_index do |stmt, i|
@@ -48,7 +48,7 @@ module Z
       end
 
       visit Stmt do
-        out io, "s(:#{name(node)},\n"
+        out io, "(#{name(node)},\n"
         indent
 
         visit(node.expr, io)
@@ -59,11 +59,11 @@ module Z
 
       visit Fn do
         if node.params.empty? && node.statements.empty?
-          out io, "s(:#{name(node)}, #{node.name})"
+          out io, "(#{name(node)}, #{node.name})"
           return
         end
 
-        out io, "s(:#{name(node)}, #{node.name},\n"
+        out io, "(#{name(node)}, #{node.name},\n"
         indent
 
         node.params.each_with_index do |arg, i|
@@ -81,16 +81,16 @@ module Z
       end
 
       visit FnParam do
-        out io, "s(:#{name(node)}, #{node.name})"
+        out io, "(#{name(node)}, #{node.name})"
       end
 
       visit FnCall do
         if node.args.empty?
-          out io, "s(:#{name(node)}, #{node.name})"
+          out io, "(#{name(node)}, #{node.name})"
           return
         end
 
-        out io, "s(:#{name(node)}, #{node.name},\n"
+        out io, "(#{name(node)}, #{node.name},\n"
         indent
         node.args.each_with_index do |arg, i|
           visit(arg, io)
@@ -101,7 +101,7 @@ module Z
       end
 
       visit Expr, Return do
-        out io, "s(:#{name(node)},\n"
+        out io, "(#{name(node)},\n"
         indent
 
         visit(node.value, io)
@@ -111,7 +111,7 @@ module Z
       end
 
       visit FnArg do
-        out io, "s(:#{name(node)},\n"
+        out io, "(#{name(node)},\n"
         indent
         visit(node.value, io)
         dedent
@@ -119,15 +119,15 @@ module Z
       end
 
       visit Lvar, Ident do
-        out io, "s(:#{name(node)}, #{node.value}@#{node.offset})"
+        out io, "(#{name(node)}, #{node.value}@#{node.offset})"
       end
 
       visit NumberLiteral do
-        out io, "s(:#{name(node)}, #{node.value})"
+        out io, "(#{name(node)}, #{node.value})"
       end
 
       visit Assignment do
-        out io, "s(:#{name(node)},\n"
+        out io, "(#{name(node)},\n"
         indent
         visit(node.left, io)
 
@@ -140,7 +140,7 @@ module Z
       end
 
       visit BinOp do
-        out io, "s(:#{name(node)}, #{node.type},\n"
+        out io, "(#{name(node)}, #{node.type},\n"
         indent
         visit(node.left, io)
 
@@ -153,7 +153,7 @@ module Z
       end
 
       visit Nop do
-        out io, "s(:#{name(node)})"
+        out io, "(#{name(node)})"
       end
     end
   end
