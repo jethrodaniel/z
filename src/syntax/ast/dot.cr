@@ -51,13 +51,25 @@ module Z
         io.puts "}"
       end
 
-      visit Block, FnArg, FnParam do
+      visit Block, FnArg do
         raise "#{name(node)} not supported yet"
+      end
+
+      visit FnParam do
+        io.puts "  #{id}; // #{name(node)}"
+        io.puts "  #{id} [label=\"#{name(node)}, #{node.name}\"];"
       end
 
       visit Fn do
         io.puts "  statements -> #{node.object_id}; // #{name(node)}"
         io.puts "  #{id} [label=\"#{name(node)}, #{node.name}\"];"
+
+        io.puts "  \"#{id}_params\" [label=\"params\"];"
+        io.puts "  #{id} -> \"#{id}_params\";"
+        node.params.each do |param|
+          io.print "  \"#{id}_params\" ->"
+          visit(param, io)
+        end
 
         io.puts "  \"#{id}_statements\" [label=\"statements\"];"
         io.puts "  #{id} -> \"#{id}_statements\";"
