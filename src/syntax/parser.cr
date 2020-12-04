@@ -36,6 +36,7 @@ module Z
     @locals : Hash(String, Int32) = {} of String => Int32
     @offset : Int32 = 0
     @pos : Int32 = 0
+    @fn_left_brace_count : Int32 = 0
 
     def initialize(@code : String)
       @lex = Lexer.new(@code)
@@ -83,8 +84,9 @@ module Z
       error "missing `{` after fn `#{name.value}`" unless accept T::LEFT_BRACE
 
       stmts = [] of Ast::Node
+      @fn_left_brace_count = 0
       loop do
-        break if accept T::RIGHT_BRACE
+        break if @fn_left_brace_count.zero? && accept T::RIGHT_BRACE
         stmt = _stmt
         stmts << stmt if stmt
       end
@@ -97,10 +99,18 @@ module Z
       if accept T::RETURN
         n = Ast::Stmt.new(Ast::Return.new(_expr))
       elsif accept T::LEFT_BRACE
+        @fn_left_brace_count += 1
         stmts = [] of Ast::Node
-        while stmt = _stmt
-          stmts << stmt
-          return Ast::Block.new(stmts) if accept T::RIGHT_BRACE
+        loop do
+          if accept T::RIGHT_BRACE
+            @fn_left_brace_count -= 1
+            return Ast::Block.new(stmts)
+          end
+          if stmt = _stmt
+            stmts << stmt
+          else
+            break
+          end
         end
         return Ast::Block.new(stmts)
       else

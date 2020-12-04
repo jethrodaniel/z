@@ -52,7 +52,12 @@ module Z
       end
 
       visit Block do
-        raise "#{name(node)} not supported yet"
+        io.puts "  #{id}; // #{name(node)}"
+        io.puts "  #{id} [label=\"#{name(node)}\"];"
+        node.statements.each_with_index(1) do |stmt, i|
+          io.print "  #{id} ->"
+          visit(stmt, io)
+        end
       end
 
       visit FnParam do

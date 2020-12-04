@@ -35,6 +35,11 @@ module Z
       end
 
       visit Block do
+        if node.statements.empty?
+          out io, "(#{name(node)})"
+          return
+        end
+
         out io, "(#{name(node)},\n"
         indent
 
