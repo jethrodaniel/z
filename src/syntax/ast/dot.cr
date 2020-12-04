@@ -131,7 +131,9 @@ module Z
       end
 
       visit Nop do
-        # io.puts " -> #{name(node)}"
+        io.puts "  statements -> #{id}; // #{name(node)}"
+        io.puts "  #{id}; // #{name(node)}"
+        io.puts "  #{id} [label=\"#{name(node)}\"];"
       end
     end
   end
