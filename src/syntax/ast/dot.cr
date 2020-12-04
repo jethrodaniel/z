@@ -51,7 +51,7 @@ module Z
         io.puts "}"
       end
 
-      visit Block, FnArg do
+      visit Block do
         raise "#{name(node)} not supported yet"
       end
 
@@ -99,7 +99,7 @@ module Z
         visit(node.value, io)
       end
 
-      visit Expr do
+      visit Expr, FnArg do
         visit(node.value, io)
       end
 
