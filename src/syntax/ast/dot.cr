@@ -25,6 +25,11 @@ require "./visitor"
 
 module Z
   # Print AST in graphviz's `dot` format
+  #
+  # ```
+  # makedot() { make ; z -d "$1" |tee ast.gv && dot -Tpng ast.gv -o ast.png && firefox ast.png; }
+  # makedot 'f(){a=b=5;t=b+5;foo();return t+1;}b(x){}'
+  # ```
   module Ast
     class Dot < Visitor
       macro id
@@ -41,56 +46,76 @@ module Z
         io.puts "  #{name(node)} -> statements;"
 
         node.statements.each_with_index(1) do |stmt, i|
-          io.puts "  statements -> #{stmt.object_id};"
-
-          stmt.accept(self, io)
-
-          io.puts unless i == node.statements.size - 1
+          visit(stmt, io)
         end
         io.puts "}"
       end
 
-      visit Block, FnArg, Fn, FnParam do
+      visit Block, FnArg, FnParam do
         raise "#{name(node)} not supported yet"
       end
 
-      visit Stmt do
-        node.expr.accept(self, io)
+      visit Fn do
+        io.puts "  statements -> #{node.object_id}; // #{name(node)}"
+        io.puts "  #{id} [label=\"#{name(node)}, #{node.name}\"];"
+
+        io.puts "  \"#{id}_statements\" [label=\"statements\"];"
+        io.puts "  #{id} -> \"#{id}_statements\";"
+        node.statements.each do |stmt|
+          io.print "  \"#{id}_statements\" ->"
+          visit(stmt, io)
+        end
       end
 
       visit FnCall do
-        io.puts "s(:#{name(node)}, #{node.name})"
+        io.puts "  #{id}; // #{name(node)}"
+        io.puts "  #{id} [label=\"#{name(node)}, #{node.name}\"];"
+        node.args.each do |arg|
+          io.print "  #{id} ->"
+          visit(arg, io)
+        end
       end
 
-      visit Expr, Return do
-        node.value.accept(self, io)
+      visit Stmt do
+        visit(node.expr, io)
+      end
+
+      visit Return do
+        io.puts "  #{id}; // #{name(node)}"
+        io.puts "  #{id} [label=\"#{name(node)}\"];"
+        io.print "  #{id} ->"
+        visit(node.value, io)
+      end
+
+      visit Expr do
+        visit(node.value, io)
       end
 
       visit Lvar, Ident, NumberLiteral do
-        io.puts "  #{id};"
+        io.puts "  #{id}; // #{name(node)}"
         io.puts "  #{id} [label=\"#{name(node)}, #{node.value}\"];"
       end
 
       visit Assignment do
-        io.puts "  #{id};"
+        io.puts "  #{id}; // #{name(node)}"
         io.puts "  #{id} [label=\"#{name(node)}, =\"];"
 
         io.print "  #{id} ->"
-        node.left.accept(self, io)
+        visit(node.left, io)
 
         io.print "  #{id} ->"
-        node.right.accept(self, io)
+        visit(node.right, io)
       end
 
       visit BinOp do
-        io.puts "  #{id};"
+        io.puts "  #{id}; // #{name(node)}"
         io.puts "  #{id} [label=\"#{name(node)}, #{node.type}\"];"
 
         io.print "  #{id} ->"
-        node.left.accept(self, io)
+        visit(node.left, io)
 
         io.print "  #{id} ->"
-        node.right.accept(self, io)
+        visit(node.right, io)
       end
 
       visit Nop do
