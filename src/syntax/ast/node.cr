@@ -46,16 +46,17 @@ module Z
     end
 
     ast_node Program,
-      statements : Array(Node),
-      offset : Int32
+      functions : Array(Node)
 
     ast_node Fn,
       name : String,
       params : Array(FnParam),
-      statements : Array(Node)
+      statements : Array(Node),
+      offset : Int32
 
     ast_node FnParam,
-      name : String
+      name : String,
+      offset : Int32
     # : type
 
     ast_node Block,

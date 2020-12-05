@@ -86,29 +86,63 @@ module Z
   #    instruction will find and remove the appropriate return address from
   #    the stack.
   #
+  # ```
+  # zc() { shards build; z -c "$1" |tee a.s && gcc a.s && ./a.out ; echo $?; }
+  # zc 'main(){f();}f(){42;}'
+  # ```
   class CodeGen < Ast::Visitor
+    CALL_REGS = {
+      1 => :rdi,
+      2 => :rsi,
+      3 => :rdx,
+      4 => :rcx,
+      5 => :r8,
+      6 => :r9,
+    }
+
     visit Ast::Program do
       io.puts <<-ASM
         .intel_syntax noprefix
         .globl main
-        main:
+        ASM
+      node.functions.each do |f|
+        visit(f, io)
+      end
+    end
+
+    visit Ast::FnParam do
+      raise "fn params are handled by Ast::Fn, you shouldn't see this"
+    end
+
+    visit Ast::Fn do
+      io.puts <<-ASM
+        #{node.name}:
           push rbp
           mov rbp, rsp
           sub rsp, #{node.offset}
         ASM
+
+      node.params.each_with_index(1) do |p, i|
+        io.puts <<-ASM
+          mov [rbp-#{node.offset}], #{CALL_REGS[i]}
+        ASM
+      end
+
       node.statements.each do |s|
         visit(s, io)
       end
+
+      if node.statements.empty?
+        io.puts "  push 0" # nop
+      end
+      unless node.name == "main"
+        io.puts "  pop rax"
+      end
       io.puts <<-ASM
-        pop rax
         mov rsp, rbp
         pop rbp
         ret
       ASM
-    end
-
-    visit Ast::Fn, Ast::FnParam do
-      raise "#{name(node)} not supported yet"
     end
 
     visit Ast::Block do
@@ -119,14 +153,6 @@ module Z
     end
 
     visit Ast::FnCall do
-      regs = {
-        1 => :rdi,
-        2 => :rsi,
-        3 => :rdx,
-        4 => :rcx,
-        5 => :r8,
-        6 => :r9,
-      }
       node.args.each_with_index(1) do |arg, index|
         # todo: pass remaining args on stack, pop after call
         if index > 6
@@ -134,13 +160,16 @@ module Z
                 "yet (`#{node.name}`)\n"
         end
         visit(arg, io)
-        io.puts "  pop #{regs[index]}"
+        io.puts "  pop #{CALL_REGS[index]}"
       end
       # todo: align stack to 16 bytes
+      # ```
       # and esp 0xfffffff0
+      # ```
       # https://medium.com/@_neerajpal/explained-difference-between-x86-x64-disassembly-49e9678e1ae2
       io.puts <<-ASM
         call #{node.name}
+        push rax
       ASM
     end
 
@@ -159,7 +188,6 @@ module Z
     visit Ast::Return do
       node.value.accept(self, io)
       io.puts <<-ASM
-        pop rax
         mov rsp, rbp
         pop rbp
         ret

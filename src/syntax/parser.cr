@@ -33,10 +33,11 @@ module Z
 
     alias T = Token::Type
     @tokens : Array(Token) = [] of Token
-    @locals : Hash(String, Int32) = {} of String => Int32
-    @offset : Int32 = 0
     @pos : Int32 = 0
     @fn_left_brace_count : Int32 = 0
+
+    @locals : Hash(String, Int32) = {} of String => Int32
+    @offset : Int32 = 0
 
     def initialize(@code : String)
       @lex = Lexer.new(@code)
@@ -50,26 +51,29 @@ module Z
     ##
 
     private def _root
-      return Ast::Program.new([Ast::Nop.new] of Ast::Node, @offset) if eof?
+      return Ast::Program.new([Ast::Nop.new] of Ast::Node) if eof?
       _program
     end
 
     private def _program
-      stmts = [] of Ast::Node
+      functions = [] of Ast::Node
       until eof?
-        stmts << _fn
+        functions << _fn
       end
-      Ast::Program.new(stmts, @offset)
+      Ast::Program.new(functions)
     end
 
     private def _fn
+      @offset = 0
+      @locals.clear
       name = accept T::IDENT
       error "expected a fn name" unless name
       error "missing `(` after fn name" unless accept T::LEFT_PAREN
 
       params = [] of Ast::FnParam
       while param = accept T::IDENT
-        params << Ast::FnParam.new(param.value)
+        @locals[param.value] ||= (@offset += 8)
+        params << Ast::FnParam.new(param.value, @locals[param.value])
         if accept T::COMMA
           next
         elsif accept T::RIGHT_PAREN
@@ -92,7 +96,7 @@ module Z
       end
 
       # error "missing `}` after fn `#{name.value}`" unless accept T::RIGHT_BRACE
-      Ast::Fn.new(name.value, params, stmts)
+      Ast::Fn.new(name.value, params, stmts, @offset)
     end
 
     private def _stmt

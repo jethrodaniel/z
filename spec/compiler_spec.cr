@@ -1,35 +1,22 @@
 require "./spec_helper"
 
-# it_compiles "1 == 1;", 1
-# it_compiles "1 != 1;", 0
-# it_compiles "1 <= 1;", 1
-# it_compiles "1 < 1;", 0
-# it_compiles "1 < 2;", 1
+def it_compiles(name, code, expected)
+  describe Z::Compiler do
+    it name do
+      output = IO::Memory.new
+      compiled = Z::Compiler.new(code).compile
 
-def for_each_spec
-Dir
-  .glob("./spec/compiler/**/*")
-  .select! { |f| File.file?(f) }
-  .group_by { |f| File.basename(f).sub(/\..*$/, "") }
-  .each do |name, files|
-    yield name, files
+      begin
+        expected.should eq(compiled)
+      rescue error
+        fail diff(expected, compiled)
+      end
+    end
   end
 end
-#
-#    it file do
-#      # asm = File.read(file).split("-" * 80).map(&.strip)
-#
-#
-#      result = Z::Compiler.new(source).compile
-#      begin
-#        result.should eq(_asm)
-#      rescue error
-#        fail diff(_asm, result)
-#      end
-#
-#      f = File.tempfile("z.S") { |f| f.print result }
-#      res = `gcc #{f.path} && ./a.out; echo $?`.strip
-#      puts "=> #{res}"
-#      res.should eq(exit_code)
-#    end
-#  end
+
+for_each_spec do |name, files|
+  src = files.find { |f| f.ends_with? ".c" }.not_nil!
+  ast = files.find { |f| f.ends_with? ".s" }.not_nil!
+  it_compiles name, File.read(src).chomp, File.read(ast).chomp
+end
