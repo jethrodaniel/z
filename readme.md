@@ -14,15 +14,13 @@ cd z && rake
 ## usage
 
 ```
-$ ./bin/z '2*10-4/4-(3*5)-(5+4)+45-20+2+10*2;'
-42
-$ ./bin/z -f sample/math.z 
-42
-$ ./bin/z -h
 z compiler.
+Usage:
 
-Usage: z [...options] -f progfile
-Usage: z [...options] [--] 'program'
+  z [...options]
+  z [...options] -f progfile
+  z [...options] [--] 'program'
+
     -v, --version                    Show version
     -h, --help                       Show help
     -d, --dot                        Output graphviz
@@ -30,6 +28,18 @@ Usage: z [...options] [--] 'program'
     -p, --parse                      Run parser
     -c, --compile                    Run compiler
     -f FILE, --file FILE             Use FILE as input
+```
+
+## example
+
+```
+cd sample && make
+gcc -c io.c 
+z -c -f main.c > z.s
+gcc -c z.s
+gcc *.o
+./a.out; exit 0
+hi!
 ```
 
 ## prerequisites
@@ -58,6 +68,9 @@ Thanks, y'all.
 - https://github.com/rui314/chibicc
 - unix history repo
   - https://github.com/dspinellis/unix-history-repo/blob/Research-V2-Snapshot-Development/c/nc0/c00.c
+- https://github.com/eatonphil/ulisp
+- [writing elf output](https://github.com/lazear/lass/blob/66771edd7fa883e0620b3e00777320e6577f7f33/assembler.c#L53)
+  - https://github.com/crystal-lang/crystal/blob/1f38312aa4ac9e3aa0ab5c1a900f5801845845bd/src/exception/call_stack/elf.cr
 
 [9cc-book]: https://www.sigbus.info/compilerbook
 [9cc]: https://github.com/rui314/chibicc

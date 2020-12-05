@@ -7,7 +7,7 @@ FLAGS = -masm=intel \
     -fno-ident \
     -finhibit-size-directive \
     -Wl,-z,noexecstack
-CC=gcc $(FLAGS)
+CC=gcc#$(FLAGS)
  
 Z=z
 run: build
