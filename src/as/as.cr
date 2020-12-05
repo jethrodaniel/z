@@ -6,8 +6,8 @@ module Z
 end
 
 enum Arch
-  A_x86_64
-  A_aarch64
+  X86_64
+  Aarch64
 end
 
 class Target
@@ -15,23 +15,40 @@ class Target
   end
 
   def to_s(io)
-    io.print "linux-#{@arch.to_s.sub("A_", "")}"
+    io << "linux-#{@arch}"
   end
 end
+
+enum Register
+  Rax
+  Rdi
+  Rdx
+  Rsi
+end
+
+alias ParamType = Register | Int64
 
 class Instruction
   def initialize(@name : String, @target : Target)
   end
 
   def to_s(io)
-    io.puts "[#{@target}] #{@name}"
+    io << "[#{@target}] #{@name}"
   end
 end
 
 instructions = [
   Instruction.new(
     name: "mov",
-    target: Target.new(arch: Arch::A_x86_64)
+    target: Target.new(arch: Arch::X86_64)
+  ),
+  Instruction.new(
+    name: "syscall",
+    target: Target.new(arch: Arch::X86_64)
+  ),
+  Instruction.new(
+    name: "xor",
+    target: Target.new(arch: Arch::X86_64)
   )
 ] of Instruction
 

@@ -1,4 +1,6 @@
 CC=gcc -nostartfiles
+cr:
+	crystal run as.cr
 run: build
 	./a.out
 clean:
