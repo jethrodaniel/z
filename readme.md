@@ -34,11 +34,6 @@ Usage:
 
 ```
 cd sample && make
-gcc -c io.c 
-z -c -f main.c > z.s
-gcc -c z.s
-gcc *.o
-./a.out; exit 0
 hi!
 ```
 
