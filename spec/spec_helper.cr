@@ -15,12 +15,30 @@ def diff(a, b)
   io = IO::Memory.new
 
   Process.run("git", [
-    "--no-pager", "diff", "--no-index", "--color=always",
-    file1.path, file2.path,
+    "diff",
+    "--no-pager",
+    "--no-index",
+    "--color=always",
+    "--ws-error-highlight=all",
+    file1.path,
+    file2.path,
   ], output: io)
+  # p file1.path
+  # p file2.path
 
   io.to_s
 ensure
   file1.try &.delete
   file2.try &.delete
 end
+
+def for_each_spec
+Dir
+  .glob("./spec/compiler/**/*")
+  .select! { |f| File.file?(f) }
+  .group_by { |f| File.basename(f).sub(/\..*$/, "") }
+  .each do |name, files|
+    yield name, files
+  end
+end
+
