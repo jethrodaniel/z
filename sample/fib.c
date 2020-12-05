@@ -1,3 +1,4 @@
+// todo: call putc here directly
 main() {
   fib(42);
   zputc(104);

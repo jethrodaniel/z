@@ -1,8 +1,12 @@
+zput(c) {
+  zputc(c, 1);
+  // putc(c, 1);
+}
 main() {
   fib(42);
-  zputc(104);
-  zputc(105);
-  zputc(33);
+  zput(104);
+  zput(105);
+  zput(33);
   zputc(10);
   zputc(13);
 }
