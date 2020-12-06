@@ -1,7 +1,28 @@
+# machine code: http://ref.x86asm.net/coder64.html
+# nasm: https://cs.lmu.edu/~ray/notes/nasmtutorial/
+
 module Z
   module Assembler
     class Arch
     end
+  end
+end
+
+require "../syntax/token"
+
+class Token < Z::BaseToken
+  enum Type
+    EOF         # \0
+    PLUS        # +
+    MIN         # -
+    DIV         # /
+    MUL         # *
+    INT         # 124
+    LEFT_PAREN  # (
+    RIGHT_PAREN # )
+    IDENT       # a = ..., etc
+    SEMI        # ;
+    COMMA       # ,
   end
 end
 
@@ -49,7 +70,7 @@ instructions = [
   Instruction.new(
     name: "xor",
     target: Target.new(arch: Arch::X86_64)
-  )
+  ),
 ] of Instruction
 
 instructions.each { |i| puts i }
