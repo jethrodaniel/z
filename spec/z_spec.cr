@@ -1,15 +1,15 @@
 require "./spec_helper"
 
-alias T = Z::Token::Type
+alias T = Z::Lex::Token::Type
 
 def token(line, col, type, value)
-  Z::Token.new(line, col, type, value)
+  Z::Lex::Token.new(line, col, type, value)
 end
 
-describe Z::Lexer do
+describe Z::Lex::Lexer do
   context "#next" do
     it "returns the next token" do
-      lex = Z::Lexer.new("1 + 2")
+      lex = Z::Lex::Lexer.new("1 + 2")
       t = token(1, 1, T::INT, "1")
       lex.next.should eq t
       t = token(1, 3, T::PLUS, "+")
@@ -22,14 +22,14 @@ describe Z::Lexer do
 
   context "#tokens" do
     it "returns all the tokens" do
-      lex = Z::Lexer.new("9001")
+      lex = Z::Lex::Lexer.new("9001")
       t = token(1, 1, T::INT, "9001")
       lex.tokens.should eq([t])
     end
   end
 end
 
-describe Z::Token do
+describe Z::Lex::Token do
   it ".new" do
     t = token(1, 1, T::INT, "1")
     t.line.should eq 1

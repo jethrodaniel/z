@@ -1,10 +1,10 @@
 require "./spec_helper"
 
-def it_lexes(str, expected : Z::Token | Array(Z::Token))
+def it_lexes(str, expected : Z::Lex::Token | Array(Z::Lex::Token))
   it str do
-    lex = Z::Lexer.new(str)
+    lex = Z::Lex::Lexer.new(str)
     t = lex.tokens
-    if expected.is_a? Z::Token
+    if expected.is_a? Z::Lex::Token
       t.first.should eq expected
     else
       t.should eq expected
@@ -13,10 +13,10 @@ def it_lexes(str, expected : Z::Token | Array(Z::Token))
 end
 
 def t(line, col, type, value)
-  Z::Token.new(line, col, type, value)
+  Z::Lex::Token.new(line, col, type, value)
 end
 
-describe Z::Lexer do
+describe Z::Lex::Lexer do
   it_lexes "1", t(1, 1, T::INT, "1")
   it_lexes "*", t(1, 1, T::MUL, "*")
   it_lexes "/", t(1, 1, T::DIV, "/")

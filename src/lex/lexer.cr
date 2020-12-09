@@ -1,6 +1,6 @@
 require "./token"
 
-module Z
+module Z::Lex
   class Lexer
     class Error < Exception
     end

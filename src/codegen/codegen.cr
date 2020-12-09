@@ -1,6 +1,6 @@
 require "../ast/node"
 require "../ast/visitor"
-require "../lex/parser"
+require "../parse/parser"
 
 module Z
   # = x86_64 calling conventions

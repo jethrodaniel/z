@@ -1,4 +1,4 @@
-module Z
+module Z::Lex
   class Token
     enum Type
       EOF         # \0
