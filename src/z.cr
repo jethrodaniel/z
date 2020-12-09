@@ -2,9 +2,9 @@ module Z
   VERSION = "0.1.0"
 end
 
-require "./syntax/lexer"
-require "./syntax/parser"
-require "./syntax/ast/dot"
+require "./lex/lexer"
+require "./lex/parser"
+require "./ast/dot"
 require "./codegen/compiler"
 require "./cli"
 require "./line_editor"

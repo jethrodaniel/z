@@ -1,7 +1,7 @@
 require "set"
 
 require "./lexer"
-require "./ast/node"
+require "../ast/node"
 
 # Simple calculator grammar for now
 #

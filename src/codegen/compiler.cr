@@ -1,5 +1,5 @@
-require "../syntax/ast/node"
-require "../syntax/parser"
+require "../ast/node"
+require "../lex/parser"
 require "./codegen"
 
 module Z
