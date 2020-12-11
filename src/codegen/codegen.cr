@@ -135,10 +135,8 @@ module Z
       if node.statements.empty?
         io.puts "  push 0" # nop
       end
-      unless node.name == "main"
-        io.puts "  pop rax"
-      end
       io.puts <<-ASM
+        pop rax
         mov rsp, rbp
         pop rbp
         ret

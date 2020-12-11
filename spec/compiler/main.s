@@ -4,10 +4,11 @@ main:
   push rbp
   mov rbp, rsp
   sub rsp, 0
-  push 42
+  push 41
   pop rdi
   call fib
   push rax
+  pop rax
   mov rsp, rbp
   pop rbp
   ret
@@ -16,7 +17,8 @@ fib:
   mov rbp, rsp
   sub rsp, 8
   mov [rbp-8], rdi
-  push 41
+  mov rax, [rbp-8]
+  push rax
   call g
   push rax
   pop rdi

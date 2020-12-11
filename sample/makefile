@@ -9,7 +9,7 @@ FLAGS = -masm=intel \
     -Wl,-z,noexecstack
 CC=gcc#$(FLAGS)
  
-Z=z
+Z=../bin/z
 run: build
 	./a.out; exit 0
 clean:

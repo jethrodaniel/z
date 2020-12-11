@@ -5,13 +5,13 @@
         (fn_call, fib,
           (fn_arg,
             (expr,
-              (number_literal, 42)))))))
+              (number_literal, 41)))))))
   (fn, fib,
     (fn_param, n),
     (stmt,
       (expr,
         (bin_op, +,
-          (number_literal, 41),
+          (ident, n@8),
           (fn_call, g))))
   (fn, g,
     (stmt,
