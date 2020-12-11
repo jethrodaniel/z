@@ -2,7 +2,7 @@ module Z
   VERSION = "0.1.0"
 end
 
-require "./lex/lexer"
+require "./lex/c/lexer"
 require "./parse/parser"
 require "./ast/dot"
 require "./codegen/compiler"
@@ -74,7 +74,7 @@ module Z
   end
 
   private def self.run_lexer(input)
-    lex = Z::Lex::Lexer.new(input)
+    lex = Z::Lex::C::Lexer.new(input)
     lex.each { |token| puts token }
   end
 
