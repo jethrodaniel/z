@@ -31,25 +31,6 @@ task :fmt do
 end
 task :lint => :fmt
 
-task :sample => %w[sample/main.c] do |t|
-  flags = %w[
-    -S
-    -masm=intel
-    -O0
-    -o /dev/stdout
-
-    -Wall
-    -Wextra
-
-    -fno-asynchronous-unwind-tables
-    -fno-exceptions
-    -fno-ident
-    -finhibit-size-directive
-    -Wl,-z,noexecstack
-  ].join(" ")
-  sh "gcc #{flags} #{t.source}"
-end
-
 ## asm
 
 nasm = 'third_party/nasm/nasm'
