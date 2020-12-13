@@ -29,6 +29,7 @@ module Z::Lex::C
       LVAR        # _left variable_
       RETURN      # return
       COMMA       # ,
+      ASM         # asm
     end
 
     property :line, :col, :type, :value

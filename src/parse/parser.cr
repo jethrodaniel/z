@@ -11,6 +11,7 @@ require "../ast/node"
 # stmt       = expr ";"
 #            | "return" expr ";"
 #            | "{" stmt* "}"
+#            | asm "{" asm_line* "}"
 #            #| "if" "(" expr ")" stmt ("else" stmt)?
 #            #| "while" "(" expr ")" stmt
 #            #| "for" "(" expr? ";" expr? ";" expr? ")" stmt
@@ -25,6 +26,17 @@ require "../ast/node"
 #            | ident
 #            | ident "(" ( ident ",")* ")"
 #            | "(" expr ")"
+#
+# asm_line   = directive
+#            | op_reg_reg
+#            | op_reg_imm
+# op_reg_reg = op reg "," reg
+# op_reg_imm = op reg "," imm
+# op         = mv
+#            | sub
+# reg        = rax
+#            | rsi
+# imm        = num
 # ```
 module Z
   class Parser
@@ -102,6 +114,27 @@ module Z
     private def _stmt
       if accept T::RETURN
         n = Ast::Stmt.new(Ast::Return.new(_expr))
+      elsif accept T::ASM
+        error "expected a `{` after `asm`" unless accept T::LEFT_BRACE
+
+        idents = [] of Ast::Node
+
+        until accept T::RIGHT_BRACE
+          error "expected a `}` after `asm`" if eof?
+
+          if i = accept T::IDENT
+            idents << Ast::AsmIdent.new(prev.value)
+          elsif c = accept T::INT
+            idents << Ast::AsmImm.new(prev.value)
+          elsif c = accept T::COMMA
+            # args 2, or 3
+          elsif s = accept T::SEMI
+            # idents << curr_node
+          else
+            error "unexpected #{curr}"
+          end
+        end
+        return Ast::Asm.new(idents)
       elsif accept T::LEFT_BRACE
         @fn_left_brace_count += 1
         stmts = [] of Ast::Node

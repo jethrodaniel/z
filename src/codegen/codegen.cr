@@ -100,6 +100,16 @@ module Z
       6 => :r9,
     }
 
+    visit Ast::Asm do
+      node.lines.each do |line|
+        visit(line, io)
+      end
+    end
+
+    visit Ast::AsmIdent, Ast::AsmImm do
+      io.puts "  #{node.value}"
+    end
+
     visit Ast::Program do
       io.puts <<-ASM
         .intel_syntax noprefix

@@ -98,8 +98,11 @@ module Z::Lex::C
           while @reader.has_next? && IDENT_CHARS.includes? @reader.peek_next_char
             v += next_char
           end
-          if v.to_s == "return"
+          case v.to_s
+          when "return"
             return add_token T::RETURN, v.to_s
+          when "asm"
+            return add_token T::ASM, v.to_s
           else
             return add_token T::IDENT, v.to_s
           end

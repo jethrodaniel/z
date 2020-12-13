@@ -99,5 +99,14 @@ module Z
     ast_node Assignment,
       left : Node,
       right : Node
+
+    ast_node Asm,
+      lines : Array(Node)
+
+    ast_node AsmIdent,
+      value : String
+
+    ast_node AsmImm,
+      value : String
   end
 end

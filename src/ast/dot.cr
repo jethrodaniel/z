@@ -140,6 +140,10 @@ module Z
         io.puts "  #{id}; // #{name(node)}"
         io.puts "  #{id} [label=\"#{name(node)}\"];"
       end
+
+      visit Asm, AsmIdent, AsmImm do
+        raise "err"
+      end
     end
   end
 end

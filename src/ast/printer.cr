@@ -160,6 +160,27 @@ module Z
       visit Nop do
         out io, "(#{name(node)})"
       end
+
+      visit Asm do
+        if node.lines.empty?
+          out io, "(#{name(node)})"
+          return
+        end
+        out io, "(#{name(node)},\n"
+        indent
+
+        node.lines.each_with_index do |line, i|
+          visit(line, io)
+          io.puts unless i == node.lines.size - 1
+        end
+
+        dedent
+        io.print ")"
+      end
+
+      visit AsmIdent, AsmImm do
+        out io, "(#{name(node)}, #{node.value})"
+      end
     end
   end
 end
