@@ -186,6 +186,7 @@ module Z
     visit Ast::Return do
       node.value.accept(self, io)
       io.puts <<-ASM
+        pop rax
         mov rsp, rbp
         pop rbp
         ret
