@@ -1,5 +1,4 @@
 require "spec"
-require "../src/z"
 
 # https://github.com/mint-lang/mint/blob/6be6630089058b1a753cb2367469460d37251c45/spec/spec_helper.cr#L17
 def diff(a, b)
@@ -31,6 +30,8 @@ def for_each_spec
     .select! { |f| File.file?(f) }
     .group_by { |f| File.basename(f).sub(/\..*$/, "") }
     .each do |name, files|
+      # puts "name: #{name}"
+      # puts "files: #{files.map(&.to_s).join}"
       yield name, files
     end
 end

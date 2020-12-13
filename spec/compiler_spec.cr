@@ -1,4 +1,5 @@
 require "./spec_helper"
+require "../src/codegen/compiler"
 
 def it_compiles(name, code, expected)
   describe Z::Compiler do

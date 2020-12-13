@@ -2,6 +2,10 @@ require "../token"
 
 module Z::Lex::C
   class Token
+    def to_s(io)
+      io.print "[#{line}:#{col}-#{col + value.size}][#{type}, '#{value}']"
+    end
+
     enum Type
       EOF         # \0
       PLUS        # +

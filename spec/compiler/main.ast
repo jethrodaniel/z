@@ -9,10 +9,11 @@
   (fn, fib,
     (fn_param, n),
     (stmt,
-      (expr,
-        (bin_op, +,
-          (ident, n@8),
-          (fn_call, g))))
+      (return,
+        (expr,
+          (bin_op, +,
+            (ident, n@8),
+            (fn_call, g)))))
   (fn, g,
     (stmt,
       (expr,

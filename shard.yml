@@ -7,4 +7,4 @@ license: MIT
 crystal: 0.35.1
 targets:
   z:
-    main: exe/z.cr
+    main: src/cli/z.cr

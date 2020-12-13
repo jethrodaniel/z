@@ -29,6 +29,10 @@ fib:
   mov rsp, rbp
   pop rbp
   ret
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
 g:
   push rbp
   mov rbp, rsp

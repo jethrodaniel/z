@@ -9,10 +9,6 @@ module Z::Lex
     abstract def type
     abstract def value
 
-    def to_s(io)
-      io.print "[#{line}:#{col}-#{col + value.size}][#{type}, '#{value}']"
-    end
-
     def inspect(io)
       to_s(io)
     end
