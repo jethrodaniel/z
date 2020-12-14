@@ -31,7 +31,7 @@ z
 
 ## example
 
-See the specs in the [specs/compiler directory](specs/compiler).
+See the specs in the [spec/compiler directory](spec/compiler).
 
 There's also some non-test samples (for now).
 
