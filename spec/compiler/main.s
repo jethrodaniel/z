@@ -141,10 +141,6 @@ puts:
   pop rdi
   call putchar
   push rax
-  push 13
-  pop rdi
-  call putchar
-  push rax
   pop rax
   mov rsp, rbp
   pop rbp

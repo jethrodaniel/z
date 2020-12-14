@@ -39,8 +39,8 @@ print_fib(n) {
 }
 
 puts() {
-  putchar(10); // \r
-  putchar(13); // \n
+  putchar(10); // \n
+  // putchar(13); // \r
 }
 
 print_num(n) {

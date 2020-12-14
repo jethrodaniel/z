@@ -164,13 +164,7 @@
         (fn_call, putchar,
           (fn_arg,
             (expr,
-              (number_literal, 10)))))),
-    (stmt,
-      (expr,
-        (fn_call, putchar,
-          (fn_arg,
-            (expr,
-              (number_literal, 13)))))))
+              (number_literal, 10)))))))
   (fn, print_num,
     (fn_param, n),
     (stmt,
