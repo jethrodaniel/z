@@ -82,6 +82,8 @@ module Z::Lex
           return add_token T::SEMI, c.to_s
         when ','
           return add_token T::COMMA, c.to_s
+        when ':'
+          return add_token T::COLON, c.to_s
         when '='
           if @reader.peek_next_char == '='
             next_char

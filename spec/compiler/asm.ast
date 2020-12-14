@@ -2,25 +2,32 @@
   (fn, main,
     (asm,
       (asm_instruction_list,
-        (asm_ident, push)
+        (asm_ident, push),
         (asm_imm, 24))),
     (asm,
       (asm_instruction_list,
-        (asm_ident, pop)
-        (asm_ident, rax))
+        (asm_ident, pop),
+        (asm_ident, rax)),
       (asm_instruction_list,
-        (asm_ident, push)
+        (asm_ident, push),
         (asm_imm, 42))),
     (asm,
       (asm_instruction_list,
-        (asm_ident, pop)
-        (asm_ident, rsi))
+        (asm_ident, pop),
+        (asm_ident, rsi)),
       (asm_instruction_list,
-        (asm_ident, push)
+        (asm_ident, push),
         (asm_ident, rsi))))
   (asm,
     (asm_instruction_list,
-      (asm_ident, push)
-      (asm_imm, 3))
+      (asm_ident, push),
+      (asm_imm, 3)),
     (asm_instruction_list,
-      (asm_ident, pop))))
+      (asm_ident, pop)),
+    (asm_instruction_list,
+      (asm_label, f)),
+    (asm_instruction_list,
+      (asm_ident, call),
+      (asm_ident, printf)),
+    (asm_instruction_list,
+      (asm_ident, ret))))

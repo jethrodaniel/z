@@ -171,7 +171,7 @@ module Z
 
         node.instructions.each_with_index do |inst, i|
           visit(inst, io)
-          io.puts unless i == node.instructions.size - 1
+          io.puts "," if i < node.instructions.size - 1
         end
 
         dedent
@@ -180,6 +180,10 @@ module Z
 
       visit AsmIdent, AsmImm do
         out io, "(#{name(node)}, #{node.value})"
+      end
+
+      visit AsmLabel do
+        out io, "(#{name(node)}, #{node.name})"
       end
     end
   end

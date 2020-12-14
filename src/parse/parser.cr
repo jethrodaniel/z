@@ -141,27 +141,73 @@ module Z
       n
     end
 
-    # the asm token should already be consumed
+    # note: the asm token should already be consumed
     private def _asm
-      error "expected a `{` after `asm`" unless accept T::LEFT_BRACE
+      error "[#{prev.line}:#{prev.col}] expected a `{` after `asm`" unless accept T::LEFT_BRACE
 
       instructions = [] of Ast::AsmInstructionList
-      idents = [] of Ast::AsmIdent | Ast::AsmImm
+      idents = [] of Ast::AsmIdent | Ast::AsmImm | Ast::AsmLabel
 
       until accept T::RIGHT_BRACE
-        error "expected a `}` after `asm`" if eof?
+        error "[#{prev.line}:#{prev.col}] expected a `}` after `asm`" if eof?
 
-        if i = accept T::IDENT
+        if accept T::IDENT
           idents << Ast::AsmIdent.new(prev.value)
-        elsif c = accept T::INT
-          idents << Ast::AsmImm.new(prev.value)
-        elsif c = accept T::COMMA
-          # args 2, or 3
-        elsif s = accept T::SEMI
-          instructions << Ast::AsmInstructionList.new(idents)
-          idents = [] of Ast::AsmIdent | Ast::AsmImm
+
+          # label:
+          #   ...
+          if match? T::COLON
+            label = Ast::AsmLabel.new(prev.value)
+            consume T::COLON
+            instructions << Ast::AsmInstructionList.new([label] of Ast::Node)
+            idents = [] of Ast::AsmIdent | Ast::AsmImm | Ast::AsmLabel
+            # elsif accept T::RIGHT_BRACE
+            #   consume T::SEMI, "expected a `;` to terminate assembly line"
+
+            #   instructions << Ast::AsmInstructionList.new(idents)
+            #   idents = [] of Ast::AsmIdent | Ast::AsmImm | Ast::AsmLabel
+            #   break
+
+            # opcode;
+            #
+          elsif accept T::SEMI
+            instructions << Ast::AsmInstructionList.new(idents)
+            idents = [] of Ast::AsmIdent | Ast::AsmImm | Ast::AsmLabel
+
+            # opcode arg
+            #
+          elsif accept(T::IDENT, T::INT)
+            if prev.type.is_a? T::IDENT
+              idents << Ast::AsmIdent.new(prev.value)
+            elsif prev.type.is_a? T::INT
+              idents << Ast::AsmImm.new(prev.value)
+            else
+              error "prev is #{prev.class}"
+            end
+
+            # opcode arg,
+            #
+            if accept T::COMMA
+              # opcode arg, arg
+              #
+              if accept(T::IDENT, T::INT)
+                idents << Ast::AsmIdent.new(prev.value)
+              else
+                error "expected ident after `,`"
+              end
+            end
+
+            consume T::SEMI, "expected a `;` to terminate assembly line"
+
+            while accept T::SEMI # eat trailing semicolons
+            end
+
+            inst = Ast::AsmInstructionList.new(idents)
+            instructions << inst
+            idents = [] of Ast::AsmIdent | Ast::AsmImm | Ast::AsmLabel
+          end
         else
-          error "unexpected #{curr}"
+          error "unexpected #{curr}, expected assembly, got #{prev}"
         end
       end
       Ast::Asm.new(instructions)
@@ -288,7 +334,11 @@ module Z
 
     private def consume(type : T, msg : String? = "")
       unless accept type
-        error "expected a #{type}, got `#{curr.value}`"
+        if msg == ""
+          error "expected a #{type}, got `#{curr.value}`"
+        else
+          error msg
+        end
       end
     end
 
@@ -326,7 +376,7 @@ module Z
     end
 
     private def error(msg : String)
-      raise Error.new(msg)
+      raise Error.new("[#{prev.line}:#{prev.col}] #{msg}")
     end
   end
 end

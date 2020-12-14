@@ -124,6 +124,10 @@ module Z
       io.print node.value
     end
 
+    visit Ast::AsmLabel do
+      io.print "#{node.name}:"
+    end
+
     visit Ast::Program do
       io.puts <<-ASM
         .intel_syntax noprefix

@@ -111,5 +111,8 @@ module Z
 
     ast_node AsmImm,
       value : String
+
+    ast_node AsmLabel,
+      name : String
   end
 end

@@ -28,6 +28,7 @@ module Z::Lex
       RETURN      # return
       COMMA       # ,
       ASM         # asm
+      COLON       # :
     end
 
     property :line, :col, :type, :value
