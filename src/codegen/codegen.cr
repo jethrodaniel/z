@@ -108,8 +108,8 @@ module Z
 
     # TODO: don't indent if top-level assembly
     visit Ast::AsmInstructionList do
+      io.print " "
       node.instructions.each_with_index do |inst, i|
-        io.print " "
         if i < 2
           io.print " "
         else
