@@ -101,13 +101,26 @@ module Z
     }
 
     visit Ast::Asm do
-      node.lines.each do |line|
-        visit(line, io)
+      node.instructions.each do |inst|
+        visit(inst, io)
       end
     end
 
+    visit Ast::AsmInstructionList do
+      node.instructions.each_with_index do |inst, i|
+        io.print " "
+        if i < 2
+          io.print " "
+        else
+          io.print ", "
+        end
+        visit(inst, io)
+      end
+      io.puts
+    end
+
     visit Ast::AsmIdent, Ast::AsmImm do
-      io.puts "  #{node.value}"
+      io.print node.value
     end
 
     visit Ast::Program do

@@ -161,17 +161,17 @@ module Z
         out io, "(#{name(node)})"
       end
 
-      visit Asm do
-        if node.lines.empty?
+      visit Asm, AsmInstructionList do
+        if node.instructions.empty?
           out io, "(#{name(node)})"
           return
         end
         out io, "(#{name(node)},\n"
         indent
 
-        node.lines.each_with_index do |line, i|
-          visit(line, io)
-          io.puts unless i == node.lines.size - 1
+        node.instructions.each_with_index do |inst, i|
+          visit(inst, io)
+          io.puts unless i == node.instructions.size - 1
         end
 
         dedent

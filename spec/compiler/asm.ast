@@ -1,0 +1,6 @@
+(program,
+  (fn, main,
+    (asm,
+      (asm_instruction_list,
+        (asm_ident, push)
+        (asm_imm, 42)))))

@@ -117,7 +117,8 @@ module Z
       elsif accept T::ASM
         error "expected a `{` after `asm`" unless accept T::LEFT_BRACE
 
-        idents = [] of Ast::Node
+        instructions = [] of Ast::AsmInstructionList
+        idents = [] of Ast::AsmIdent | Ast::AsmImm
 
         until accept T::RIGHT_BRACE
           error "expected a `}` after `asm`" if eof?
@@ -129,12 +130,13 @@ module Z
           elsif c = accept T::COMMA
             # args 2, or 3
           elsif s = accept T::SEMI
-            # idents << curr_node
+            instructions << Ast::AsmInstructionList.new(idents)
+            idents = [] of Ast::AsmIdent | Ast::AsmImm
           else
             error "unexpected #{curr}"
           end
         end
-        return Ast::Asm.new(idents)
+        return Ast::Asm.new(instructions)
       elsif accept T::LEFT_BRACE
         @fn_left_brace_count += 1
         stmts = [] of Ast::Node

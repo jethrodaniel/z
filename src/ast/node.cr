@@ -101,7 +101,10 @@ module Z
       right : Node
 
     ast_node Asm,
-      lines : Array(Node)
+      instructions : Array(AsmInstructionList)
+
+    ast_node AsmInstructionList,
+      instructions : Array(Node)
 
     ast_node AsmIdent,
       value : String
