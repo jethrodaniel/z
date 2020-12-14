@@ -106,6 +106,7 @@ module Z
       end
     end
 
+    # TODO: don't indent if top-level assembly
     visit Ast::AsmInstructionList do
       node.instructions.each_with_index do |inst, i|
         io.print " "

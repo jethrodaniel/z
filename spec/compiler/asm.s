@@ -13,3 +13,5 @@ main:
   mov rsp, rbp
   pop rbp
   ret
+  push  3
+  pop

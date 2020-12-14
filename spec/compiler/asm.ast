@@ -17,4 +17,10 @@
         (asm_ident, rsi))
       (asm_instruction_list,
         (asm_ident, push)
-        (asm_ident, rsi)))))
+        (asm_ident, rsi))))
+  (asm,
+    (asm_instruction_list,
+      (asm_ident, push)
+      (asm_imm, 3))
+    (asm_instruction_list,
+      (asm_ident, pop))))

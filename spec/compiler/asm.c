@@ -23,7 +23,8 @@ main() {
 }
 
 // Since assembly is fully supported, we don't need to have a separate
-// assembler - if you have an assembly file, just shove it in an assembly block.
-//asm {
-//  // wow!
-//}
+// assembler - if you want an assembly file, just put code in an assembly block.
+asm {
+  push 3;
+  pop;
+}

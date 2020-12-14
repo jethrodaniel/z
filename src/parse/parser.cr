@@ -65,9 +65,17 @@ module Z
       stmts = [] of Ast::Node
       until eof?
         # if accept Ast::Asm
-        stmts << _fn
+        stmts << _fn_or_asm
       end
       Ast::Program.new(stmts)
+    end
+
+    private def _fn_or_asm
+      if accept T::ASM
+        _asm
+      else
+        _fn
+      end
     end
 
     private def _fn
@@ -110,28 +118,7 @@ module Z
       if accept T::RETURN
         n = Ast::Stmt.new(Ast::Return.new(_expr))
       elsif accept T::ASM
-        error "expected a `{` after `asm`" unless accept T::LEFT_BRACE
-
-        instructions = [] of Ast::AsmInstructionList
-        idents = [] of Ast::AsmIdent | Ast::AsmImm
-
-        until accept T::RIGHT_BRACE
-          error "expected a `}` after `asm`" if eof?
-
-          if i = accept T::IDENT
-            idents << Ast::AsmIdent.new(prev.value)
-          elsif c = accept T::INT
-            idents << Ast::AsmImm.new(prev.value)
-          elsif c = accept T::COMMA
-            # args 2, or 3
-          elsif s = accept T::SEMI
-            instructions << Ast::AsmInstructionList.new(idents)
-            idents = [] of Ast::AsmIdent | Ast::AsmImm
-          else
-            error "unexpected #{curr}"
-          end
-        end
-        return Ast::Asm.new(instructions)
+        return _asm
       elsif accept T::LEFT_BRACE
         @fn_left_brace_count += 1
         stmts = [] of Ast::Node
@@ -152,6 +139,32 @@ module Z
       end
       consume T::SEMI
       n
+    end
+
+    # the asm token should already be consumed
+    private def _asm
+      error "expected a `{` after `asm`" unless accept T::LEFT_BRACE
+
+      instructions = [] of Ast::AsmInstructionList
+      idents = [] of Ast::AsmIdent | Ast::AsmImm
+
+      until accept T::RIGHT_BRACE
+        error "expected a `}` after `asm`" if eof?
+
+        if i = accept T::IDENT
+          idents << Ast::AsmIdent.new(prev.value)
+        elsif c = accept T::INT
+          idents << Ast::AsmImm.new(prev.value)
+        elsif c = accept T::COMMA
+          # args 2, or 3
+        elsif s = accept T::SEMI
+          instructions << Ast::AsmInstructionList.new(idents)
+          idents = [] of Ast::AsmIdent | Ast::AsmImm
+        else
+          error "unexpected #{curr}"
+        end
+      end
+      Ast::Asm.new(instructions)
     end
 
     private def _expr
