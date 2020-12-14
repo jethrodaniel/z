@@ -128,8 +128,8 @@ module Z
         .intel_syntax noprefix
         .globl main
         ASM
-      node.functions.each do |f|
-        visit(f, io)
+      node.statements.each do |s|
+        visit(s, io)
       end
     end
 

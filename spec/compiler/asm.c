@@ -21,3 +21,9 @@ main() {
     push rsi;
   }
 }
+
+// Since assembly is fully supported, we don't need to have a separate
+// assembler - if you have an assembly file, just shove it in an assembly block.
+//asm {
+//  // wow!
+//}

@@ -46,7 +46,7 @@ module Z
     end
 
     ast_node Program,
-      functions : Array(Node)
+      statements : Array(Node)
 
     ast_node Fn,
       name : String,

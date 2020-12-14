@@ -6,7 +6,7 @@ require "../ast/node"
 # Simple calculator grammar for now
 #
 # ```
-# program    = fn*
+# program    = (fn | asm)*
 # fn         = ident "(" (indent ",")* ")" "{" stmt* "}"
 # stmt       = expr ";"
 #            | "return" expr ";"
@@ -15,6 +15,7 @@ require "../ast/node"
 #            #| "if" "(" expr ")" stmt ("else" stmt)?
 #            #| "while" "(" expr ")" stmt
 #            #| "for" "(" expr? ";" expr? ";" expr? ")" stmt
+#
 # expr       = assign
 # assign     = equality ("=" assign)?
 # equality   = relational ("==" relational | "!=" relational)*
@@ -27,16 +28,9 @@ require "../ast/node"
 #            | ident "(" ( ident ",")* ")"
 #            | "(" expr ")"
 #
-# asm_line   = directive
-#            | op_reg_reg
-#            | op_reg_imm
-# op_reg_reg = op reg "," reg
-# op_reg_imm = op reg "," imm
-# op         = mv
-#            | sub
-# reg        = rax
-#            | rsi
-# imm        = num
+# asm                  = "{" asm_instruction_list* "}"
+# asm_instruction_list = asm_ident
+#                      | asm_imm
 # ```
 module Z
   class Parser
@@ -68,11 +62,12 @@ module Z
     end
 
     private def _program
-      functions = [] of Ast::Node
+      stmts = [] of Ast::Node
       until eof?
-        functions << _fn
+        # if accept Ast::Asm
+        stmts << _fn
       end
-      Ast::Program.new(functions)
+      Ast::Program.new(stmts)
     end
 
     private def _fn

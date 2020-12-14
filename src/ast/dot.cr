@@ -45,8 +45,8 @@ module Z
         io.puts "  ratio=\"auto\";\n"
         io.puts "  #{name(node)} -> statements;"
 
-        node.functions.each_with_index(1) do |f, i|
-          visit(f, io)
+        node.statements.each_with_index(1) do |s, i|
+          visit(s, io)
         end
         io.puts "}"
       end

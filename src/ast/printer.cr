@@ -25,9 +25,9 @@ module Z
         out io, "(#{name(node)},\n"
         indent
 
-        node.functions.each_with_index do |f, i|
-          visit(f, io)
-          io.puts unless i == node.functions.size - 1
+        node.statements.each_with_index do |s, i|
+          visit(s, io)
+          io.puts unless i == node.statements.size - 1
         end
 
         dedent
