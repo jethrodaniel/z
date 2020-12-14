@@ -106,7 +106,7 @@ module Z
       end
     end
 
-    # TODO: don't indent if top-level assembly
+    # TODO: don't indent labels
     visit Ast::AsmInstructionList do
       io.print " "
       node.instructions.each_with_index do |inst, i|

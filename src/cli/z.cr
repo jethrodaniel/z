@@ -93,7 +93,8 @@ elsif compile
 elsif run
   cc = Z::Compiler.new(input.to_s)
   File.open("z.S", "w") { |f| f.puts cc.compile }
-  puts `gcc z.S && ./a.out ; echo $?`
+  puts `gcc z.S && ./a.out ; echo "=> $?"`
+  %w[z.S a.out].each { |f| File.delete(f) }
 else
   puts parser
   exit(1)
