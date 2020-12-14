@@ -1,8 +1,21 @@
 require "./spec_helper"
 require "../src/codegen/compiler"
 
+def it_runs(name, file, expected)
+  describe "running" do
+    it name do
+      begin
+        got = `./bin/z run #{file}`.chomp
+        got.should eq(expected)
+      rescue error
+        fail diff(got.not_nil!, expected)
+      end
+    end
+  end
+end
+
 def it_compiles(name, code, expected)
-  describe Z::Compiler do
+  describe "compiling" do
     it name do
       output = IO::Memory.new
       compiled = Z::Compiler.new(code).compile
@@ -20,4 +33,8 @@ for_each_spec do |name, files|
   src = files.find { |f| f.ends_with? ".c" }.not_nil!
   ast = files.find { |f| f.ends_with? ".s" }.not_nil!
   it_compiles name, File.read(src).chomp, File.read(ast).chomp
+
+  if output = files.find { |f| f.ends_with? ".out" }
+    it_runs name, src, File.read(output).chomp
+  end
 end
