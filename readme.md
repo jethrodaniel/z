@@ -14,20 +14,7 @@ cd z && rake
 ## usage
 
 ```
-z compiler.
-Usage:
-
-  z [...options]
-  z [...options] -f progfile
-  z [...options] [--] 'program'
-
-    -v, --version                    Show version
-    -h, --help                       Show help
-    -d, --dot                        Output graphviz
-    -l, --lex                        Run lexer
-    -p, --parse                      Run parser
-    -c, --compile                    Run compiler
-    -f FILE, --file FILE             Use FILE as input
+z
 ```
 
 ## example

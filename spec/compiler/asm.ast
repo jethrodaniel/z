@@ -3,4 +3,18 @@
     (asm,
       (asm_instruction_list,
         (asm_ident, push)
-        (asm_imm, 42)))))
+        (asm_imm, 24))),
+    (asm,
+      (asm_instruction_list,
+        (asm_ident, pop)
+        (asm_ident, rax))
+      (asm_instruction_list,
+        (asm_ident, push)
+        (asm_imm, 42))),
+    (asm,
+      (asm_instruction_list,
+        (asm_ident, pop)
+        (asm_ident, rsi))
+      (asm_instruction_list,
+        (asm_ident, push)
+        (asm_ident, rsi)))))
