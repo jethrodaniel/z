@@ -2,7 +2,19 @@
 
 ![](https://github.com/jethrodaniel/z/workflows/ci/badge.svg)
 
-Following along with Rui Ueyama's 9cc ([book][9cc-book], [repo][9cc]).
+Building a C compiler along with Rui Ueyama's 9cc ([book][9cc-book], [repo][9cc]).
+
+Well, that's where _some_ of this started. The _eventual_ plan is to implement
+HolyC.
+
+## license
+
+MIT
+
+## prerequisites
+
+- crystal 0.35 or greater
+- rake (ruby) for building
 
 ## install
 
@@ -19,21 +31,20 @@ z
 
 ## example
 
+See the specs in the [specs/compiler directory](specs/compiler).
+
+There's also some non-test samples (for now).
+
 ```
 cd sample && make
 hi!
 ```
 
-## prerequisites
-
-- crystal 0.35 or greater
-- rake (ruby) for building
-
-## license
-
-MIT
+TODO: add output as testing result using `.out` files
 
 ## references
+
+TODO: clean this up, add more refereneces, order by subject
 
 > If I have seen further, it is by standing upon the shoulders of giants.
 >
