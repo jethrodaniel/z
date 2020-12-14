@@ -1,6 +1,6 @@
 require "set"
 
-require "../lex/c/lexer"
+require "../lex/lexer"
 require "../ast/node"
 
 # Simple calculator grammar for now
@@ -43,8 +43,8 @@ module Z
     class Error < Exception
     end
 
-    alias T = Z::Lex::C::Token::Type
-    @tokens : Array(Z::Lex::C::Token) = [] of Z::Lex::C::Token
+    alias T = Z::Lex::Token::Type
+    @tokens : Array(Z::Lex::Token) = [] of Z::Lex::Token
     @pos : Int32 = 0
     @fn_left_brace_count : Int32 = 0
 
@@ -52,7 +52,7 @@ module Z
     @offset : Int32 = 0
 
     def initialize(@code : String)
-      @lex = Z::Lex::C::Lexer.new(@code)
+      @lex = Z::Lex::Lexer.new(@code)
     end
 
     def parse

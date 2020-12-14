@@ -3,7 +3,7 @@
 
 require "option_parser"
 require "../version"
-require "../lex/c/lexer"
+require "../lex/lexer"
 require "../parse/parser"
 require "../ast/dot"
 require "../codegen/compiler"
@@ -78,7 +78,7 @@ else
 end
 
 if lex
-  lexer = Z::Lex::C::Lexer.new(input)
+  lexer = Z::Lex::Lexer.new(input)
   lexer.each { |token| puts token }
 elsif parse
   parser = Z::Parser.new(input)

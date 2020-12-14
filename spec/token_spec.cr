@@ -1,13 +1,13 @@
 require "./spec_helper"
-require "../src/lex/c/token"
+require "../src/lex/token"
 
-alias T = Z::Lex::C::Token::Type
+alias T = Z::Lex::Token::Type
 
 def token(line, col, type, value)
-  Z::Lex::C::Token.new(line, col, type, value)
+  Z::Lex::Token.new(line, col, type, value)
 end
 
-describe Z::Lex::C::Token do
+describe Z::Lex::Token do
   it ".new" do
     t = token(1, 1, T::INT, "1")
     t.line.should eq 1
