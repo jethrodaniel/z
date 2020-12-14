@@ -1,14 +1,4 @@
-FLAGS = -masm=intel \
-    -O0 \
-    -Wall \
-    -Wextra \
-    -fno-asynchronous-unwind-tables \
-    -fno-exceptions \
-    -fno-ident \
-    -finhibit-size-directive \
-    -Wl,-z,noexecstack
-CC=gcc#$(FLAGS)
- 
+CC=gcc
 Z=../bin/z
 run: build
 	./a.out; exit 0
