@@ -106,8 +106,14 @@ module Z
       end
     end
 
-    # TODO: don't indent labels
     visit Ast::AsmInstructionList do
+      # don't indent labels
+      if node.instructions.size == 1 && node.instructions.first.is_a?(Ast::AsmLabel)
+        visit(node.instructions.first, io)
+        io.puts
+        return
+      end
+
       io.print " "
       node.instructions.each_with_index do |inst, i|
         if i < 2

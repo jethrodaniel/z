@@ -15,6 +15,6 @@ main:
   ret
   push 3
   pop
-  f:
+f:
   call printf
   ret
