@@ -3,7 +3,7 @@ name: ci
 on: [push]
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
 
     container:
@@ -15,7 +15,9 @@ jobs:
     - name: install build tools
       run: |
         apt update -y
-        apt install -y rake
+        apt install -y rake tree
 
     - name: build and run tests
-      run: rake
+      run: |
+        tree
+        rake
