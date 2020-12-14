@@ -12,7 +12,7 @@ require "../ast/node"
 #            | "return" expr ";"
 #            | "{" stmt* "}"
 #            | asm "{" asm_line* "}"
-#            #| "if" "(" expr ")" stmt ("else" stmt)?
+#            | "if" "(" expr ")" stmt ("else" stmt)?
 #            #| "while" "(" expr ")" stmt
 #            #| "for" "(" expr? ";" expr? ";" expr? ")" stmt
 #
@@ -119,6 +119,12 @@ module Z
         n = Ast::Stmt.new(Ast::Return.new(_expr))
       elsif accept T::ASM
         return _asm
+      elsif accept T::IF
+        consume T::LEFT_PAREN, "expected `(` after `if`"
+        cond = _expr
+        consume T::RIGHT_PAREN, "expected closing `)` after `if (...`"
+        stmt = _stmt
+        return Ast::Stmt.new(Ast::If.new(cond, stmt))
       elsif accept T::LEFT_BRACE
         @fn_left_brace_count += 1
         stmts = [] of Ast::Node

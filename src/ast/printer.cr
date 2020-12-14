@@ -62,6 +62,18 @@ module Z
         io.print ")"
       end
 
+      visit If do
+        out io, "(#{name(node)},\n"
+        indent
+
+        visit(node.cond, io)
+        io.puts ","
+        visit(node.statement, io)
+
+        dedent
+        io.print ")"
+      end
+
       visit Fn do
         if node.params.empty? && node.statements.empty?
           out io, "(#{name(node)}, #{node.name})"

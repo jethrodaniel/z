@@ -125,6 +125,10 @@ module Z::Lex
             return add_token T::RETURN, v.to_s
           when "asm"
             return add_token T::ASM, v.to_s
+          when "if"
+            return add_token T::IF, v.to_s
+          when "else"
+            return add_token T::IF, v.to_s
           else
             return add_token T::IDENT, v.to_s
           end

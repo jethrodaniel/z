@@ -91,6 +91,8 @@ module Z
   # zc 'main(){f();}f(){42;}'
   # ```
   class CodeGen < Ast::Visitor
+    @label : Int32 = 0
+
     CALL_REGS = {
       1 => :rdi,
       2 => :rsi,
@@ -210,15 +212,28 @@ module Z
     end
 
     visit Ast::Stmt do
-      node.expr.accept(self, io)
+      visit(node.expr, io)
     end
 
     visit Ast::Expr do
-      node.value.accept(self, io)
+      visit(node.value, io)
+    end
+
+    visit Ast::If do
+      visit(node.cond, io)
+      @label += 1
+      n = @label.dup
+      io.puts <<-ASM
+        pop rax
+        cmp rax, 0
+        je label#{n}
+      ASM
+      visit(node.statement, io)
+      io.puts "label#{n}:"
     end
 
     visit Ast::Return do
-      node.value.accept(self, io)
+      visit(node.value, io)
       io.puts <<-ASM
         pop rax
         mov rsp, rbp

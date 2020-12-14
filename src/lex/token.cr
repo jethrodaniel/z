@@ -29,6 +29,8 @@ module Z::Lex
       COMMA       # ,
       ASM         # asm
       COLON       # :
+      IF          # if
+      ELSE        # else
     end
 
     property :line, :col, :type, :value

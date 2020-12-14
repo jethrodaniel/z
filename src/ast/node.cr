@@ -68,6 +68,10 @@ module Z
     ast_node Expr,
       value : Node
 
+    ast_node If,
+      cond : Node,
+      statement : Node
+
     ast_node Return,
       value : Node
 
