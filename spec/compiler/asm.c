@@ -25,7 +25,7 @@ main() {
 // block.
 asm {
   push 3;
-  pop;
+  pop rsi;
 
   f:
     call printf;

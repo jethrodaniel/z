@@ -14,7 +14,7 @@ main:
   pop rbp
   ret
   push 3
-  pop
+  pop rsi
 f:
   call printf
   ret
