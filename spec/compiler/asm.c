@@ -12,8 +12,9 @@ main() {
   asm { pop rax; push 42; }
 
   asm {
-    // At the moment, an assembly block is an expression, and as such, is
-    // expected to push a value to the stack, which will be popped into rax.
+    // At the moment, an assembly block inside a function is an expression, and
+    // as such, is expected to push a value to the stack, which will be popped
+    // into rax.
     pop rsi;
     push rsi;
   }

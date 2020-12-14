@@ -5,7 +5,5 @@ run: build
 clean:
 	rm -fv *.o *.s *.out
 build:
-	$(CC) -c io.c 
-	$(Z) -c -f main.c > z.s
-	$(CC) -c z.s
-	$(CC) *.o
+	$(Z) compile main.c > z.s
+	$(CC) z.s
