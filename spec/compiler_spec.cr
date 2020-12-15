@@ -5,6 +5,7 @@ def it_runs(name, file, expected)
   describe "running" do
     it name do
       begin
+        puts `ls -lrth . ./bin`
         got = `./bin/z run #{file}`.chomp
         got.should eq(expected)
       rescue error
