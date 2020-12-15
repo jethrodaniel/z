@@ -93,7 +93,7 @@ elsif compile
 elsif run
   cc = Z::Compiler.new(input.to_s)
   File.open("z.S", "w") { |f| f.puts cc.compile }
-  Process.run("gcc", ["z.S"])
+  Process.run("gcc", ["-no-pie", "z.S"])
   Process.exec("a.out", env: {"PATH" => Dir.current})
 else
   puts parser
