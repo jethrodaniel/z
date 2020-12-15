@@ -99,8 +99,9 @@ elsif run
   # a.out: Symbol `putchar' causes overflow in R_X86_64_PC32 relocation
   # ```
   #
-  Process.run("gcc", ["-no-pie", "z.S"])
-  Process.exec("a.out", env: {"PATH" => Dir.current})
+  Process.run("gcc", ["-no-pie", "z.S"], env: {"PATH" => ENV.fetch("PATH")})
+  Process.exec(File.join(Dir.current, "a.out"))
+  File.delete("z.S")
 else
   puts parser
   exit(1)

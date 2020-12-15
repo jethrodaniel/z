@@ -8,7 +8,7 @@ def it_runs(name, file, expected)
       err = IO::Memory.new
       Process.run "z",
         ["run", file],
-        env: {"PATH" => File.join(Dir.current, "bin") + ":/usr/bin:/bin"},
+        env: {"PATH" => ENV.fetch("PATH") + ":" + File.join(Dir.current, "bin")},
         output: output,
         error: err
       got = output.to_s.chomp
