@@ -4,12 +4,13 @@ require "../src/codegen/compiler"
 def it_runs(name, file, expected)
   describe "running" do
     it name do
+      output = IO::Memory.new
+      Process.run("z", ["run"], env: {"PATH" => File.join(Dir.current, "bin")}, output: output)
+      got = output.to_s
       begin
-        puts `ls -lrth . ./bin`
-        got = `./bin/z run #{file}`.chomp
         got.should eq(expected)
       rescue error
-        fail diff(got.not_nil!, expected)
+        fail diff(got, expected)
       end
     end
   end
