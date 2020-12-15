@@ -94,6 +94,7 @@ elsif run
   cc = Z::Compiler.new(input.to_s)
   File.open("z.S", "w") { |f| f.puts cc.compile }
   Process.run("gcc", ["z.S"] of String, error: STDERR, output: STDOUT)
+  p `gcc z.S`
   Process.run("a.out", env: {"PATH" => Dir.current}, output: STDOUT)
   # `>> 8` is needed to emulate `WEXITSTATUS`, see https://stackoverflow.com/a/22569908/7132678
   STDERR.puts "=> #{$?.exit_status >> 8}"
