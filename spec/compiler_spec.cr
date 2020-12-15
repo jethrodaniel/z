@@ -5,12 +5,15 @@ def it_runs(name, file, expected)
   describe "running" do
     it name do
       output = IO::Memory.new
-      Process.run("z", ["run"], env: {"PATH" => File.join(Dir.current, "bin")}, output: output)
-      got = output.to_s
+      Process.run "z",
+        ["run", file],
+        env: {"PATH" => File.join(Dir.current, "bin") + ":/usr/bin:/bin"},
+        output: output
+      got = output.to_s.chomp
       begin
-        got.should eq(expected)
+        expected.should eq(got)
       rescue error
-        fail diff(got, expected)
+        fail diff(expected, got)
       end
     end
   end
