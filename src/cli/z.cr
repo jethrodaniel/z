@@ -93,6 +93,12 @@ elsif compile
 elsif run
   cc = Z::Compiler.new(input.to_s)
   File.open("z.S", "w") { |f| f.puts cc.compile }
+  # `-no-pie` is needed on Debian to prevent
+  #
+  # ```
+  # a.out: Symbol `putchar' causes overflow in R_X86_64_PC32 relocation
+  # ```
+  #
   Process.run("gcc", ["-no-pie", "z.S"])
   Process.exec("a.out", env: {"PATH" => Dir.current})
 else
