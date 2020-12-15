@@ -94,14 +94,12 @@ elsif run
   cc = Z::Compiler.new(input.to_s)
   File.open("z.S", "w") { |f| f.puts cc.compile }
   Process.run("gcc", ["z.S"])
-  puts `cat z.S`
-  puts `gcc z.S`
-  p `file a.out`
-  Process.run("a.out", env: {"PATH" => Dir.current})
-  # `>> 8` is needed to emulate `WEXITSTATUS`, see https://stackoverflow.com/a/22569908/7132678
-  STDERR.puts "=> #{$?.exit_status >> 8}"
-  %w[z.S a.out].each { |f| File.delete(f) }
+  Process.exec("a.out", env: {"PATH" => Dir.current})
 else
   puts parser
   exit(1)
+end
+
+at_exit do
+  %w[z.S a.out].each { |f| File.delete(f) if File.file?(f) }
 end
