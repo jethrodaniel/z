@@ -12,7 +12,7 @@ def it_runs(name, file, expected)
         output: output,
         error: err
       got = output.to_s.chomp
-      puts err.to_s
+      puts "ERROR: #{err.to_s.inspect}"
       begin
         expected.should eq(got)
       rescue error
