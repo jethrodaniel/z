@@ -226,10 +226,10 @@ module Z
       io.puts <<-ASM
         pop rax
         cmp rax, 0
-        je label#{n}
+        je label_#{n}
       ASM
       visit(node.statement, io)
-      io.puts "label#{n}:"
+      io.puts "label_#{n}:"
     end
 
     visit Ast::Return do

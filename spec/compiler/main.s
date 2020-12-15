@@ -105,12 +105,12 @@ print_fib:
   push rax
   pop rax
   cmp rax, 0
-  je label1
+  je label_1
   push 32
   pop rdi
   call putchar
   push rax
-label1:
+label_1:
   push 61
   pop rdi
   call putchar
@@ -161,7 +161,7 @@ print_num:
   push rax
   pop rax
   cmp rax, 0
-  je label2
+  je label_2
   push 45
   pop rdi
   call putchar
@@ -178,7 +178,7 @@ print_num:
   mov rax, [rbp-8]
   push rax
   pop rax
-label2:
+label_2:
   mov rax, [rbp-8]
   push rax
   push 10
@@ -189,7 +189,7 @@ label2:
   push rax
   pop rax
   cmp rax, 0
-  je label3
+  je label_3
   mov rax, [rbp-8]
   push rax
   push 10
@@ -225,7 +225,7 @@ label2:
   mov rax, [rbp-8]
   push rax
   pop rax
-label3:
+label_3:
   mov rax, [rbp-8]
   push rax
   push 48
@@ -256,14 +256,14 @@ fib:
   push rax
   pop rax
   cmp rax, 0
-  je label4
+  je label_4
   mov rax, [rbp-8]
   push rax
   pop rax
   mov rsp, rbp
   pop rbp
   ret
-label4:
+label_4:
   mov rax, [rbp-8]
   push rax
   push 1
