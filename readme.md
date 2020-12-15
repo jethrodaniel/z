@@ -26,21 +26,42 @@ cd z && rake
 ## usage
 
 ```
-z
+$ ./bin/z
+Usage: z [command] [arguments]
+    lex                              Lex input, output tokens
+    parse                            Parse input, output AST
+    dot                              Parse input, output graphviz dot
+    compile                          Compile input, output assembly
+    run                              Compile and run input
+    -i                               Get input from stdin
+    -c                               Get input from string
+    -v, --version                    Show the version
+    -h, --help                       Show this help
 ```
 
 ## example
 
 See the specs in the [spec/compiler directory](spec/compiler).
 
-There's also some non-test samples (for now).
-
 ```
-cd sample && make
+$ pushd spec/compiler/
+$ ../../bin/z run hi.c
 hi!
+$ ../../bin/z run main.c
+fib(0)  = 0
+fib(1)  = 1
+fib(2)  = 1
+fib(3)  = 2
+fib(4)  = 3
+fib(5)  = 5
+fib(6)  = 8
+fib(7)  = 13
+fib(8)  = 21
+fib(9)  = 34
+fib(10) = 55
+fib(11) = 89
+fib(12) = 144
 ```
-
-TODO: add output as testing result using `.out` files
 
 ## references
 
