@@ -87,9 +87,12 @@ module Z
   #    the stack.
   #
   # ```
-  # zc() { shards build; z -c "$1" |tee a.s && gcc a.s && ./a.out ; echo $?; }
-  # zc 'main(){f();}f(){42;}'
-  # ```
+  #
+  # Links:
+  #
+  # - https://cs.lmu.edu/~ray/notes/asmtoexe/
+  # - https://nasm.us/doc/
+  #
   class CodeGen < Ast::Visitor
     @label : Int32 = 0
 
