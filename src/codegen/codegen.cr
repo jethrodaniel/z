@@ -319,7 +319,20 @@ module Z
           setle al
           movzb rax, al
         ASM
+      when :>
+        io.puts <<-ASM
+          cmp rax, rdi
+          setg al
+          movzb rax, al
+        ASM
+      when :>=
+        io.puts <<-ASM
+          cmp rax, rdi
+          setge al
+          movzb rax, al
+        ASM
       end
+
       io.puts "  push rax"
     end
 
