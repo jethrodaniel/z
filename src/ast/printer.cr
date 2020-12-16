@@ -62,11 +62,24 @@ module Z
         io.print ")"
       end
 
-      visit If do
+      visit Cond do
         out io, "(#{name(node)},\n"
         indent
 
-        visit(node.cond, io)
+        node.clauses.each_with_index do |c, i|
+          visit(c, io)
+          io.puts unless i == node.clauses.size - 1
+        end
+
+        dedent
+        io.print ")"
+      end
+
+      visit Clause do
+        out io, "(#{name(node)},\n"
+        indent
+
+        visit(node.test, io)
         io.puts ","
         visit(node.statement, io)
 

@@ -222,8 +222,12 @@ module Z
       visit(node.value, io)
     end
 
-    visit Ast::If do
-      visit(node.cond, io)
+    visit Ast::Cond do
+      node.clauses.each { |c| visit(c, io) }
+    end
+
+    visit Ast::Clause do
+      visit(node.test, io)
       @label += 1
       n = @label.dup
       io.puts <<-ASM

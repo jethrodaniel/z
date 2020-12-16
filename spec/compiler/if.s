@@ -29,6 +29,12 @@ main:
   pop rax
   add rax, rdi
   push rax
+  call test_if_else_braces
+  push rax
+  pop rdi
+  pop rax
+  add rax, rdi
+  push rax
   pop rax
   mov [rbp-8], rax
   mov rax, [rbp-8]
@@ -161,6 +167,153 @@ test_if_zero:
   ret
 label_6:
   push 0
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+test_if_else:
+  push rbp
+  mov rbp, rsp
+  sub rsp, 0
+  push 2
+  push 4
+  pop rdi
+  pop rax
+  cmp rax, rdi
+  setg al
+  movzb rax, al
+  push rax
+  pop rax
+  cmp rax, 0
+  je label_7
+  push 2
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+label_7:
+  push 0
+  pop rax
+  cmp rax, 0
+  je label_8
+  push 3
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+label_8:
+  push 2
+  push 4
+  pop rdi
+  pop rax
+  cmp rax, rdi
+  setl al
+  movzb rax, al
+  push rax
+  pop rax
+  cmp rax, 0
+  je label_9
+  push 0
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+label_9:
+  push 0
+  pop rax
+  cmp rax, 0
+  je label_10
+  push 42
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+label_10:
+  push 42
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+test_if_else_braces:
+  push rbp
+  mov rbp, rsp
+  sub rsp, 0
+  push 2
+  push 4
+  pop rdi
+  pop rax
+  cmp rax, rdi
+  setg al
+  movzb rax, al
+  push rax
+  pop rax
+  cmp rax, 0
+  je label_11
+  push 2
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+  pop rax
+label_11:
+  push 2
+  push 4
+  pop rdi
+  pop rax
+  cmp rax, rdi
+  setg al
+  movzb rax, al
+  push rax
+  pop rax
+  cmp rax, 0
+  je label_12
+  push 2
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+label_12:
+  push 0
+  pop rax
+  cmp rax, 0
+  je label_13
+  push 3
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+  pop rax
+label_13:
+  push 2
+  push 4
+  pop rdi
+  pop rax
+  cmp rax, rdi
+  setl al
+  movzb rax, al
+  push rax
+  pop rax
+  cmp rax, 0
+  je label_14
+  push 0
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+  pop rax
+label_14:
+  push 0
+  pop rax
+  cmp rax, 0
+  je label_15
+  push 42
+  pop rax
+  mov rsp, rbp
+  pop rbp
+  ret
+  pop rax
+label_15:
+  push 42
   pop rax
   mov rsp, rbp
   pop rbp

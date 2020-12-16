@@ -68,8 +68,11 @@ module Z
     ast_node Expr,
       value : Node
 
-    ast_node If,
-      cond : Node,
+    ast_node Cond,
+      clauses : Array(Node)
+
+    ast_node Clause,
+      test : Expr,
       statement : Node
 
     ast_node Return,

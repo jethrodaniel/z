@@ -120,11 +120,29 @@ module Z
       elsif accept T::ASM
         return _asm
       elsif accept T::IF
+        clauses = [] of Ast::Node
+
         consume T::LEFT_PAREN, "expected `(` after `if`"
         cond = _expr
-        consume T::RIGHT_PAREN, "expected closing `)` after `if (...`"
-        stmt = _stmt
-        return Ast::Stmt.new(Ast::If.new(cond, stmt))
+        consume T::RIGHT_PAREN, "expected `)` after `if`"
+        clauses << Ast::Clause.new(cond, _stmt)
+
+        while accept T::ELSE
+          if accept T::IF
+            consume T::LEFT_PAREN, "expected `(` after `else if`"
+            cond = _expr
+            consume T::RIGHT_PAREN, "expected `)` after `else if`"
+            clauses << Ast::Clause.new(cond, _stmt)
+
+            next
+          end
+
+          default_cond = Ast::Expr.new(Ast::NumberLiteral.new("0"))
+          clauses << Ast::Clause.new(default_cond, _stmt)
+          break
+        end
+
+        return Ast::Stmt.new(Ast::Cond.new(clauses))
       elsif accept T::LEFT_BRACE
         @fn_left_brace_count += 1
         stmts = [] of Ast::Node
