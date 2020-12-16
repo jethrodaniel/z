@@ -29,6 +29,12 @@ main:
   pop rax
   add rax, rdi
   push rax
+  call test_if_else
+  push rax
+  pop rdi
+  pop rax
+  add rax, rdi
+  push rax
   call test_if_else_braces
   push rax
   pop rdi

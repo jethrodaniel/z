@@ -4,6 +4,7 @@ main() {
   n = n + test_if()
         + test_if_nested()
         + test_if_zero()
+        + test_if_else()
         + test_if_else_braces();
   putchar(48 + n);
 }
