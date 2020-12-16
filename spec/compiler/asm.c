@@ -1,9 +1,9 @@
-// == Assembly
+// test: final result should print `0`.
 //
 // Heavily inspired by D. See https://dlang.org/spec/iasm.html
-
+//
 main() {
-  // Assembly here uses the same tokens as the rest of the language.
+  // Assembly uses the same tokens as the rest of the language.
   asm {
     sub rax, 0;
     add rax, 0;
@@ -16,8 +16,8 @@ main() {
 }
 
 // Since assembly is fully supported, we don't need to have a separate
-// assembler - if you want an assembly file, just put code in an assembly
-// block.
+// assembler - if you want to assemble an assembly file, just wrap it in
+// an assembler block and compile with the compiler.
 asm {
   test_asm_fn:
     mov rax, 42;
@@ -28,9 +28,6 @@ asm {
 
 test_asm_in_fn() {
   asm {
-    // At the moment, an assembly block inside a function is an expression, and
-    // as such, is expected to push a value to the stack, which will be popped
-    // into rax.
     push 0;
     pop rax;
     ret;
