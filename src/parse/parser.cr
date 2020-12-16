@@ -11,9 +11,9 @@ require "../ast/node"
 # stmt       = expr ";"
 #            | "return" expr ";"
 #            | "{" stmt* "}"
-#            | asm "{" asm_line* "}"
+#            | asm
 #            | "if" "(" expr ")" stmt ("else" stmt)?
-#            #| "while" "(" expr ")" stmt
+#            | "while" "(" expr ")" stmt
 #            #| "for" "(" expr? ";" expr? ";" expr? ")" stmt
 #
 # expr       = assign
@@ -28,7 +28,7 @@ require "../ast/node"
 #            | ident "(" ( ident ",")* ")"
 #            | "(" expr ")"
 #
-# asm                  = "{" asm_instruction_list* "}"
+# asm                  = "asm" "{" asm_instruction_list* "}"
 # asm_instruction_list = asm_ident
 #                      | asm_imm
 # ```
@@ -119,6 +119,14 @@ module Z
         n = Ast::Stmt.new(Ast::Return.new(_expr))
       elsif accept T::ASM
         return _asm
+      elsif accept T::WHILE
+        statements = [] of Ast::Node
+
+        consume T::LEFT_PAREN, "expected `(` after `while`"
+        cond = _expr
+        consume T::RIGHT_PAREN, "expected `)` after `while`"
+
+        return Ast::While.new(cond, _stmt)
       elsif accept T::IF
         clauses = [] of Ast::Node
 

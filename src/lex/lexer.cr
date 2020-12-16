@@ -129,6 +129,8 @@ module Z::Lex
             return add_token T::IF, v.to_s
           when "else"
             return add_token T::ELSE, v.to_s
+          when "while"
+            return add_token T::WHILE, v.to_s
           else
             return add_token T::IDENT, v.to_s
           end

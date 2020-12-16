@@ -31,6 +31,7 @@ module Z::Lex
       COLON       # :
       IF          # if
       ELSE        # else
+      WHILE       # while
     end
 
     property :line, :col, :type, :value

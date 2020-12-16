@@ -239,6 +239,25 @@ module Z
       io.puts "label_#{n}:"
     end
 
+    visit Ast::While do
+      @label += 1
+      n = @label.dup
+      io.puts <<-ASM
+      label_begin_#{n}:
+      ASM
+      visit(node.test, io)
+      io.puts <<-ASM
+        pop rax
+        cmp rax, 0
+        je label_end_#{n}
+      ASM
+      visit(node.statement, io)
+      io.puts <<-ASM
+        jmp label_begin_#{n}
+      label_end_#{n}:
+      ASM
+    end
+
     visit Ast::Return do
       visit(node.value, io)
       io.puts <<-ASM

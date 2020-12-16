@@ -75,6 +75,10 @@ module Z
       test : Expr,
       statement : Node
 
+    ast_node While,
+      test : Expr,
+      statement : Node
+
     ast_node Return,
       value : Node
 
