@@ -92,21 +92,18 @@ elsif compile
   puts cc.compile
 elsif run
   cc = Z::Compiler.new(input.to_s)
-  File.open("z.S", "w") { |f| f.puts cc.compile }
+  asm_file = File.tempfile("z.S") { |f| f.puts cc.compile }
+  bin_file = File.tempfile("a.out") { }
+
   # `-no-pie` is needed on Debian to prevent
   #
   # ```
   # a.out: Symbol `putchar' causes overflow in R_X86_64_PC32 relocation
   # ```
   #
-  Process.run("gcc", ["-no-pie", "z.S"], env: {"PATH" => ENV.fetch("PATH")})
-  Process.exec(File.join(Dir.current, "a.out"))
-  File.delete("z.S")
+  Process.run("gcc", ["-no-pie", asm_file.path, "-o", bin_file.path], env: {"PATH" => ENV.fetch("PATH")})
+  Process.exec(bin_file.path)
 else
   puts parser
   exit(1)
-end
-
-at_exit do
-  %w[z.S a.out].each { |f| File.delete(f) if File.file?(f) }
 end
