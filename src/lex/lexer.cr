@@ -57,6 +57,8 @@ module Z::Lex
           return add_token T::PLUS, c.to_s
         when '-'
           return add_token T::MIN, c.to_s
+        when '%'
+          return add_token T::MOD, c.to_s
         when '/'
           if @reader.has_next? && @reader.peek_next_char == '/'
             next_char

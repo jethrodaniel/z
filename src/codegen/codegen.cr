@@ -318,6 +318,12 @@ module Z
           cqo
           idiv rdi
         ASM
+      when :%
+        io.puts <<-ASM
+          cqo
+          idiv rdi
+          mov rax, rdx
+        ASM
       when :==
         io.puts <<-ASM
           cmp rax, rdi

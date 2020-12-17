@@ -27,6 +27,7 @@ require "../ast/node"
 #            | ident
 #            | ident "(" ( ident ",")* ")"
 #            | "(" expr ")"
+# num        = 0..9
 #
 # asm                  = "asm" "{" asm_instruction_list* "}"
 # asm_instruction_list = asm_ident
@@ -317,6 +318,8 @@ module Z
           n = Ast::BinOp.new(:*, n, _unary)
         elsif accept T::DIV
           n = Ast::BinOp.new(:/, n, _unary)
+        elsif accept T::MOD
+          n = Ast::BinOp.new(:%, n, _unary)
         else
           return n
         end

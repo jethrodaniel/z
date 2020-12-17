@@ -10,6 +10,7 @@ module Z::Lex
       MIN         # -
       DIV         # /
       MUL         # *
+      MOD         # %
       INT         # 124
       LEFT_PAREN  # (
       RIGHT_PAREN # )
