@@ -129,7 +129,7 @@ module Z
 
         return Ast::While.new(cond, _stmt)
       elsif accept T::IF
-        clauses = [] of Ast::Node
+        clauses = [] of Ast::Clause
 
         consume T::LEFT_PAREN, "expected `(` after `if`"
         cond = _expr
@@ -146,7 +146,7 @@ module Z
             next
           end
 
-          default_cond = Ast::Expr.new(Ast::NumberLiteral.new("0"))
+          default_cond = Ast::Expr.new(Ast::NumberLiteral.new("1"))
           clauses << Ast::Clause.new(default_cond, _stmt)
           break
         end

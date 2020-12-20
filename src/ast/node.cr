@@ -69,7 +69,7 @@ module Z
       value : Node
 
     ast_node Cond,
-      clauses : Array(Node)
+      clauses : Array(Clause)
 
     ast_node Clause,
       test : Expr,

@@ -222,20 +222,29 @@ module Z
     end
 
     visit Ast::Cond do
-      node.clauses.each { |c| visit(c, io) }
+      @label += 1
+      n = @label.dup
+
+      node.clauses.each_with_index do |c, i|
+        visit(c.test, io)
+        io.puts <<-ASM
+          pop rax
+          cmp rax, 0
+          je label_#{n}_#{n + i}
+        ASM
+        visit(c.statement, io)
+        io.puts <<-ASM
+          jmp label_#{n}
+          label_#{n}_#{n + i}:
+        ASM
+      end
+
+      io.puts <<-ASM
+        label_#{n}:
+      ASM
     end
 
     visit Ast::Clause do
-      visit(node.test, io)
-      @label += 1
-      n = @label.dup
-      io.puts <<-ASM
-        pop rax
-        cmp rax, 0
-        je label_#{n}
-      ASM
-      visit(node.statement, io)
-      io.puts "label_#{n}:"
     end
 
     visit Ast::While do
