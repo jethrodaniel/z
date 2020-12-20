@@ -8,41 +8,37 @@ repl() {
   prompt();
 
   while (running) {
-    c = getchar();
+    if ((c = getchar()) == 113) // q
+      return running = 0;
+    
+    print_num(c);
+    puts();
 
     if (c == 10) { // \n
-      putchar(61); // =
-      putchar(62); // >
-      putchar(32); // ' '
-      putchar(33); // !
-      // puts line
-      puts();
-      prompt();
-    }
-
-    if (c == 113) // q
-      running = 0;
-    else {
+      p(61); // =
+      p(62); // >
+      p(32); // ' '
       print_num(c);
       puts();
+      prompt();
     }
   }
 }
 
-puts() { putchar(10); }
+p(c){putchar(c);}
+puts(){p(10);}
 
 prompt() {
-  putchar(63); // ?
-  putchar(32); // ' '
+  p(63); // ?
+  p(32); // ' '
 }
 
 print_num(n) {
   if (n < 0) {
-    putchar(45); // -
+    p(45); // -
     n = -n;
   }
   if (n / 10)
     print_num(n / 10);
-
-  putchar(n % 10 + 48);
+  p(n % 10 + 48);
 }
