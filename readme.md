@@ -61,6 +61,8 @@ fib(9)  = 34
 fib(10) = 55
 fib(11) = 89
 fib(12) = 144
+$ z run -c 'p(c){putchar(c);}main(){p(65);p(10);}'
+A
 ```
 
 ## references
