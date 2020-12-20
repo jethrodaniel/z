@@ -186,7 +186,6 @@ module Z
       node.statements.each do |s|
         visit(s, io)
       end
-      io.puts "  pop rax"
     end
 
     visit Ast::FnCall do
