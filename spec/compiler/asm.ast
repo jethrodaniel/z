@@ -20,7 +20,7 @@
           (lvar, n@8),
           (bin_op, +,
             (bin_op, +,
-              (ident, n@8),
+              (ident, U64, n@8),
               (fn_call, test_asm_fn),
             (fn_call, test_asm_fn))),
     (stmt,
@@ -30,7 +30,7 @@
             (expr,
               (bin_op, +,
                 (number_literal, 48),
-                (ident, n@8)))))))
+                (ident, U64, n@8)))))))
   (asm,
     (asm_instruction_list,
       (asm_label, test_asm_fn)),

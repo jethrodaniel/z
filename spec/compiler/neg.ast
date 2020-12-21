@@ -17,4 +17,4 @@
                     (expr,
                       (bin_op, +,
                         (number_literal, 66),
-                        (ident, a@8))))))))))))
+                        (ident, U64, a@8))))))))))))

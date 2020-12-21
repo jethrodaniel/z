@@ -37,6 +37,7 @@ module Z::Lex
       BAR         # |
       AND_AND     # &&
       AND         # &
+      TYPE        # one of Ast::Types as a string
     end
 
     property :line, :col, :type, :value

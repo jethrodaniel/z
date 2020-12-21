@@ -160,8 +160,12 @@ module Z
         io.print ")"
       end
 
-      visit Lvar, Ident do
+      visit Lvar do
         out io, "(#{name(node)}, #{node.value}@#{node.offset})"
+      end
+
+      visit Ident do
+        out io, "(#{name(node)}, #{node.type}, #{node.value}@#{node.offset})"
       end
 
       visit NumberLiteral do

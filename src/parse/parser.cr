@@ -3,18 +3,21 @@ require "set"
 require "../lex/lexer"
 require "../ast/node"
 
-# Simple calculator grammar for now
-#
 # ```
 # program    = (fn | asm)*
 # fn         = ident "(" (indent ",")* ")" "{" stmt* "}"
 # stmt       = expr ";"
 #            | "return" expr ";"
+#            #| declaration
 #            | "{" stmt* "}"
 #            | asm
 #            | "if" "(" expr ")" stmt ("else" stmt)?
 #            | "while" "(" expr ")" stmt
 #            #| "for" "(" expr? ";" expr? ";" expr? ")" stmt
+#
+# declaration = type ident ";"
+#             | type ident "=" assign ";"
+# type        = "int"
 #
 # expr       = assign
 # assign     = equality ("=" assign)?
@@ -121,6 +124,8 @@ module Z
         n = Ast::Stmt.new(Ast::Return.new(_expr))
       elsif accept T::ASM
         return _asm
+        # elsif accept T::TYPE
+        #   n = Ast::Declaration.new()
       elsif accept T::WHILE
         statements = [] of Ast::Node
 
@@ -376,7 +381,7 @@ module Z
           end
         end
         @locals[prev.value] ||= (@offset += 8)
-        return Ast::Ident.new(prev.value, @locals[prev.value])
+        return Ast::Ident.new(prev.value, Ast::Types::U64, @locals[prev.value])
       end
       error "expected a parenthesized list, an ident, or a number, got `#{curr.value}`"
     end

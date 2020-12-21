@@ -178,7 +178,7 @@
         (fn_call, putchar,
           (fn_arg,
             (expr,
-              (ident, c@8)))))),
+              (ident, U64, c@8)))))),
     (stmt,
       (expr,
         (fn_call, putchar,

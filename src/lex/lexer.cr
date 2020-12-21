@@ -147,6 +147,8 @@ module Z::Lex
             return add_token T::ELSE, v.to_s
           when "while"
             return add_token T::WHILE, v.to_s
+          when "U0", "I16", "U16", "I32", "U32", "I64", "U64", "F64"
+            return add_token T::TYPE, v.to_s
           else
             return add_token T::IDENT, v.to_s
           end

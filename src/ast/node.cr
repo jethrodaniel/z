@@ -45,6 +45,19 @@ module Z
       end
     end
 
+    enum Types
+      U0
+      I8
+      U8
+      I16
+      U16
+      I32
+      U32
+      I64
+      U64
+      F64
+    end
+
     ast_node Program,
       statements : Array(Node)
 
@@ -94,6 +107,7 @@ module Z
 
     ast_node Ident,
       value : String,
+      type : Types,
       offset : Int32
 
     ast_node Lvar,
