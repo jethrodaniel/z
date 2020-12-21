@@ -18,7 +18,8 @@ require "../ast/node"
 #
 # expr       = assign
 # assign     = equality ("=" assign)?
-# equality   = relational ("==" relational | "!=" relational)*
+# equality   = logical ("==" logical | "!=" logical)*
+# logical    = relational ("&&" relational | "||" relational)*
 # relational = add ("<" add | "<=" add | ">" add | ">=" add)*
 # add        = mul ("+" mul | "-" mul)*
 # mul        = unary ("*" unary | "/" unary)*
@@ -142,7 +143,6 @@ module Z
             cond = _expr
             consume T::RIGHT_PAREN, "expected `)` after `else if`"
             clauses << Ast::Clause.new(cond, _stmt)
-
             next
           end
 
@@ -265,13 +265,29 @@ module Z
     end
 
     private def _equality
-      n = _relational
+      n = _logical
 
       loop do
         if accept T::EQ
-          n = Ast::BinOp.new(:==, n, _relational)
+          n = Ast::BinOp.new(:==, n, _logical)
         elsif accept T::NE
-          n = Ast::BinOp.new(:!=, n, _relational)
+          n = Ast::BinOp.new(:!=, n, _logical)
+        else
+          return n
+        end
+      end
+    end
+
+    private def _logical
+      return _relational # todo, actually allow logical ops
+
+      n = _relational
+
+      loop do
+        if accept T::AND_AND
+          n = Ast::BinOp.new(:"&&", n, _relational)
+        elsif accept T::BAR_BAR
+          n = Ast::BinOp.new(:"||", n, _relational)
         else
           return n
         end
@@ -330,7 +346,7 @@ module Z
       if accept T::PLUS
         return _primary
       elsif accept T::MIN
-        return Ast::BinOp.new(:-, Ast::NumberLiteral.new("0"), _primary)
+        return Ast::Neg.new(_primary)
       end
 
       _primary

@@ -22,11 +22,9 @@ main:
   jmp label_1
   label_1_1:
   label_1:
-  push 0
   push 3
-  pop rdi
   pop rax
-  sub rax, rdi
+  neg rax
   push rax
   push 2
   pop rdi
@@ -45,11 +43,9 @@ main:
   jmp label_2
   label_2_2:
   label_2:
-  push 0
   push 4
-  pop rdi
   pop rax
-  sub rax, rdi
+  neg rax
   push rax
   push 2
   pop rdi
@@ -78,11 +74,9 @@ main:
   jmp label_3
   label_3_4:
   label_3:
-  push 0
   push 3
-  pop rdi
   pop rax
-  sub rax, rdi
+  neg rax
   push rax
   push 3
   pop rdi

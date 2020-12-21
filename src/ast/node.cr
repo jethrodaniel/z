@@ -107,6 +107,15 @@ module Z
       left : Node,
       right : Node
 
+    ast_node Neg, value : Node
+
+    # ast_node LogicalAnd,
+    #   left : Node,
+    #   right : Node
+    # ast_node LogicalOr,
+    #   left : Node,
+    #   right : Node
+
     ast_node Assignment,
       left : Node,
       right : Node

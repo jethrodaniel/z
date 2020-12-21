@@ -168,12 +168,10 @@ print_num:
   pop rdi
   call putchar
   push rax
-  push 0
   mov rax, [rbp-8]
   push rax
-  pop rdi
   pop rax
-  sub rax, rdi
+  neg rax
   push rax
   pop rax
   mov [rbp-8], rax

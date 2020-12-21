@@ -141,7 +141,15 @@ module Z
         io.puts "  #{id} [label=\"#{name(node)}\"];"
       end
 
-      visit Asm, AsmIdent, AsmImm, AsmInstructionList, AsmLabel, Cond, Clause, While do
+      visit Asm,
+        AsmIdent,
+        AsmImm,
+        AsmInstructionList,
+        AsmLabel,
+        Cond,
+        Clause,
+        While,
+        Neg do
         raise "err"
       end
     end

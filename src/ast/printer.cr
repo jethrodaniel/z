@@ -198,6 +198,14 @@ module Z
         out io, "(#{name(node)})"
       end
 
+      visit Neg do
+        out io, "(#{name(node)},\n"
+        indent
+        visit(node.value, io)
+        dedent
+        io.print ")"
+      end
+
       visit Asm, AsmInstructionList do
         if node.instructions.empty?
           out io, "(#{name(node)})"

@@ -59,6 +59,20 @@ module Z::Lex
           return add_token T::MIN, c.to_s
         when '%'
           return add_token T::MOD, c.to_s
+        when '&'
+          if @reader.peek_next_char == '&'
+            next_char
+            return add_token T::AND_AND, "&&"
+          else
+            return add_token T::AND, c.to_s
+          end
+        when '|'
+          if @reader.peek_next_char == '|'
+            next_char
+            return add_token T::BAR_BAR, "||"
+          else
+            return add_token T::BAR, c.to_s
+          end
         when '/'
           if @reader.has_next? && @reader.peek_next_char == '/'
             next_char

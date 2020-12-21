@@ -306,6 +306,15 @@ module Z
       visit(node.left, io)
     end
 
+    visit Ast::Neg do
+      visit(node.value, io)
+      io.puts <<-ASM
+        pop rax
+        neg rax
+        push rax
+      ASM
+    end
+
     visit Ast::BinOp do
       visit(node.left, io)
       visit(node.right, io)

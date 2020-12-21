@@ -33,6 +33,10 @@ module Z::Lex
       IF          # if
       ELSE        # else
       WHILE       # while
+      BAR_BAR     # ||
+      BAR         # |
+      AND_AND     # &&
+      AND         # &
     end
 
     property :line, :col, :type, :value
