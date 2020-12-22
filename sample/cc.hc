@@ -1,8 +1,8 @@
-main() {
+u64 main() {
   repl();
 }
 
-repl() {
+u64 repl() {
   running = 1;
 
   prompt();
@@ -13,6 +13,10 @@ repl() {
     
     print_num(c);
     puts();
+    if (c == -1) { // ^D // we get 4294967295 atm
+      p(94);
+      p(68);
+    }
 
     if (c == 10) { // \n
       p(61); // =
@@ -25,15 +29,15 @@ repl() {
   }
 }
 
-p(c){putchar(c);}
-puts(){p(10);}
+u64 p(c){putchar(c);}
+u64 puts(){p(10);}
 
-prompt() {
+u64 prompt() {
   p(63); // ?
   p(32); // ' '
 }
 
-print_num(n) {
+u64 print_num(n) {
   if (n < 0) {
     p(45); // -
     n = -n;
