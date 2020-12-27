@@ -1,1 +1,1 @@
-int main(){a=-1;putchar(-(-(66 + a)));}
+main(){a=-1;putchar(-(-(66 + a)));}

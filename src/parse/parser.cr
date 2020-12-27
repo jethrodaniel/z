@@ -4,6 +4,10 @@ require "colorize"
 require "../lex/lexer"
 require "../ast/node"
 
+# Basic recursive-descent parser.
+#
+# The grammar is as follows (basic EBNF notation)
+#
 # ```
 # program    = (fn | asm)*
 # fn         = ident "(" (indent ",")* ")" "{" stmt* "}"
@@ -16,9 +20,8 @@ require "../ast/node"
 #            | "while" "(" expr ")" stmt
 #            #| "for" "(" expr? ";" expr? ";" expr? ")" stmt
 #
-# declaration = type ident ";"
-#             | type ident "=" assign ";"
-# type        = "int"
+# #declaration = type ident ";"
+# #            | type ident "=" assign ";"
 #
 # expr       = assign
 # assign     = equality ("=" assign)?
@@ -32,7 +35,6 @@ require "../ast/node"
 #            | ident
 #            | ident "(" ( ident ",")* ")"
 #            | "(" expr ")"
-# num        = 0..9
 #
 # asm                  = "asm" "{" asm_instruction_list* "}"
 # asm_instruction_list = asm_ident
@@ -70,7 +72,6 @@ module Z
     private def _program
       stmts = [] of Ast::Node
       until eof?
-        # if accept Ast::Asm
         stmts << _fn_or_asm
       end
       Ast::Program.new(stmts)
@@ -116,7 +117,6 @@ module Z
         stmts << stmt if stmt
       end
 
-      # error "missing `}` after fn `#{name.value}`" unless accept T::RIGHT_BRACE
       Ast::Fn.new(name.value, params, stmts, @offset)
     end
 
@@ -182,13 +182,13 @@ module Z
 
     # note: the asm token should already be consumed
     private def _asm
-      error "[#{prev.line}:#{prev.col}] expected a `{` after `asm`" unless accept T::LEFT_BRACE
+      error "expected a `{` after `asm`" unless accept T::LEFT_BRACE
 
       instructions = [] of Ast::AsmInstructionList
       idents = [] of Ast::AsmIdent | Ast::AsmImm | Ast::AsmLabel
 
       until accept T::RIGHT_BRACE
-        error "[#{prev.line}:#{prev.col}] expected a `}` after `asm`" if eof?
+        error "expected a `}` after `asm`" if eof?
 
         if accept T::IDENT
           idents << Ast::AsmIdent.new(prev.value)

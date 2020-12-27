@@ -4,7 +4,7 @@
 // - We currently have an implicit return
 // - Functions are typeless; everything's an int
 
-int main() {
+main() {
   print_fib(0);
   print_fib(1);
   print_fib(2);
@@ -22,7 +22,7 @@ int main() {
 }
 
 // prints `fib(n) = x`, for the given `n`
-int print_fib(n) {
+print_fib(n) {
   putchar(102);  // f
   putchar(105);  // i
   putchar(98);   // b
@@ -38,11 +38,11 @@ int print_fib(n) {
   puts();
 }
 
-int puts() {
+puts() {
   putchar(10); // \n
 }
 
-int print_num(n) {
+print_num(n) {
   if (n < 0) {
     putchar(45); // -
     n = -n;
@@ -56,7 +56,7 @@ int print_num(n) {
   putchar(n + 48);
 }
 
-int fib(n) {
+fib(n) {
   if (n < 2) return n;
 
   fib(n-1) + fib(n-2);

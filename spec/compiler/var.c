@@ -1,13 +1,13 @@
-int main() {
+main() {
   test_vars();
 }
 
-int p(n) {
+p(n) {
   putchar(48 + n);
   putchar(10);
 }
 
-int test_vars() {
+test_vars() {
   a = b = c = 5;
   p(a);
 
