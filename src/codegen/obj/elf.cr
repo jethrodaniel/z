@@ -193,18 +193,3 @@ class Elf64::Obj
     ELF
   end
 end
-
-module Elf64
-  def self.new
-    Main.new
-  end
-end
-
-# elf = Elf64.new.tap do |e|
-#   # ...
-# end
-#
-# # puts elf
-# o = IO::Memory.new
-# elf.write(o)
-# File.open("a.out", "wb") { |f| f << o.to_s }
