@@ -1,3 +1,4 @@
+require "colorize"
 require "./spec_helper"
 
 def it_parses(name, code, expected)
@@ -17,6 +18,10 @@ end
 
 for_each_spec do |name, files|
   src = files.find { |f| f.ends_with? ".c" }.not_nil!
-  ast = files.find { |f| f.ends_with? ".ast" }.not_nil!
-  it_parses name, File.read(src).chomp, File.read(ast).chomp
+
+  if ast = files.find { |f| f.ends_with? ".ast" }
+    it_parses name, File.read(src).chomp, File.read(ast).chomp
+  else
+    STDERR.puts "missing ast (`.ast`) file for `#{src}`".colorize(:red)
+  end
 end
