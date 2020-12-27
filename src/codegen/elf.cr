@@ -1,22 +1,13 @@
 # Write a x86_64 ELF binary
 #
-# See https://www.conradk.com/codebase/2017/05/28/elf-from-scratch/
-#
 # References:
 #
 # - `/usr/include/elf.h`
+# - https://linuxhint.com/understanding_elf_file_format/
+# - https://www.conradk.com/codebase/2017/05/28/elf-from-scratch/
 
 module Elf
   EI_NIDENT = 16
-
-  EI_MAG0 =    0
-  ELFMAG0 = 0x7f
-  EI_MAG1 =    1
-  ELFMAG1 = 'E'.ord
-  EI_MAG2 = 2
-  ELFMAG2 = 'L'.ord
-  EI_MAG3 = 3
-  ELFMAG3 = 'F'.ord
 
   EI_CLASS   = 4
   ELFCLASS64 = 2 # 64-bit objects
@@ -89,6 +80,7 @@ class Elf64::Header < BinData
 
   def to_s(io)
     magic = [e_ident.mag0, e_ident.mag1, e_ident.mag2, e_ident.mag3].map(&.to_s(16)).join
+    return
     io.puts <<-E
       e_ident:
         magic: #{magic}
@@ -114,13 +106,27 @@ class Elf64::Header < BinData
   end
 end
 
+class Elf64::ProgramHeader < BinData
+  endian little
+
+  # todo
+  uint32 :p_type, default: 6
+  uint32 :p_flags, default: 5
+  uint64 :p_offset, default: 0x40
+  uint64 :p_vaddr, default: 0x40
+  uint64 :p_paddr, default: 0x40
+  uint32 :p_filesz, default: 0x01f8
+  uint32 :p_memsz, default: 0
+  uint32 :p_align, default: 0x01f8
+end
+
 class Elf64::Main < BinData
   endian little
 
   custom header : Header = Header.new
+  custom program_header : ProgramHeader = ProgramHeader.new
 
   def to_s(io)
-    io.puts
     io.puts <<-ELF
     == elf64 ==
 
