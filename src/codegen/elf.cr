@@ -174,14 +174,28 @@ class Elf64::SectionHeader < BinData
   uint64 :sh_entsize, default: 0x1c
 end
 
+macro add_n_sections(n)
+  # puts "n: #{n}"
+  {% for i in (1..n) %}
+    custom section_header_{{i.id}} : SectionHeader = SectionHeader.new
+  {% end %}
+end
+
 class Elf64::Main < BinData
   endian little
 
   custom header : Header = Header.new
+
   # todo: ensure this is located at e_ident.phoff
   custom program_header : ProgramHeader = ProgramHeader.new
 
-  custom section_header : SectionHeader = SectionHeader.new
+  # {% for i in header.shnum %}
+  #   custom section_header_{{i.id}} : SectionHeader = SectionHeader.new
+  # {% end %}
+  # add_n_sections(header.shnum)
+  # if header.shnum.is_a? NumberLiteral
+  #   add_n_sections(3)
+  # end
 
   def to_s(io)
     io.puts <<-ELF
