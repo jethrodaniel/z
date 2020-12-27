@@ -7,30 +7,40 @@
 # - `/usr/include/elf.h`
 
 module Elf
-  module Index
-    MAG0          = 0
-    MAG1          = 1
-    MAG2          = 2
-    MAG3          = 3
-    CLASS         = 4
-    DATA          = 5
-    VERSION       = 6
-    OSABI         = 7
-    OSABI_VERSION = 8
-    PAD = 9
-  end
+  EI_NIDENT = 16
 
-  module Const
-    MAG0       = 0x7f
-    MAG1       = 'E'.ord
-    MAG2       = 'L'.ord
-    MAG3       = 'F'.ord
-    CLASS64    = 2 # 64-bit objects
-    DATA2LSB   = 1 # 2's complement, litte endian
-    VERSION    = 1
-    OSABI_SYSV = 0
-    OSABI_SYSV_VERSION = 0
-  end
+  EI_MAG0 = 0
+  ELFMAG0 = 0x7f
+  EI_MAG1 = 1
+  ELFMAG1 = 'E'.ord
+  EI_MAG2 = 2
+  ELFMAG2 = 'L'.ord
+  EI_MAG3 = 3
+  ELFMAG3 = 'F'.ord
+
+  EI_CLASS   = 4
+  ELFCLASS64 = 2 # 64-bit objects
+
+  EI_DATA     = 5
+  ELFDATA2LSB = 1 # 2's complement, litte endian
+
+  EI_VERSION = 6
+  EV_CURRENT = 1
+
+  EI_OSABI      = 7
+  ELFOSABI_SYSV = 0
+
+  EI_ABIVERSION = 8
+
+  EI_PAD = 9
+
+  # ET_NONE = 0
+  # ET_REL = 1
+  ET_EXEC = 2
+  # ET_DYN = 3
+  # ET_CORE = 4
+
+  EM_X86_64 = 62
 end
 
 class ElfBinary
@@ -49,6 +59,9 @@ end
 
 bin = ElfBinary.new
 
+##
+# Header
+
 # every ELF file starts with the magic number, then ASCII for 'ELF'
 #
 # ```
@@ -57,25 +70,43 @@ bin = ElfBinary.new
 # 00000004
 # ```
 #
-bin << Elf::Const::MAG0
-bin << Elf::Const::MAG1
-bin << Elf::Const::MAG2
-bin << Elf::Const::MAG3
+bin << Elf::ELFMAG0
+bin << Elf::ELFMAG1
+bin << Elf::ELFMAG2
+bin << Elf::ELFMAG3
 
 # Specify 64-bit output
-bin << Elf::Const::CLASS64
+bin << Elf::ELFCLASS64
 
 # Specify endianess
-bin << Elf::Const::DATA2LSB
+bin << Elf::ELFDATA2LSB
 
-# todo
-bin << Elf::Const::VERSION
+# Specify elf version
+bin << 1
 
 # Specify ABI
-bin << Elf::Const::OSABI_SYSV
-bin << Elf::Const::OSABI_SYSV_VERSION
+bin << Elf::ELFOSABI_SYSV
+bin << 0
 
-# Specify padding
+# Specify padding; todo, is this alway zero?
+bin << 0
+
+# Pad out the rest of the `e_ident` header with zeros
+(Elf::EI_NIDENT - 10).times { |n| bin << 0 }
+
+##
+# segments
+
+# Specify type
+bin << Elf::ET_EXEC
+bin << 0
+
+# Specify machine
+bin << Elf::EM_X86_64
+bin << 0
+
+# Specify version
+bin << Elf::EV_CURRENT
 bin << 0
 
 File.open("a.out", "wb") do |f|
