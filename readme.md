@@ -68,7 +68,7 @@ A
 
 ## references
 
-TODO: clean this up, add more refereneces, order by subject
+TODO: clean this up, add more, order by subject
 
 > If I have seen further, it is by standing upon the shoulders of giants.
 >
