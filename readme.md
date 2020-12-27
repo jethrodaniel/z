@@ -33,6 +33,7 @@ Usage: z [command] [arguments]
     dot                              Parse input, output graphviz dot
     compile                          Compile input, output assembly
     run                              Compile and run input
+    obj                              Analyze object files
     -i                               Get input from stdin
     -c                               Get input from string
     -v, --version                    Show the version
