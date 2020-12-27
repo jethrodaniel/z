@@ -6,14 +6,6 @@
 #
 # - `/usr/include/elf.h`
 
-require "bindata"
-
-class Elf64 < BinData
-  endian little
-
-  uint8 :mag0, default: 0x7f_u8
-end
-
 module Elf
   EI_NIDENT = 16
 
@@ -51,93 +43,58 @@ module Elf
   EM_X86_64 = 62
 end
 
-class ElfBinary
-  getter :io
+require "bindata"
 
-  def initialize
-    @io = IO::Memory.new
+class Elf64 < BinData
+  endian little
+
+  group :e_ident do
+    uint8 :mag0, default: 0x7f_u8 # , verify: ->{ mag0 == 0x7f_u8 }
+    uint8 :mag1, default: 'E'.ord
+    uint8 :mag2, default: 'L'.ord
+    uint8 :mag3, default: 'F'.ord
+
+    uint8 :class, default: Elf::ELFCLASS64
+    uint8 :endian, default: Elf::ELFDATA2LSB # todo - use exisiting endian
+    uint8 :version, default: 1
+    uint8 :osabi, default: Elf::ELFOSABI_SYSV
+    uint8 :pad, default: 0 # todo
+
+    uint32 :e_ident_after1, default: 0
+    uint16 :e_ident_after2, default: 0
+    uint8 :e_ident_after3, default: 0
   end
 
-  def <<(int)
-    @io.write_byte int.to_u8
-  end
+  uint16 :e_type, default: Elf::ET_EXEC
+  uint16 :e_machine, default: Elf::EM_X86_64
+  uint32 :e_version, default: Elf::EV_CURRENT
 
-  def to_s
-    @io.to_slice
+  # todo
+  uint64 :e_entry, default: 0x400440
+  uint64 :e_phoff, default: 0x40
+  uint64 :e_shoff, default: 0x1160
+
+  uint32 :e_flags, default: 0
+
+  # todo
+  uint32 :e_ehsize, default: 0x38_00_40
+
+  def to_s(io)
+    magic = [e_ident.mag0, e_ident.mag1, e_ident.mag2, e_ident.mag3].map(&.to_s(16)).join
+    io.puts "magic: #{magic}"
+    io.puts "class: #{e_ident.class.to_s(16)}"
+
+    io.puts <<-ELF
+      magic: #{e_ident.mag0.to_s(16)}
+    ELF
   end
 end
-
-bin = ElfBinary.new
-
-##
-# Header
-
-# every ELF file starts with the magic number, then ASCII for 'ELF'
-#
-# ```
-# $ hexdump -C a.out
-# 00000000  7f 45 4c 46                                       |.ELF|
-# 00000004
-# ```
-#
-bin << Elf::ELFMAG0
-bin << Elf::ELFMAG1
-bin << Elf::ELFMAG2
-bin << Elf::ELFMAG3
-
-# Specify 64-bit output
-bin << Elf::ELFCLASS64
-
-# Specify endianess
-bin << Elf::ELFDATA2LSB
-
-# Specify elf version
-bin << 1
-
-# Specify ABI
-bin << Elf::ELFOSABI_SYSV
-bin << 0
-
-# Specify padding; todo, is this alway zero?
-bin << 0
-
-# Pad out the rest of the `e_ident` header with zeros
-(Elf::EI_NIDENT - 10).times { |n| bin << 0 }
-
-##
-# segments
-
-# Specify type
-bin << Elf::ET_EXEC
-bin << 0
-
-# Specify machine
-bin << Elf::EM_X86_64
-bin << 0
-
-# Specify version
-bin << Elf::EV_CURRENT
-bin << 0
-
-File.open("a.out", "wb") do |f|
-  f.write bin.to_s
-end
-
-bin.io.rewind
-elf = bin.io.read_bytes(Elf64)
-puts <<-ELF
-  mag0: #{elf.mag0.to_s(16)}
-ELF
 
 elf = Elf64.new.tap do |e|
-  e.mag0 = 1_u8
+  # ...
 end
-puts <<-ELF
-  mag0: #{elf.mag0.to_s(16)}
-ELF
+
+puts elf
 o = IO::Memory.new
 elf.write(o)
-File.open("elf.out", "wb") { |f| f << o.to_s }
-
-puts
-Process.exec "hexdump", %w[-C a.out]
+File.open("a.out", "wb") { |f| f << o.to_s }
