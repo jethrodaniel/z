@@ -77,7 +77,12 @@ class Elf64 < BinData
   uint32 :e_flags, default: 0
 
   # todo
-  uint32 :e_ehsize, default: 0x38_00_40
+  uint16 :e_ehsize, default: 0x00_40
+  uint16 :e_phentsize, default: 0x00_38
+  uint16 :e_phnum, default: 0x00_09
+  uint16 :e_shentsize, default: 0x00_40
+  uint16 :e_shnum, default: 0x00_1c
+  uint16 :e_shstrndx, default: 0x00_1b
 
   def to_s(io)
     magic = [e_ident.mag0, e_ident.mag1, e_ident.mag2, e_ident.mag3].map(&.to_s(16)).join
