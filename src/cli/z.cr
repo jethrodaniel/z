@@ -7,6 +7,7 @@ require "../lex/lexer"
 require "../parse/parser"
 require "../ast/dot"
 require "../codegen/compiler"
+require "../codegen/elf"
 
 PROG = "z"
 lex = false
@@ -16,6 +17,7 @@ compile = false
 run = false
 stdin = false
 string = false
+obj = false
 
 parser = OptionParser.new do |parser|
   parser.banner = "Usage: #{PROG} [command] [arguments]"
@@ -39,6 +41,10 @@ parser = OptionParser.new do |parser|
   parser.on("run", "Compile and run input") do
     parser.banner = "Usage: #{PROG} run [arguments]"
     run = true
+  end
+  parser.on("obj", "Analyze object files") do
+    parser.banner = "Usage: #{PROG} obj [arguments]"
+    obj = true
   end
   parser.on("-i", "Get input from stdin") do
     stdin = true
@@ -90,6 +96,10 @@ elsif dot
 elsif compile
   cc = Z::Compiler.new(input)
   puts cc.compile
+elsif obj
+  io = IO::Memory.new(input)
+  elf = io.read_bytes(Elf64::Header)
+  puts elf
 elsif run
   cc = Z::Compiler.new(input.to_s)
   asm_file = File.tempfile("z.S") { |f| f.puts cc.compile }

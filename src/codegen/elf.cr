@@ -81,10 +81,10 @@ class Elf64::Header < BinData
   endian little
 
   group :e_ident do
-    uint8 :mag0, default: 0x7f_u8 # , verify: ->{ mag0 == 0x7f_u8 }
-    uint8 :mag1, default: 'E'.ord
-    uint8 :mag2, default: 'L'.ord
-    uint8 :mag3, default: 'F'.ord
+    uint8 :mag0, default: 0x7f_u8, verify: ->{ mag0 == 0x7f_u8 }
+    uint8 :mag1, default: 'E'.ord, verify: ->{ mag1 == 'E'.ord }
+    uint8 :mag2, default: 'L'.ord, verify: ->{ mag2 == 'L'.ord }
+    uint8 :mag3, default: 'F'.ord, verify: ->{ mag3 == 'F'.ord }
 
     uint8 :class, default: Elf::ELFCLASS64
     uint8 :endian, default: Elf::ELFDATA2LSB # todo - use exisiting endian
@@ -213,11 +213,11 @@ module Elf64
   end
 end
 
-elf = Elf64.new.tap do |e|
-  # ...
-end
-
-# puts elf
-o = IO::Memory.new
-elf.write(o)
-File.open("a.out", "wb") { |f| f << o.to_s }
+# elf = Elf64.new.tap do |e|
+#   # ...
+# end
+#
+# # puts elf
+# o = IO::Memory.new
+# elf.write(o)
+# File.open("a.out", "wb") { |f| f << o.to_s }

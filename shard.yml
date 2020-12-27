@@ -8,8 +8,6 @@ crystal: 0.35.1
 targets:
   z:
     main: src/cli/z.cr
-  elf:
-    main: src/codegen/elf.cr
 dependencies:
   bindata:
     git: https://github.com/spider-gazelle/bindata
