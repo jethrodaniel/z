@@ -45,7 +45,10 @@ end
 
 require "bindata"
 
-class Elf64 < BinData
+module Elf64
+end
+
+class Elf64::Header < BinData
   endian little
 
   group :e_ident do
@@ -86,12 +89,50 @@ class Elf64 < BinData
 
   def to_s(io)
     magic = [e_ident.mag0, e_ident.mag1, e_ident.mag2, e_ident.mag3].map(&.to_s(16)).join
-    io.puts "magic: #{magic}"
-    io.puts "class: #{e_ident.class.to_s(16)}"
+    io.puts <<-E
+      e_ident:
+        magic: #{magic}
+        class: #{e_ident.class}
+        endian: #{e_ident.endian}
+        version: #{e_ident.version}
+        osabi: #{e_ident.osabi}
+        pad: #{e_ident.pad}
+      e_type: #{e_type}
+      e_machine: #{e_machine}
+      e_version: #{e_version}
+      e_entry: #{e_entry}
+      e_phoff: #{e_phoff}
+      e_shoff: #{e_shoff}
+      e_flags: #{e_flags}
+      e_ehsize: #{e_ehsize}
+      e_phentsize: #{e_phentsize}
+      e_phnum: #{e_phnum}
+      e_shentsize: #{e_shentsize}
+      e_shnum: #{e_shnum}
+      e_shstrndx: #{e_shstrndx}
+    E
+  end
+end
 
+class Elf64::Main < BinData
+  endian little
+
+  custom header : Header = Header.new
+
+  def to_s(io)
+    io.puts
     io.puts <<-ELF
-      magic: #{e_ident.mag0.to_s(16)}
+    == elf64 ==
+
+    ==> Header
+    #{header}
     ELF
+  end
+end
+
+module Elf64
+  def self.new
+    Main.new
   end
 end
 
