@@ -1,4 +1,5 @@
 require "set"
+require "colorize"
 
 require "../lex/lexer"
 require "../ast/node"
@@ -432,7 +433,28 @@ module Z
     end
 
     private def error(msg : String)
-      raise Error.new("[#{prev.line}:#{prev.col}] #{msg}")
+      lines = @code.split("\n")
+
+      # todo, split out into separate _error with location_ thing
+      #
+      err = "\n\n#{"error".colorize(:red)}: #{msg.colorize.mode(:bold)}\n"
+      err += "#{"-->".colorize(:blue)} #{prev.line}:#{prev.col}"
+
+      space_n = (prev.line + 1).to_s.size
+      err += "\n#{" ".ljust(space_n, ' ')}#{" |".colorize(:blue)}\n"
+
+      print_line = ->(n : Int32) {
+        err += "#{n.to_s.ljust(space_n, ' ')} | ".colorize(:blue).to_s
+        err += lines[n - 1]
+        err += "\n"
+      }
+      print_line.call(prev.line - 1) unless prev.line == 1
+      print_line.call(prev.line)
+      err += "#{" ".ljust(space_n, ' ')}#{" " * prev.col}  ^".colorize(:red).mode(:bright).to_s
+      err += "\n"
+      print_line.call(prev.line + 1) if prev.line + 1 < lines.size
+      err += "\n\n"
+      raise Error.new(err)
     end
   end
 end
