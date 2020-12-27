@@ -1,6 +1,6 @@
-p(c){putchar(c);putchar(10);}
+int p(c){putchar(c);putchar(10);}
 
-main() {
+int main() {
   i = 5;
 
   while (i > 0) {

@@ -2,7 +2,7 @@
 //
 // Heavily inspired by D. See https://dlang.org/spec/iasm.html
 //
-main() {
+int main() {
   // Assembly uses the same tokens as the rest of the language.
   asm {
     sub rax, 0;
@@ -26,7 +26,7 @@ asm {
     ret;
 }
 
-test_asm_in_fn() {
+int test_asm_in_fn() {
   asm {
     push 0;
     pop rax;

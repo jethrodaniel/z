@@ -1,8 +1,8 @@
-u64 main() {
+int main() {
   repl();
 }
 
-u64 repl() {
+int repl() {
   running = 1;
 
   prompt();
@@ -29,15 +29,15 @@ u64 repl() {
   }
 }
 
-u64 p(c){putchar(c);}
-u64 puts(){p(10);}
+int p(c){putchar(c);}
+int puts(){p(10);}
 
-u64 prompt() {
+int prompt() {
   p(63); // ?
   p(32); // ' '
 }
 
-u64 print_num(n) {
+int print_num(n) {
   if (n < 0) {
     p(45); // -
     n = -n;

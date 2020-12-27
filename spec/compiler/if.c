@@ -1,4 +1,4 @@
-main() {
+int main() {
   // if
   if (3>2) p(65);
   if (-3>2) p(90);
@@ -24,4 +24,4 @@ main() {
   } else p(90);
 }
 
-p(c){putchar(c);putchar(10);}
+int p(c){putchar(c);putchar(10);}
