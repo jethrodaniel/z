@@ -80,7 +80,6 @@ class Elf64::Header < BinData
 
   def to_s(io)
     magic = [e_ident.mag0, e_ident.mag1, e_ident.mag2, e_ident.mag3].map(&.to_s(16)).join
-    return
     io.puts <<-E
       e_ident:
         magic: #{magic}
@@ -112,19 +111,39 @@ class Elf64::ProgramHeader < BinData
   # todo
   uint32 :p_type, default: 6
   uint32 :p_flags, default: 5
-  uint64 :p_offset, default: 0x40
-  uint64 :p_vaddr, default: 0x40
-  uint64 :p_paddr, default: 0x40
+  uint64 :p_offset, default: 0x40_00_40
+  uint64 :p_vaddr, default: 0x40_00_40
+  uint64 :p_paddr, default: 0x40_00_40
   uint32 :p_filesz, default: 0x01f8
   uint32 :p_memsz, default: 0
   uint32 :p_align, default: 0x01f8
+end
+
+class Elf64::SectionHeader < BinData
+  endian little
+
+  # todo
+  uint32 :sh_name, default: 0
+
+  # define SHT_NOBITS	  8		/* Program space with no data (bss) */
+  uint32 :sh_type, default: 8
+  uint32 :sh_flags, default: 0
+  uint64 :sh_addr, default: 0x04_00_00_00_00_3
+  uint64 :sh_offset, default: 0x02_38
+  uint64 :sh_size, default: 0x40_02_38
+  uint64 :sh_info, default: 0x40_02_38
+  uint64 :sh_addralign, default: 0x1c
+  uint64 :sh_entsize, default: 0x1c
 end
 
 class Elf64::Main < BinData
   endian little
 
   custom header : Header = Header.new
+  # todo: ensure this is located at e_ident.phoff
   custom program_header : ProgramHeader = ProgramHeader.new
+
+  custom section_header : SectionHeader = SectionHeader.new
 
   def to_s(io)
     io.puts <<-ELF
