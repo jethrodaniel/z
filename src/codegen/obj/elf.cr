@@ -11,8 +11,10 @@ module Elf
   EI_NIDENT = 16
 
   EI_CLASS       = 4
-  ELFCLASS64     = 2 # 64-bit objects
+  ELFCLASS32     = 1
+  ELFCLASS64     = 2
   EI_CLASS_NAMES = {
+    # ELFCLASS32 => "32-bit",
     ELFCLASS64 => "64-bit",
   }
 
@@ -52,8 +54,10 @@ module Elf
   }
 
   EM_X86_64 = 62
+  EM_386    =  3
   EM_NAMES  = {
     EM_X86_64 => "x86_64",
+    # EM_386 => "Intel 80386",
   }
 end
 
@@ -164,28 +168,28 @@ macro add_n_sections(n)
   {% end %}
 end
 
-class Elf64::Main < BinData
-  endian little
+class Elf64::Obj
+  @header : Header
 
-  custom header : Header = Header.new
+  def initialize(@io : IO)
+    @header = @io.read_bytes(Header)
 
-  # todo: ensure this is located at e_ident.phoff
-  custom program_header : ProgramHeader = ProgramHeader.new
+    # todo: ensure this is located at e_ident.phoff
+    # @program_header = ProgramHeader.new
 
-  # {% for i in header.shnum %}
-  #   custom section_header_{{i.id}} : SectionHeader = SectionHeader.new
-  # {% end %}
-  # add_n_sections(header.shnum)
-  # if header.shnum.is_a? NumberLiteral
-  #   add_n_sections(3)
-  # end
+    @header.e_shnum.times do |n|
+      # add section
+    end
+
+    # error if anything remains
+  end
 
   def to_s(io)
     io.puts <<-ELF
-    == elf64 ==
+    == elf file ==
 
     ==> Header
-    #{header}
+    #{@header}
     ELF
   end
 end

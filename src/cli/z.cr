@@ -98,7 +98,7 @@ elsif compile
   puts cc.compile
 elsif obj
   io = IO::Memory.new(input)
-  elf = io.read_bytes(Elf64::Header)
+  elf = Elf64::Obj.new(io)
   puts elf
 elsif run
   cc = Z::Compiler.new(input.to_s)
