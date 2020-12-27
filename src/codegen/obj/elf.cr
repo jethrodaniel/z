@@ -1,4 +1,4 @@
-# Write a x86_64 ELF binary
+# Read and write x86_64 ELF binaries
 #
 # References:
 #
@@ -6,70 +6,55 @@
 # - https://linuxhint.com/understanding_elf_file_format/
 # - https://www.conradk.com/codebase/2017/05/28/elf-from-scratch/
 
-# $ gcc -s hi.c ; rake build; hexdump -C a.out |head -n 20; echo ; ../../bin/elf; hexdump -C a.out
-# == elf64 ==
-#
-# ==> Header
-#   e_ident:
-#     magic: 7f454c46
-#     class: 2
-#     endian: 1
-#     version: 1
-#     osabi: 0
-#     pad: 0
-#   e_type: 2
-#   e_machine: 62
-#   e_version: 1
-#   e_entry: 4195392
-#   e_phoff: 64
-#   e_shoff: 4448
-#   e_flags: 0
-#   e_ehsize: 64
-#   e_phentsize: 56
-#   e_phnum: 9
-#   e_shentsize: 64
-#   e_shnum: 28
-#   e_shstrndx: 27
-#
-# 00000000  7f 45 4c 46 02 01 01 00  00 00 00 00 00 00 00 00  |.ELF............|
-# 00000010  02 00 3e 00 01 00 00 00  40 04 40 00 00 00 00 00  |..>.....@.@.....|
-# 00000020  40 00 00 00 00 00 00 00  60 11 00 00 00 00 00 00  |@.......`.......|
-# 00000030  00 00 00 00 40 00 38 00  09 00 40 00 1c 00 1b 00  |....@.8...@.....|
-# 00000040  06 00 00 00 05 00 00 00  40 00 40 00 00 00 00 00  |........@.@.....|
-# 00000050  40 00 40 00 00 00 00 00  40 00 40 00 00 00 00 00  |@.@.....@.@.....|
-# 00000060  f8 01 00 00 00 00 00 00  f8 01 00 00 00 00 00 00  |................|
-# 00000070  08 00 00 00 00 00 00 00  03 00 00 00 40 00 00 00  |............@...|
-# 00000080  38 02 00 00 00 00 00 00  38 02 40 00 00 00 00 00  |8.......8.@.....|
-# 00000090  38 02 40 00 00 00 00 00  1c 00 00 00 00 00 00 00  |8.@.............|
-# 000000a0  1c 00 00 00 00 00 00 00                           |........|
-# 000000a8
-
+# note: try and retain header names, for readability's sake
 module Elf
   EI_NIDENT = 16
 
-  EI_CLASS   = 4
-  ELFCLASS64 = 2 # 64-bit objects
+  EI_CLASS       = 4
+  ELFCLASS64     = 2 # 64-bit objects
+  EI_CLASS_NAMES = {
+    ELFCLASS64 => "64-bit",
+  }
 
-  EI_DATA     = 5
-  ELFDATA2LSB = 1 # 2's complement, litte endian
+  EI_DATA       = 5
+  ELFDATA2LSB   = 1
+  EI_DATA_NAMES = {
+    ELFDATA2LSB => "2's complement, litte endian",
+  }
 
-  EI_VERSION = 6
-  EV_CURRENT = 1
+  EI_VERSION       = 6
+  EV_CURRENT       = 1
+  EI_VERSION_NAMES = {
+    EV_CURRENT => "version #{EV_CURRENT}",
+  }
 
-  EI_OSABI      = 7
-  ELFOSABI_SYSV = 0
+  EI_OSABI       = 7
+  ELFOSABI_SYSV  = 0
+  EI_OSABI_NAMES = {
+    ELFOSABI_SYSV => "SYSV",
+  }
 
   EI_ABIVERSION = 8
 
   EI_PAD = 9
 
-  # ET_NONE = 0
-  # ET_REL = 1
-  ET_EXEC = 2
-  # ET_DYN = 3
-  # ET_CORE = 4
+  ET_NONE  = 0
+  ET_REL   = 1
+  ET_EXEC  = 2
+  ET_DYN   = 3
+  ET_CORE  = 4
+  ET_NAMES = {
+    ET_NONE => "none",
+    ET_REL  => "relocatable",
+    ET_EXEC => "executable",
+    ET_DYN  => "dynamic",
+    ET_CORE => "core",
+  }
 
   EM_X86_64 = 62
+  EM_NAMES  = {
+    EM_X86_64 => "x86_64",
+  }
 end
 
 require "bindata"
@@ -117,28 +102,26 @@ class Elf64::Header < BinData
   uint16 :e_shstrndx, default: 0x00_1b
 
   def to_s(io)
-    magic = [e_ident.mag0, e_ident.mag1, e_ident.mag2, e_ident.mag3].map(&.to_s(16)).join
     io.puts <<-E
-      e_ident:
-        magic: #{magic}
-        class: #{e_ident.class}
-        endian: #{e_ident.endian}
-        version: #{e_ident.version}
-        osabi: #{e_ident.osabi}
-        pad: #{e_ident.pad}
-      e_type: #{e_type}
-      e_machine: #{e_machine}
-      e_version: #{e_version}
-      e_entry: #{e_entry}
-      e_phoff: #{e_phoff}
-      e_shoff: #{e_shoff}
-      e_flags: #{e_flags}
-      e_ehsize: #{e_ehsize}
-      e_phentsize: #{e_phentsize}
-      e_phnum: #{e_phnum}
-      e_shentsize: #{e_shentsize}
-      e_shnum: #{e_shnum}
-      e_shstrndx: #{e_shstrndx}
+      e_ident
+        class    : #{Elf::EI_CLASS_NAMES[e_ident.class]}
+        endian   : #{Elf::EI_DATA_NAMES[e_ident.endian]}
+        version  : #{Elf::EI_VERSION_NAMES[e_ident.version]}
+        osabi    : #{Elf::EI_OSABI_NAMES[e_ident.osabi]}
+        pad      : 0x#{e_ident.pad.to_s(16)}
+      e_type     : #{Elf::ET_NAMES[e_type]}
+      e_machine  : #{Elf::EM_NAMES[e_machine]}
+      e_version  : #{Elf::EI_VERSION_NAMES[e_version]}
+      e_entry    : 0x#{e_entry.to_s(16)}
+      e_phoff    : 0x#{e_phoff.to_s(16)}
+      e_shoff    : 0x#{e_shoff.to_s(16)}
+      e_flags    : 0x#{e_flags.to_s(16)}
+      e_ehsize   : 0x#{e_ehsize.to_s(16)}
+      e_phentsize: 0x#{e_phentsize.to_s(16)}
+      e_phnum    : 0x#{e_phnum.to_s(16)}
+      e_shentsize: 0x#{e_shentsize.to_s(16)}
+      e_shnum    : 0x#{e_shnum.to_s(16)}
+      e_shstrndx : 0x#{e_shstrndx.to_s(16)}
     E
   end
 end

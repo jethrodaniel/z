@@ -7,7 +7,7 @@ require "../lex/lexer"
 require "../parse/parser"
 require "../ast/dot"
 require "../codegen/compiler"
-require "../codegen/elf"
+require "../codegen/obj/elf"
 
 PROG = "z"
 lex = false
