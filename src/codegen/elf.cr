@@ -6,12 +6,20 @@
 #
 # - `/usr/include/elf.h`
 
+require "bindata"
+
+class Elf64 < BinData
+  endian little
+
+  uint8 :mag0, default: 0x7f_u8
+end
+
 module Elf
   EI_NIDENT = 16
 
-  EI_MAG0 = 0
+  EI_MAG0 =    0
   ELFMAG0 = 0x7f
-  EI_MAG1 = 1
+  EI_MAG1 =    1
   ELFMAG1 = 'E'.ord
   EI_MAG2 = 2
   ELFMAG2 = 'L'.ord
@@ -44,6 +52,8 @@ module Elf
 end
 
 class ElfBinary
+  getter :io
+
   def initialize
     @io = IO::Memory.new
   end
@@ -113,4 +123,21 @@ File.open("a.out", "wb") do |f|
   f.write bin.to_s
 end
 
+bin.io.rewind
+elf = bin.io.read_bytes(Elf64)
+puts <<-ELF
+  mag0: #{elf.mag0.to_s(16)}
+ELF
+
+elf = Elf64.new.tap do |e|
+  e.mag0 = 1_u8
+end
+puts <<-ELF
+  mag0: #{elf.mag0.to_s(16)}
+ELF
+o = IO::Memory.new
+elf.write(o)
+File.open("elf.out", "wb") { |f| f << o.to_s }
+
+puts
 Process.exec "hexdump", %w[-C a.out]

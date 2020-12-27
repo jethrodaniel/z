@@ -15,6 +15,7 @@ task :clean do
   sh 'rm -rfv tmp bin'
 end
 
+task :build => :install
 task :install => :fmt do
 	sh 'shards install'
 	sh 'shards build'
