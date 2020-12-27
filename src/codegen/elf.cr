@@ -21,10 +21,21 @@ module Elf
   end
 end
 
-elf_bin = IO::Memory.new
+class ElfBinary
+  def initialize
+    @io = IO::Memory.new
+  end
 
-class IO::Memory
+  def <<(int)
+    @io.write_byte int.to_u8
+  end
+
+  def to_s
+    @io.to_slice
+  end
 end
+
+bin = ElfBinary.new
 
 # every ELF file starts with the magic number, then ASCII for 'ELF'
 #
@@ -34,15 +45,15 @@ end
 # 00000004
 # ```
 #
-elf_bin.write_byte Elf::Const::MAG0.to_u8
-elf_bin.write_byte Elf::Const::MAG1.to_u8
-elf_bin.write_byte Elf::Const::MAG2.to_u8
-elf_bin.write_byte Elf::Const::MAG3.to_u8
+bin << Elf::Const::MAG0
+bin << Elf::Const::MAG1
+bin << Elf::Const::MAG2
+bin << Elf::Const::MAG3
 
-elf_bin.write_byte Elf::Const::CLASS64.to_u8
+bin << Elf::Const::CLASS64
 
 File.open("a.out", "wb") do |f|
-  f.write elf_bin.to_slice
+  f.write bin.to_s
 end
 
 Process.exec "hexdump", %w[-C a.out]
