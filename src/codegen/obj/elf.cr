@@ -195,15 +195,13 @@ macro add_n_sections(n)
   {% end %}
 end
 
-class Elf64::Obj
+class Elf64::Reader
   @header : Header
   @program_header : ProgramHeader?
 
-  # private def parse_section_header
-  # end
-
   def initialize(@io : IO)
     @header = @io.read_bytes(Header)
+    @sections = [] of SectionHeader
 
     # Linking view      Executable view
     #
@@ -234,9 +232,7 @@ class Elf64::Obj
 
       io.seek(@header.e_shoff)
       @header.e_shnum.times do |n|
-        section = @io.read_bytes(SectionHeader)
-        puts "\n==> Section ##{n}"
-        puts section
+        @sections << @io.read_bytes(SectionHeader)
       end
     else
       # we may or may not have a program header
@@ -263,5 +259,13 @@ class Elf64::Obj
     ==> Program Header
     #{@program_header}
     ELF
+
+    @sections.each_with_index(1) do |s, i|
+      io.puts <<-ELF
+
+      ==> Section ##{i}
+      #{s}
+      ELF
+    end
   end
 end
