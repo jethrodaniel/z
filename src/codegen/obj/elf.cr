@@ -62,6 +62,50 @@ module Elf
     EM_X86_64 => "x86_64",
     # EM_386 => "Intel 80386",
   }
+
+  SHT_NULL     =          0
+  SHT_PROGBITS =          1
+  SHT_SYMTAB   =          2
+  SHT_STRTAB   =          3
+  SHT_RELA     =          4
+  SHT_HASH     =          5
+  SHT_DYNAMIC  =          6
+  SHT_NOTE     =          7
+  SHT_NOBITS   =          8
+  SHT_REL      =          9
+  SHT_SHLIB    =         10
+  SHT_DYNSYM   =         11
+  SHT_LOPROC   = 0x70000000
+  SHT_HIPROC   = 0x7fffffff
+
+  # SHT_LOUSER = 0x80000000
+  # SHT_HIUSER = 0x8fffffff
+
+  def self.sht_names(type)
+    types = {
+      SHT_NULL     => "Section header table entry unused",
+      SHT_PROGBITS => "Program data",
+      SHT_SYMTAB   => "Symbol table",
+      SHT_STRTAB   => "String table",
+      SHT_RELA     => "Relocation entries with addends",
+      SHT_HASH     => "Symbol hash table",
+      SHT_DYNAMIC  => "Dynamic linking information",
+      SHT_NOTE     => "Notes",
+      SHT_NOBITS   => "Program space with no data (bss)",
+      SHT_REL      => "Relocation entries, no addends",
+      SHT_SHLIB    => "Reserved",
+      SHT_DYNSYM   => "Dynamic linker symbol table",
+    }
+
+    return types[type] if types[type]?
+
+    case type
+    when SHT_LOPROC..SHT_HIPROC
+      "Processor-specific semantics (0x#{type.to_s(16)})"
+    else
+      "Unknown (0x#{type.to_s(16)})"
+    end
+  end
 end
 
 require "bindata"
@@ -165,6 +209,8 @@ class Elf64::SectionHeader < BinData
   uint32 :sh_name
   @name : String?
   property :name
+
+  # todo: verify
   uint32 :sh_type
   uint32 :sh_flags
   uint64 :sh_addr
@@ -178,7 +224,7 @@ class Elf64::SectionHeader < BinData
     io.puts <<-E
       name        : #{name}
       sh_name     : 0x#{sh_name.to_s(16)}
-      sh_type     : 0x#{sh_type.to_s(16)}
+      sh_type     : #{Elf.sht_names(sh_type)}
       sh_flags    : 0x#{sh_flags.to_s(16)}
       sh_addr     : 0x#{sh_addr.to_s(16)}
       sh_offset   : 0x#{sh_offset.to_s(16)}
