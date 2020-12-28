@@ -173,6 +173,19 @@ class Elf64::SectionHeader < BinData
   uint64 :sh_info, default: 0x40_02_38
   uint64 :sh_addralign, default: 0x1c
   uint64 :sh_entsize, default: 0x1c
+
+  def to_s(io)
+    io.puts <<-E
+      sh_type     : 0x#{sh_type.to_s(16)}
+      sh_flags    : 0x#{sh_flags.to_s(16)}
+      sh_addr     : 0x#{sh_addr.to_s(16)}
+      sh_offset   : 0x#{sh_offset.to_s(16)}
+      sh_size     : 0x#{sh_size.to_s(16)}
+      sh_info     : 0x#{sh_info.to_s(16)}
+      sh_addralign: 0x#{sh_addralign.to_s(16)}
+      sh_entsize  : 0x#{sh_entsize.to_s(16)}
+    E
+  end
 end
 
 macro add_n_sections(n)
@@ -185,6 +198,9 @@ end
 class Elf64::Obj
   @header : Header
   @program_header : ProgramHeader?
+
+  # private def parse_section_header
+  # end
 
   def initialize(@io : IO)
     @header = @io.read_bytes(Header)
@@ -215,6 +231,13 @@ class Elf64::Obj
 
       io.seek(@header.e_phoff)
       @program_header = @io.read_bytes(ProgramHeader)
+
+      io.seek(@header.e_shoff)
+      @header.e_shnum.times do |n|
+        section = @io.read_bytes(SectionHeader)
+        puts "\n==> Section ##{n}"
+        puts section
+      end
     else
       # we may or may not have a program header
       # ensure we have a section header
