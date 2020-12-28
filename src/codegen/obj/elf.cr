@@ -5,6 +5,7 @@
 # - `/usr/include/elf.h`
 # - https://linuxhint.com/understanding_elf_file_format/
 # - https://www.conradk.com/codebase/2017/05/28/elf-from-scratch/
+# - http://www.skyfree.org/linux/references/ELF_Format.pdf
 
 # note: try and retain header names, for readability's sake
 module Elf
@@ -161,21 +162,22 @@ end
 class Elf64::SectionHeader < BinData
   endian little
 
-  # todo
-  uint32 :sh_name, default: 0
-
-  # define SHT_NOBITS	  8		/* Program space with no data (bss) */
-  uint32 :sh_type, default: 8
-  uint32 :sh_flags, default: 0
-  uint64 :sh_addr, default: 0x04_00_00_00_00_3
-  uint64 :sh_offset, default: 0x02_38
-  uint64 :sh_size, default: 0x40_02_38
-  uint64 :sh_info, default: 0x40_02_38
-  uint64 :sh_addralign, default: 0x1c
-  uint64 :sh_entsize, default: 0x1c
+  uint32 :sh_name
+  @name : String?
+  property :name
+  uint32 :sh_type
+  uint32 :sh_flags
+  uint64 :sh_addr
+  uint64 :sh_offset
+  uint64 :sh_size
+  uint64 :sh_info
+  uint64 :sh_addralign
+  uint64 :sh_entsize
 
   def to_s(io)
     io.puts <<-E
+      name        : #{name}
+      sh_name     : 0x#{sh_name.to_s(16)}
       sh_type     : 0x#{sh_type.to_s(16)}
       sh_flags    : 0x#{sh_flags.to_s(16)}
       sh_addr     : 0x#{sh_addr.to_s(16)}
@@ -186,13 +188,6 @@ class Elf64::SectionHeader < BinData
       sh_entsize  : 0x#{sh_entsize.to_s(16)}
     E
   end
-end
-
-macro add_n_sections(n)
-  # puts "n: #{n}"
-  {% for i in (1..n) %}
-    custom section_header_{{i.id}} : SectionHeader = SectionHeader.new
-  {% end %}
 end
 
 class Elf64::Reader
@@ -232,19 +227,31 @@ class Elf64::Reader
 
       io.seek(@header.e_shoff)
       @header.e_shnum.times do |n|
-        @sections << @io.read_bytes(SectionHeader)
+        s = @io.read_bytes(SectionHeader)
+        @sections << s
       end
+
+      # s.name = sh_string_table(s.sh_name)
     else
       # we may or may not have a program header
       # ensure we have a section header
-    end
-
-    @header.e_shnum.times do |n|
-      # add section
+      STDERR.puts "non-exec not supported"
     end
 
     # error if anything remains
   end
+
+  # def sh_string_table(index)
+  #  @io.seek(@header.e_shstrndx) # skip leading \0
+
+  #  @io.puts <<-ELF
+  #  > str table @#{@header.e_shstrndx}
+  #  #{@io.gets("\0")}
+  #  ELF
+
+  #  # @io.seek(@header.e_shstrndx) # skip leading \0
+  #  "unknown"
+  # end
 
   def to_s(io)
     io.puts <<-ELF
@@ -267,5 +274,11 @@ class Elf64::Reader
       #{s}
       ELF
     end
+
+    io.puts <<-ELF
+
+    ==> Section Header String Table
+    TODO
+    ELF
   end
 end
