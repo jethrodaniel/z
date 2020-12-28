@@ -21,7 +21,7 @@ module Elf
   EI_DATA       = 5
   ELFDATA2LSB   = 1
   EI_DATA_NAMES = {
-    ELFDATA2LSB => "2's complement, litte endian",
+    ELFDATA2LSB => "2's complement, little endian",
   }
 
   EI_VERSION       = 6
@@ -46,12 +46,14 @@ module Elf
   ET_DYN   = 3
   ET_CORE  = 4
   ET_NAMES = {
-    ET_NONE => "none",
+    # ET_NONE => "none",
     ET_REL  => "relocatable",
     ET_EXEC => "executable",
-    ET_DYN  => "dynamic",
-    ET_CORE => "core",
+    # ET_DYN  => "dynamic",
+    # ET_CORE => "core",
   }
+  ET_LOPROC = 0xff00
+  ET_HIPROC = 0xffff
 
   EM_X86_64 = 62
   EM_386    =  3
@@ -133,15 +135,27 @@ end
 class Elf64::ProgramHeader < BinData
   endian little
 
-  # todo
-  uint32 :p_type, default: 6
-  uint32 :p_flags, default: 5
-  uint64 :p_offset, default: 0x40_00_40
-  uint64 :p_vaddr, default: 0x40_00_40
-  uint64 :p_paddr, default: 0x40_00_40
-  uint32 :p_filesz, default: 0x01f8
-  uint32 :p_memsz, default: 0
-  uint32 :p_align, default: 0x01f8
+  uint32 :p_type
+  uint32 :p_flags
+  uint64 :p_offset
+  uint64 :p_vaddr
+  uint64 :p_paddr
+  uint32 :p_filesz
+  uint32 :p_memsz
+  uint32 :p_align
+
+  def to_s(io)
+    io.puts <<-E
+      p_type     : 0x#{p_type.to_s(16)}
+      p_flags    : 0x#{p_flags.to_s(16)}
+      p_offset   : 0x#{p_offset.to_s(16)}
+      p_vaddr    : 0x#{p_vaddr.to_s(16)}
+      p_paddr    : 0x#{p_paddr.to_s(16)}
+      p_filesz   : 0x#{p_filesz.to_s(16)}
+      p_memsz    : 0x#{p_memsz.to_s(16)}
+      p_align    : 0x#{p_align.to_s(16)}
+    E
+  end
 end
 
 class Elf64::SectionHeader < BinData
@@ -170,12 +184,41 @@ end
 
 class Elf64::Obj
   @header : Header
+  @program_header : ProgramHeader?
 
   def initialize(@io : IO)
     @header = @io.read_bytes(Header)
 
-    # todo: ensure this is located at e_ident.phoff
-    # @program_header = ProgramHeader.new
+    # Linking view      Executable view
+    #
+    # +-------------+   +-------------+
+    # | elf header  |   | elf header  |
+    # |-------------|   |-------------|
+    # | prog header |   | prog header |
+    # | table (opt) |   | table       |
+    # |-------------|   |-------------|
+    # | section 1   |   | segment 1   |
+    # |-------------|   |-------------|
+    # |    ...      |   |    ...      |
+    # |-------------|   |-------------|
+    # | section n   |   | segment n   |
+    # |-------------|   |-------------|
+    # |    ...      |   |    ...      |
+    # |-------------|   |-------------|
+    # | section     |   | section     |
+    # | header      |   | header (opt)|
+    # +-------------+   +-------------+
+
+    if @header.e_type == Elf::ET_EXEC
+      # ensure we have a program header
+      # we may or may not have a section header
+
+      io.seek(@header.e_phoff)
+      @program_header = @io.read_bytes(ProgramHeader)
+    else
+      # we may or may not have a program header
+      # ensure we have a section header
+    end
 
     @header.e_shnum.times do |n|
       # add section
@@ -190,6 +233,12 @@ class Elf64::Obj
 
     ==> Header
     #{@header}
+    ELF
+
+    io.puts <<-ELF if @program_header
+
+    ==> Program Header
+    #{@program_header}
     ELF
   end
 end
