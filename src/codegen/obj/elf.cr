@@ -136,40 +136,44 @@ class Elf64::Header < BinData
     uint8 :mag2, default: 'L'.ord, verify: ->{ mag2 == 'L'.ord }
     uint8 :mag3, default: 'F'.ord, verify: ->{ mag3 == 'F'.ord }
 
-    uint8 :class, default: Elf::ELFCLASS64
-    uint8 :endian, default: Elf::ELFDATA2LSB # todo - use exisiting endian
-    uint8 :version, default: 1
-    uint8 :osabi, default: Elf::ELFOSABI_SYSV
-    uint8 :pad, default: 0 # todo
+    uint8 :e_class, verify: ->{
+      e_class.in? [Elf::ELFCLASS32, Elf::ELFCLASS64]
+    }
+    uint8 :endian, verify: ->{
+      endian.in? [Elf::ELFDATA2LSB]
+    }
+    uint8 :version, verify: ->{ version == 1_u8 }
+    uint8 :osabi
+    uint8 :pad
 
     uint32 :e_ident_after1, default: 0
     uint16 :e_ident_after2, default: 0
     uint8 :e_ident_after3, default: 0
   end
 
-  uint16 :e_type, default: Elf::ET_EXEC
-  uint16 :e_machine, default: Elf::EM_X86_64
-  uint32 :e_version, default: Elf::EV_CURRENT
+  uint16 :e_type
+  uint16 :e_machine
+  uint32 :e_version
 
   # todo
-  uint64 :e_entry, default: 0x400440
-  uint64 :e_phoff, default: 0x40
-  uint64 :e_shoff, default: 0x1160
+  uint64 :e_entry
+  uint64 :e_phoff
+  uint64 :e_shoff
 
-  uint32 :e_flags, default: 0
+  uint32 :e_flags
 
   # todo
-  uint16 :e_ehsize, default: 0x00_40
-  uint16 :e_phentsize, default: 0x00_38
-  uint16 :e_phnum, default: 0x00_09
-  uint16 :e_shentsize, default: 0x00_40
-  uint16 :e_shnum, default: 0x00_1c
-  uint16 :e_shstrndx, default: 0x00_1b
+  uint16 :e_ehsize
+  uint16 :e_phentsize
+  uint16 :e_phnum
+  uint16 :e_shentsize
+  uint16 :e_shnum
+  uint16 :e_shstrndx
 
   def to_s(io)
     io.puts <<-E
       e_ident
-        class    : #{Elf::EI_CLASS_NAMES[e_ident.class]}
+        class    : #{Elf::EI_CLASS_NAMES[e_ident.e_class]}
         endian   : #{Elf::EI_DATA_NAMES[e_ident.endian]}
         version  : #{Elf::EI_VERSION_NAMES[e_ident.version]}
         osabi    : #{Elf::EI_OSABI_NAMES[e_ident.osabi]}
@@ -226,7 +230,12 @@ class Elf64::SectionHeader < BinData
 
   # todo: verify
   uint32 :sh_type
+
   uint32 :sh_flags
+  # bit_field do
+  #   bool :flag_write
+  #   bool :flag_
+
   uint64 :sh_addr
   uint64 :sh_offset
   uint64 :sh_size
@@ -242,6 +251,7 @@ class Elf64::SectionHeader < BinData
       sh_flags    : #{Elf.shf_names(sh_flags)}
       sh_addr     : 0x#{sh_addr.to_s(16)}
       sh_offset   : 0x#{sh_offset.to_s(16)}
+      sh_offset   : #{sh_offset}
       sh_size     : 0x#{sh_size.to_s(16)}
       sh_info     : 0x#{sh_info.to_s(16)}
       sh_addralign: 0x#{sh_addralign.to_s(16)}
@@ -287,11 +297,20 @@ class Elf64::Reader
 
       io.seek(@header.e_shoff)
       @header.e_shnum.times do |n|
-        s = @io.read_bytes(SectionHeader)
-        @sections << s
+        @sections << @io.read_bytes(SectionHeader)
       end
 
-      # s.name = sh_string_table(s.sh_name)
+      # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+      # p "string table!"
+      # s = @sections[1]
+      # p s
+      # @io.seek(s.sh_offset/8)
+      # p @io.read_char
+      # p @io.gets("\0")
+
+      # @sections.each do |s|
+      #   # s.name = sh_string_table(s.sh_name)
+      # end
     else
       # we may or may not have a program header
       # ensure we have a section header
@@ -301,17 +320,18 @@ class Elf64::Reader
     # error if anything remains
   end
 
-  # def sh_string_table(index)
-  #  @io.seek(@header.e_shstrndx) # skip leading \0
+  def sh_string_table(index)
+    @io.seek(s.sh_offset) # skip leading \0
 
-  #  @io.puts <<-ELF
-  #  > str table @#{@header.e_shstrndx}
-  #  #{@io.gets("\0")}
-  #  ELF
+    str = @io.gets("\0")
 
-  #  # @io.seek(@header.e_shstrndx) # skip leading \0
-  #  "unknown"
-  # end
+    puts <<-ELF
+   > str table @#{@header.e_shstrndx + index}
+   #{str.inspect}
+   ELF
+
+    str
+  end
 
   def to_s(io)
     io.puts <<-ELF
@@ -340,5 +360,26 @@ class Elf64::Reader
     ==> Section Header String Table
     TODO
     ELF
+  end
+end
+
+class Elf64::Writer
+  property :header
+  # @header : Header?
+
+  property :program_header
+  # @program_header : ProgramHeader?
+
+  property :sections
+
+  def initialize
+    @header = Header.new
+    @program_header = ProgramHeader.new
+    @sections = [] of SectionHeader
+  end
+
+  def write(io)
+    io.write_bytes(@header)
+    # io.write_bytes(@program_header)
   end
 end
