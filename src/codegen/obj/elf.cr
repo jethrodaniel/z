@@ -106,6 +106,20 @@ module Elf
       "Unknown (0x#{type.to_s(16)})"
     end
   end
+
+  SHF_WRITE     = (1 << 0)
+  SHF_ALLOC     = (1 << 1)
+  SHF_EXECINSTR = (1 << 2)
+
+  def self.shf_names(value)
+    flags = [] of String
+
+    flags << "Writable" if value & SHF_WRITE
+    flags << "Allocated" if value & SHF_ALLOC
+    flags << "Executable" if value & SHF_EXECINSTR
+
+    flags.join(", ")
+  end
 end
 
 require "bindata"
@@ -225,7 +239,7 @@ class Elf64::SectionHeader < BinData
       name        : #{name}
       sh_name     : 0x#{sh_name.to_s(16)}
       sh_type     : #{Elf.sht_names(sh_type)}
-      sh_flags    : 0x#{sh_flags.to_s(16)}
+      sh_flags    : #{Elf.shf_names(sh_flags)}
       sh_addr     : 0x#{sh_addr.to_s(16)}
       sh_offset   : 0x#{sh_offset.to_s(16)}
       sh_size     : 0x#{sh_size.to_s(16)}
