@@ -3,6 +3,7 @@
 # References:
 #
 # - `/usr/include/elf.h`
+# - http://www.sco.com/developers/gabi/latest/contents.html
 # - https://linuxhint.com/understanding_elf_file_format/
 # - https://www.conradk.com/codebase/2017/05/28/elf-from-scratch/
 # - http://www.skyfree.org/linux/references/ELF_Format.pdf
@@ -231,7 +232,7 @@ class Elf64::SectionHeader < BinData
   # todo: verify
   uint32 :sh_type
 
-  uint32 :sh_flags
+  uint64 :sh_flags
   # bit_field do
   #   bool :flag_write
   #   bool :flag_
@@ -300,17 +301,11 @@ class Elf64::Reader
         @sections << @io.read_bytes(SectionHeader)
       end
 
-      # p ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-      # p "string table!"
-      # s = @sections[1]
-      # p s
-      # @io.seek(s.sh_offset/8)
-      # p @io.read_char
-      # p @io.gets("\0")
+      str_table = @sections[@header.e_shstrndx]
 
-      # @sections.each do |s|
-      #   # s.name = sh_string_table(s.sh_name)
-      # end
+      @sections.each do |s|
+        s.name = str_table_value(str_table, s.sh_name)
+      end
     else
       # we may or may not have a program header
       # ensure we have a section header
@@ -320,17 +315,9 @@ class Elf64::Reader
     # error if anything remains
   end
 
-  def sh_string_table(index)
-    @io.seek(s.sh_offset) # skip leading \0
-
-    str = @io.gets("\0")
-
-    puts <<-ELF
-   > str table @#{@header.e_shstrndx + index}
-   #{str.inspect}
-   ELF
-
-    str
+  def str_table_value(section, index)
+    @io.seek(section.sh_offset + index)
+    @io.gets("\0")
   end
 
   def to_s(io)
@@ -347,7 +334,7 @@ class Elf64::Reader
     #{@program_header}
     ELF
 
-    @sections.each_with_index(1) do |s, i|
+    @sections.each_with_index do |s, i|
       io.puts <<-ELF
 
       ==> Section ##{i}
