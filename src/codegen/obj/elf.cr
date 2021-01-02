@@ -230,7 +230,7 @@ class Elf64::SectionHeader < BinData
   @name : String?
   property :name
 
-  @data : String? # Array(UInt8) = [] of UInt8
+  @data : String?
   property :data
 
   uint32 :sh_name
@@ -304,7 +304,6 @@ class Elf64::Reader
       @sections.each do |s|
         s.name = str_table_value(str_table, s.sh_name)
 
-        # if s.sh_type == Elf::SHT_STRTAB
         @io.seek(s.sh_offset)
         s.data = @io.gets(s.sh_size).not_nil!
       end
