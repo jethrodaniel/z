@@ -4,6 +4,8 @@
 #
 # - `/usr/include/elf.h`
 # - http://www.sco.com/developers/gabi/latest/contents.html
+# - https://lwn.net/Articles/631631/
+# - https://sourceware.org/binutils/docs-2.25/ld/Scripts.html
 # - https://linuxhint.com/understanding_elf_file_format/
 # - https://www.conradk.com/codebase/2017/05/28/elf-from-scratch/
 # - http://www.skyfree.org/linux/references/ELF_Format.pdf
@@ -344,6 +346,7 @@ class Elf64::Reader
       if s.sh_type == Elf::SHT_STRTAB
         io.puts "string table:"
         s.data.not_nil!.split("\0").each_with_index do |s, i|
+          # todo: <index>@<addr> : ...
           io.puts "#{i.to_s.rjust(4, ' ')}: #{s}"
         end
       end
