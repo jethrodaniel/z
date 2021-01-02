@@ -225,18 +225,15 @@ end
 class Elf64::SectionHeader < BinData
   endian little
 
-  uint32 :sh_name
   @name : String?
   property :name
 
-  # todo: verify
+  @data : String? # Array(UInt8) = [] of UInt8
+  property :data
+
+  uint32 :sh_name
   uint32 :sh_type
-
   uint64 :sh_flags
-  # bit_field do
-  #   bool :flag_write
-  #   bool :flag_
-
   uint64 :sh_addr
   uint64 :sh_offset
   uint64 :sh_size
@@ -252,7 +249,6 @@ class Elf64::SectionHeader < BinData
       sh_flags    : #{Elf.shf_names(sh_flags)}
       sh_addr     : 0x#{sh_addr.to_s(16)}
       sh_offset   : 0x#{sh_offset.to_s(16)}
-      sh_offset   : #{sh_offset}
       sh_size     : 0x#{sh_size.to_s(16)}
       sh_info     : 0x#{sh_info.to_s(16)}
       sh_addralign: 0x#{sh_addralign.to_s(16)}
@@ -261,6 +257,26 @@ class Elf64::SectionHeader < BinData
   end
 end
 
+# Linking view      Executable view
+#
+# +-------------+   +-------------+
+# | elf header  |   | elf header  |
+# |-------------|   |-------------|
+# | prog header |   | prog header |
+# | table (opt) |   | table       |
+# |-------------|   |-------------|
+# | section 1   |   | segment 1   |
+# |-------------|   |-------------|
+# |    ...      |   |    ...      |
+# |-------------|   |-------------|
+# | section n   |   | segment n   |
+# |-------------|   |-------------|
+# |    ...      |   |    ...      |
+# |-------------|   |-------------|
+# | section     |   | section     |
+# | header      |   | header (opt)|
+# +-------------+   +-------------+
+
 class Elf64::Reader
   @header : Header
   @program_header : ProgramHeader?
@@ -268,26 +284,6 @@ class Elf64::Reader
   def initialize(@io : IO)
     @header = @io.read_bytes(Header)
     @sections = [] of SectionHeader
-
-    # Linking view      Executable view
-    #
-    # +-------------+   +-------------+
-    # | elf header  |   | elf header  |
-    # |-------------|   |-------------|
-    # | prog header |   | prog header |
-    # | table (opt) |   | table       |
-    # |-------------|   |-------------|
-    # | section 1   |   | segment 1   |
-    # |-------------|   |-------------|
-    # |    ...      |   |    ...      |
-    # |-------------|   |-------------|
-    # | section n   |   | segment n   |
-    # |-------------|   |-------------|
-    # |    ...      |   |    ...      |
-    # |-------------|   |-------------|
-    # | section     |   | section     |
-    # | header      |   | header (opt)|
-    # +-------------+   +-------------+
 
     if @header.e_type == Elf::ET_EXEC
       # ensure we have a program header
@@ -305,6 +301,10 @@ class Elf64::Reader
 
       @sections.each do |s|
         s.name = str_table_value(str_table, s.sh_name)
+
+        # if s.sh_type == Elf::SHT_STRTAB
+        @io.seek(s.sh_offset)
+        s.data = @io.gets(s.sh_size).not_nil!
       end
     else
       # we may or may not have a program header
@@ -340,13 +340,14 @@ class Elf64::Reader
       ==> Section ##{i}
       #{s}
       ELF
+
+      if s.sh_type == Elf::SHT_STRTAB
+        io.puts "string table:"
+        s.data.not_nil!.split("\0").each_with_index do |s, i|
+          io.puts "#{i.to_s.rjust(4, ' ')}: #{s}"
+        end
+      end
     end
-
-    io.puts <<-ELF
-
-    ==> Section Header String Table
-    TODO
-    ELF
   end
 end
 
