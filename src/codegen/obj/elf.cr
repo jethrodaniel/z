@@ -148,7 +148,6 @@ class ELF
         sh_addralign: 0x#{addralign.to_s(16)}
         sh_entsize  : 0x#{entsize.to_s(16)}
       E
-      # link?
     end
   end
 
@@ -195,6 +194,16 @@ class ELF
       io.puts "==> Section ##{i}"
       io.puts "  name        : #{sh_name(s.name)}"
       io.puts s
+      if s.type == SectionHeader::Type::STRTAB
+        io.puts "  string table:"
+        @io.seek(s.offset)
+        strings = @io.gets(s.size).not_nil!.split("\0")
+        jus = strings.size.to_s.size
+        strings.each_with_index do |str, i|
+          puts "  #{i.to_s.ljust(jus, ' ')}: #{str}"
+        end
+      end
+      io.puts
     end
   end
 
