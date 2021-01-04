@@ -76,17 +76,17 @@ TODO: clean this up, add more, order by subject
 
 Thanks, y'all.
 
-## c `atexit`, 
+### c `atexit`, 
 
 - https://web.archive.org/web/20191210114310/http://dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html
 
-## some other languages
+### some other languages
 
 - https://github.com/charly-lang/charly
 - https://github.com/mint-lang/mint
 - https://github.com/cia-foundation/TempleOS
 
-## compilers
+### compilers
 
 - http://scheme2006.cs.uchicago.edu/11-ghuloum.pdf
 - https://www.sigbus.info/compilerbook
@@ -94,7 +94,7 @@ Thanks, y'all.
 - https://github.com/rui314/chibicc
 - https://github.com/eatonphil/ulisp
 
-## general info
+### general info
 
 - unix history repo
   - https://github.com/dspinellis/unix-history-repo/blob/Research-V2-Snapshot-Development/c/nc0/c00.c
