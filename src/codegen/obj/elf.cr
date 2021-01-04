@@ -202,8 +202,8 @@ class ELF
         strings.each_with_index do |str, i|
           puts "  #{i.to_s.ljust(jus, ' ')}: #{str}"
         end
+        io.puts
       end
-      io.puts
     end
   end
 
