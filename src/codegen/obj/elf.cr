@@ -1,375 +1,307 @@
-# Read and write x86_64 ELF binaries
+# ELF (Executable and Linkable Format) is a standard file format for
+# object files.
+#
+# This code was adapted from Crystal's [internal ELF reader](https://github.com/crystal-lang/crystal/blob/015c5687b80353692f1c1b40a46ad10722e34549/src/crystal/elf.cr#L1).
 #
 # References:
 #
-# - `/usr/include/elf.h`
 # - http://www.sco.com/developers/gabi/latest/contents.html
 # - https://lwn.net/Articles/631631/
-# - https://sourceware.org/binutils/docs-2.25/ld/Scripts.html
 # - https://linuxhint.com/understanding_elf_file_format/
 # - https://www.conradk.com/codebase/2017/05/28/elf-from-scratch/
 # - http://www.skyfree.org/linux/references/ELF_Format.pdf
+#
+class ELF
+  class Error < Exception
+  end
 
-# note: try and retain header names, for readability's sake
-module Elf
-  EI_NIDENT = 16
+  MAGIC = UInt8.slice(0x7f, 'E'.ord, 'L'.ord, 'F'.ord)
 
-  EI_CLASS       = 4
-  ELFCLASS32     = 1
-  ELFCLASS64     = 2
-  EI_CLASS_NAMES = {
-    # ELFCLASS32 => "32-bit",
-    ELFCLASS64 => "64-bit",
-  }
+  enum Klass : UInt8
+    ELF32 = 1
+    ELF64 = 2
+  end
 
-  EI_DATA       = 5
-  ELFDATA2LSB   = 1
-  EI_DATA_NAMES = {
-    ELFDATA2LSB => "2's complement, little endian",
-  }
+  enum OSABI : UInt8
+    SYSTEM_V = 0x00
+    HP_UX    = 0x01
+    NETBSD   = 0x02
+    LINUX    = 0x03
+    SOLARIS  = 0x06
+    AIX      = 0x07
+    IRIX     = 0x08
+    FREEBSD  = 0x09
+    OPENBSD  = 0x0C
+    OPENVMS  = 0x0D
+    NSK_OS   = 0x0E
+    AROS     = 0x0F
+    FENIS_OS = 0x10
+    CLOUDABI = 0x11
+    SORTIX   = 0x53
+  end
 
-  EI_VERSION       = 6
-  EV_CURRENT       = 1
-  EI_VERSION_NAMES = {
-    EV_CURRENT => "version #{EV_CURRENT}",
-  }
+  enum Type : UInt16
+    REL  = 1
+    EXEC = 2
+    DYN  = 3
+    CORE = 4
+  end
 
-  EI_OSABI       = 7
-  ELFOSABI_SYSV  = 0
-  EI_OSABI_NAMES = {
-    ELFOSABI_SYSV => "SYSV",
-  }
+  enum Machine : UInt16
+    UNKNOWN = 0x00
+    SPARC   = 0x02
+    X86     = 0x03
+    MIPS    = 0x08
+    POWERPC = 0x14
+    ARM     = 0x28
+    SUPERH  = 0x2A
+    IA_64   = 0x32
+    X86_64  = 0x3E
+    AARCH64 = 0xB7
+  end
 
-  EI_ABIVERSION = 8
+  enum Endianness
+    Little = 1
+    Big    = 2
+  end
 
-  EI_PAD = 9
+  class Ident
+    property klass : Klass
+    property data : Endianness
+    property version : UInt8
+    property osabi : OSABI
+    property abiversion : UInt8
 
-  ET_NONE  = 0
-  ET_REL   = 1
-  ET_EXEC  = 2
-  ET_DYN   = 3
-  ET_CORE  = 4
-  ET_NAMES = {
-    # ET_NONE => "none",
-    ET_REL  => "relocatable",
-    ET_EXEC => "executable",
-    # ET_DYN  => "dynamic",
-    # ET_CORE => "core",
-  }
-  ET_LOPROC = 0xff00
-  ET_HIPROC = 0xffff
+    def initialize(@klass, @data, @version, @osabi, @abiversion)
+    end
 
-  EM_X86_64 = 62
-  EM_386    =  3
-  EM_NAMES  = {
-    EM_X86_64 => "x86_64",
-    # EM_386 => "Intel 80386",
-  }
-
-  SHT_NULL     =          0
-  SHT_PROGBITS =          1
-  SHT_SYMTAB   =          2
-  SHT_STRTAB   =          3
-  SHT_RELA     =          4
-  SHT_HASH     =          5
-  SHT_DYNAMIC  =          6
-  SHT_NOTE     =          7
-  SHT_NOBITS   =          8
-  SHT_REL      =          9
-  SHT_SHLIB    =         10
-  SHT_DYNSYM   =         11
-  SHT_LOPROC   = 0x70000000
-  SHT_HIPROC   = 0x7fffffff
-
-  # SHT_LOUSER = 0x80000000
-  # SHT_HIUSER = 0x8fffffff
-
-  def self.sht_names(type)
-    types = {
-      SHT_NULL     => "Section header table entry unused",
-      SHT_PROGBITS => "Program data",
-      SHT_SYMTAB   => "Symbol table",
-      SHT_STRTAB   => "String table",
-      SHT_RELA     => "Relocation entries with addends",
-      SHT_HASH     => "Symbol hash table",
-      SHT_DYNAMIC  => "Dynamic linking information",
-      SHT_NOTE     => "Notes",
-      SHT_NOBITS   => "Program space with no data (bss)",
-      SHT_REL      => "Relocation entries, no addends",
-      SHT_SHLIB    => "Reserved",
-      SHT_DYNSYM   => "Dynamic linker symbol table",
-    }
-
-    return types[type] if types[type]?
-
-    case type
-    when SHT_LOPROC..SHT_HIPROC
-      "Processor-specific semantics (0x#{type.to_s(16)})"
-    else
-      "Unknown (0x#{type.to_s(16)})"
+    def to_s(io)
+      io.puts <<-E
+      e_ident
+        class    : #{klass}
+        endian   : #{data}
+        version  : #{version}
+        osabi    : #{osabi}
+      E
+      # pad?
     end
   end
 
-  SHF_WRITE     = (1 << 0)
-  SHF_ALLOC     = (1 << 1)
-  SHF_EXECINSTR = (1 << 2)
+  class SectionHeader
+    enum Type : UInt32
+      NULL          =  0
+      PROGBITS      =  1
+      SYMTAB        =  2
+      STRTAB        =  3
+      RELA          =  4
+      HASH          =  5
+      DYNAMIC       =  6
+      NOTE          =  7
+      NOBITS        =  8
+      REL           =  9
+      SHLIB         = 10
+      DYNSYM        = 11
+      INIT_ARRAY    = 14
+      FINI_ARRAY    = 15
+      PREINIT_ARRAY = 16
+      GROUP         = 17
+      SYMTAB_SHNDX  = 18
+    end
 
-  def self.shf_names(value)
-    flags = [] of String
+    @[Flags]
+    enum Flags : UInt64
+      WRITE            =        0x1
+      ALLOC            =        0x2
+      EXECINSTR        =        0x4
+      MERGE            =       0x10
+      STRINGS          =       0x20
+      INFO_LINK        =       0x40
+      LINK_ORDER       =       0x80
+      OS_NONCONFORMING =      0x100
+      GROUP            =      0x200
+      TLS              =      0x400
+      COMPRESSED       =      0x800
+      MASKOS           = 0x0ff00000
+      MASKPROC         = 0xf0000000
+    end
 
-    flags << "Writable" if value & SHF_WRITE
-    flags << "Allocated" if value & SHF_ALLOC
-    flags << "Executable" if value & SHF_EXECINSTR
+    property! name : UInt32
+    property! type : Type
+    property! flags : Flags
+    property! addr : UInt32 | UInt64
+    property! offset : UInt32 | UInt64
+    property! size : UInt32 | UInt64
+    property! link : UInt32
+    property! info : UInt32
+    property! addralign : UInt32 | UInt64
+    property! entsize : UInt32 | UInt64
 
-    flags.join(", ")
+    def to_s(io)
+      io.puts <<-E
+        sh_name     : 0x#{name.to_s(16)}
+        sh_type     : #{type}
+        sh_flags    : #{flags}
+        sh_addr     : 0x#{addr.to_s(16)}
+        sh_offset   : 0x#{offset.to_s(16)}
+        sh_size     : 0x#{size.to_s(16)}
+        sh_info     : 0x#{info.to_s(16)}
+        sh_addralign: 0x#{addralign.to_s(16)}
+        sh_entsize  : 0x#{entsize.to_s(16)}
+      E
+      # link?
+    end
   end
-end
 
-require "bindata"
-
-module Elf64
-end
-
-class Elf64::Header < BinData
-  endian little
-
-  group :e_ident do
-    uint8 :mag0, default: 0x7f_u8, verify: ->{ mag0 == 0x7f_u8 }
-    uint8 :mag1, default: 'E'.ord, verify: ->{ mag1 == 'E'.ord }
-    uint8 :mag2, default: 'L'.ord, verify: ->{ mag2 == 'L'.ord }
-    uint8 :mag3, default: 'F'.ord, verify: ->{ mag3 == 'F'.ord }
-
-    uint8 :e_class, verify: ->{
-      e_class.in? [Elf::ELFCLASS32, Elf::ELFCLASS64]
-    }
-    uint8 :endian, verify: ->{
-      endian.in? [Elf::ELFDATA2LSB]
-    }
-    uint8 :version, verify: ->{ version == 1_u8 }
-    uint8 :osabi
-    uint8 :pad
-
-    uint32 :e_ident_after1, default: 0
-    uint16 :e_ident_after2, default: 0
-    uint8 :e_ident_after3, default: 0
-  end
-
-  uint16 :e_type
-  uint16 :e_machine
-  uint32 :e_version
-
-  # todo
-  uint64 :e_entry
-  uint64 :e_phoff
-  uint64 :e_shoff
-
-  uint32 :e_flags
-
-  # todo
-  uint16 :e_ehsize
-  uint16 :e_phentsize
-  uint16 :e_phnum
-  uint16 :e_shentsize
-  uint16 :e_shnum
-  uint16 :e_shstrndx
-
-  def to_s(io)
-    io.puts <<-E
-      e_ident
-        class    : #{Elf::EI_CLASS_NAMES[e_ident.e_class]}
-        endian   : #{Elf::EI_DATA_NAMES[e_ident.endian]}
-        version  : #{Elf::EI_VERSION_NAMES[e_ident.version]}
-        osabi    : #{Elf::EI_OSABI_NAMES[e_ident.osabi]}
-        pad      : 0x#{e_ident.pad.to_s(16)}
-      e_type     : #{Elf::ET_NAMES[e_type]}
-      e_machine  : #{Elf::EM_NAMES[e_machine]}
-      e_version  : #{Elf::EI_VERSION_NAMES[e_version]}
-      e_entry    : 0x#{e_entry.to_s(16)}
-      e_phoff    : 0x#{e_phoff.to_s(16)}
-      e_shoff    : 0x#{e_shoff.to_s(16)}
-      e_flags    : 0x#{e_flags.to_s(16)}
-      e_ehsize   : 0x#{e_ehsize.to_s(16)}
-      e_phentsize: 0x#{e_phentsize.to_s(16)}
-      e_phnum    : 0x#{e_phnum.to_s(16)}
-      e_shentsize: 0x#{e_shentsize.to_s(16)}
-      e_shnum    : 0x#{e_shnum.to_s(16)}
-      e_shstrndx : 0x#{e_shstrndx.to_s(16)}
-    E
-  end
-end
-
-class Elf64::ProgramHeader < BinData
-  endian little
-
-  uint32 :p_type
-  uint32 :p_flags
-  uint64 :p_offset
-  uint64 :p_vaddr
-  uint64 :p_paddr
-  uint32 :p_filesz
-  uint32 :p_memsz
-  uint32 :p_align
-
-  def to_s(io)
-    io.puts <<-E
-      p_type     : 0x#{p_type.to_s(16)}
-      p_flags    : 0x#{p_flags.to_s(16)}
-      p_offset   : 0x#{p_offset.to_s(16)}
-      p_vaddr    : 0x#{p_vaddr.to_s(16)}
-      p_paddr    : 0x#{p_paddr.to_s(16)}
-      p_filesz   : 0x#{p_filesz.to_s(16)}
-      p_memsz    : 0x#{p_memsz.to_s(16)}
-      p_align    : 0x#{p_align.to_s(16)}
-    E
-  end
-end
-
-class Elf64::SectionHeader < BinData
-  endian little
-
-  @name : String?
-  property :name
-
-  @data : String?
-  property :data
-
-  uint32 :sh_name
-  uint32 :sh_type
-  uint64 :sh_flags
-  uint64 :sh_addr
-  uint64 :sh_offset
-  uint64 :sh_size
-  uint64 :sh_info
-  uint64 :sh_addralign
-  uint64 :sh_entsize
-
-  def to_s(io)
-    io.puts <<-E
-      name        : #{name}
-      sh_name     : 0x#{sh_name.to_s(16)}
-      sh_type     : #{Elf.sht_names(sh_type)}
-      sh_flags    : #{Elf.shf_names(sh_flags)}
-      sh_addr     : 0x#{sh_addr.to_s(16)}
-      sh_offset   : 0x#{sh_offset.to_s(16)}
-      sh_size     : 0x#{sh_size.to_s(16)}
-      sh_info     : 0x#{sh_info.to_s(16)}
-      sh_addralign: 0x#{sh_addralign.to_s(16)}
-      sh_entsize  : 0x#{sh_entsize.to_s(16)}
-    E
-  end
-end
-
-# Linking view      Executable view
-#
-# +-------------+   +-------------+
-# | elf header  |   | elf header  |
-# |-------------|   |-------------|
-# | prog header |   | prog header |
-# | table (opt) |   | table       |
-# |-------------|   |-------------|
-# | section 1   |   | segment 1   |
-# |-------------|   |-------------|
-# |    ...      |   |    ...      |
-# |-------------|   |-------------|
-# | section n   |   | segment n   |
-# |-------------|   |-------------|
-# |    ...      |   |    ...      |
-# |-------------|   |-------------|
-# | section     |   | section     |
-# | header      |   | header (opt)|
-# +-------------+   +-------------+
-
-class Elf64::Reader
-  @header : Header
-  @program_header : ProgramHeader?
+  getter! ident : Ident
+  property! type : Type
+  property! machine : Machine
+  property! version : UInt32
+  property! entry : UInt32 | UInt64
+  property! phoff : UInt32 | UInt64
+  property! shoff : UInt32 | UInt64
+  property! flags : UInt32
+  property! ehsize : UInt16
+  property! phentsize : UInt16
+  property! phnum : UInt16
+  property! shentsize : UInt16
+  property! shnum : UInt16
+  property! shstrndx : UInt16
 
   def initialize(@io : IO)
-    @header = @io.read_bytes(Header)
-    @sections = [] of SectionHeader
-
-    if @header.e_type == Elf::ET_EXEC
-      # ensure we have a program header
-      # we may or may not have a section header
-
-      io.seek(@header.e_phoff)
-      @program_header = @io.read_bytes(ProgramHeader)
-
-      io.seek(@header.e_shoff)
-      @header.e_shnum.times do |n|
-        @sections << @io.read_bytes(SectionHeader)
-      end
-
-      str_table = @sections[@header.e_shstrndx]
-
-      @sections.each do |s|
-        s.name = str_table_value(str_table, s.sh_name)
-
-        @io.seek(s.sh_offset)
-        s.data = @io.gets(s.sh_size).not_nil!
-      end
-    else
-      # we may or may not have a program header
-      # ensure we have a section header
-      STDERR.puts "non-exec not supported"
-    end
-
-    # error if anything remains
-  end
-
-  def str_table_value(section, index)
-    @io.seek(section.sh_offset + index)
-    @io.gets("\0")
+    read_magic
+    read_ident
+    read_header
   end
 
   def to_s(io)
-    io.puts <<-ELF
-    == elf file ==
-
+    io.puts <<-E
     ==> Header
-    #{@header}
-    ELF
+      e_type     : #{type}
+      e_machine  : #{machine}
+      e_version  : #{version}
+      e_entry    : 0x#{entry.to_s(16)}
+      e_phoff    : 0x#{phoff.to_s(16)}
+      e_shoff    : 0x#{shoff.to_s(16)}
+      e_flags    : 0x#{flags.to_s(16)}
+      e_ehsize   : 0x#{ehsize.to_s(16)}
+      e_phentsize: 0x#{phentsize.to_s(16)}
+      e_phnum    : 0x#{phnum.to_s(16)}
+      e_shentsize: 0x#{shentsize.to_s(16)}
+      e_shnum    : 0x#{shnum.to_s(16)}
+      e_shstrndx : 0x#{shstrndx.to_s(16)}
+    E
+    io.puts "\n"
+    section_headers.each_with_index do |s, i|
+      io.puts "==> Section ##{i}"
+      io.puts "  name        : #{sh_name(s.name)}"
+      io.puts s
+    end
+  end
 
-    io.puts <<-ELF if @program_header
+  private def read_magic
+    @io.read(magic = Bytes.new(4))
+    raise Error.new("Invalid magic number") unless magic == MAGIC
+  end
 
-    ==> Program Header
-    #{@program_header}
-    ELF
+  private def read_ident
+    ei_class = Klass.new(@io.read_byte.not_nil!)
+    ei_data = Endianness.from_value(@io.read_byte.not_nil!)
 
-    @sections.each_with_index do |s, i|
-      io.puts <<-ELF
+    ei_version = @io.read_byte.not_nil!
+    raise Error.new("Unsupported version number") unless ei_version == 1
 
-      ==> Section ##{i}
-      #{s}
-      ELF
+    ei_osabi = OSABI.from_value(@io.read_byte.not_nil!)
+    ei_abiversion = @io.read_byte.not_nil!
 
-      if s.sh_type == Elf::SHT_STRTAB
-        io.puts "string table:"
-        s.data.not_nil!.split("\0").each_with_index do |s, i|
-          # todo: <index>@<addr> : ...
-          io.puts "#{i.to_s.rjust(4, ' ')}: #{s}"
-        end
+    # padding (unused)
+    @io.skip(7)
+
+    @ident = Ident.new(ei_class, ei_data, ei_version, ei_osabi, ei_abiversion)
+  end
+
+  # Parses and returns an Array of `SectionHeader`.
+  def section_headers
+    @sections ||= Array(SectionHeader).new(shnum.to_i) do |i|
+      @io.seek(shoff + i * shentsize)
+
+      sh = SectionHeader.new
+      sh.name = read_word
+      sh.type = SectionHeader::Type.new(read_word)
+      sh.flags = SectionHeader::Flags.new(read_ulong.to_u64)
+      sh.addr = read_ulong
+      sh.offset = read_ulong
+      sh.size = read_ulong
+      sh.link = read_word
+      sh.info = read_word
+      sh.addralign = read_ulong
+      sh.entsize = read_ulong
+      sh
+    end
+  end
+
+  # Returns the name of a section, using the `SectionHeader#name` index.
+  def sh_name(index)
+    sh = section_headers[shstrndx]
+    pos = @io.pos
+    @io.seek(sh.offset + index)
+    name = @io.gets('\0', chomp: true).to_s
+    @io.seek(pos)
+    name
+  end
+
+  # Searches for a section then yield the `SectionHeader` and the IO object
+  # ready for parsing if the section was found. Returns the value returned by
+  # the block or nil if the section wasn't found.
+  def read_section?(name : String)
+    if sh = section_headers.find { |sh| sh_name(sh.name) == name }
+      @io.seek(sh.offset) do
+        yield sh, @io
       end
     end
   end
-end
 
-class Elf64::Writer
-  property :header
-  # @header : Header?
-
-  property :program_header
-  # @program_header : ProgramHeader?
-
-  property :sections
-
-  def initialize
-    @header = Header.new
-    @program_header = ProgramHeader.new
-    @sections = [] of SectionHeader
+  private def endianness
+    ident.data == Endianness::Little ? IO::ByteFormat::LittleEndian : IO::ByteFormat::BigEndian
   end
 
-  def write(io)
-    io.write_bytes(@header)
-    # io.write_bytes(@program_header)
+  private def read_word
+    @io.read_bytes(UInt32, endianness)
+  end
+
+  private def read_ulong
+    case ident.klass
+    when Klass::ELF32 then @io.read_bytes(UInt32, endianness)
+    when Klass::ELF64 then @io.read_bytes(UInt64, endianness)
+    else                   raise Error.new("Unsupported class")
+    end
+  end
+
+  private def read_header
+    @type = Type.new(@io.read_bytes(UInt16, endianness).not_nil!)
+    @machine = Machine.new(@io.read_bytes(UInt16, endianness).not_nil!)
+
+    @version = @io.read_bytes(UInt32, endianness).not_nil!
+    raise Error.new("Unsupported version number") unless version == 1
+
+    @entry = read_ulong
+    @phoff = read_ulong
+    @shoff = read_ulong
+
+    @flags = @io.read_bytes(UInt32, endianness)
+
+    @ehsize = @io.read_bytes(UInt16, endianness)
+    case ident.klass
+    when Klass::ELF32
+      raise Error.new("Header should be 52 bytes for ELF32") unless ehsize == 52
+    when Klass::ELF64
+      raise Error.new("Header should be 64 bytes for ELF64") unless ehsize == 64
+    end
+
+    @phentsize = @io.read_bytes(UInt16, endianness)
+    @phnum = @io.read_bytes(UInt16, endianness)
+
+    @shentsize = @io.read_bytes(UInt16, endianness)
+    @shnum = @io.read_bytes(UInt16, endianness)
+    @shstrndx = @io.read_bytes(UInt16, endianness)
   end
 end
