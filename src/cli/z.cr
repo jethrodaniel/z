@@ -111,7 +111,7 @@ elsif run
   # a.out: Symbol `putchar' causes overflow in R_X86_64_PC32 relocation
   # ```
   #
-  Process.run("gcc", ["-no-pie", asm_file.path, "-o", bin_file.path],
+  Process.run("gcc", [asm_file.path, "-o", bin_file.path],
     env: {"PATH" => ENV.fetch("PATH")},
     error: STDERR
   )
