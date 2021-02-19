@@ -104,6 +104,8 @@ elsif run
   cc = Z::Compiler.new(input.to_s)
   asm_file = File.tempfile("z.S") { |f| f.puts cc.compile }
   bin_file = File.tempfile("a.out") { }
+  cc_opts = [] of String
+  cc_opts << "-no-pie" if ENV["CI"]?
 
   # `-no-pie` is needed on Debian to prevent
   #
@@ -111,7 +113,7 @@ elsif run
   # a.out: Symbol `putchar' causes overflow in R_X86_64_PC32 relocation
   # ```
   #
-  Process.run("gcc", [asm_file.path, "-o", bin_file.path],
+  Process.run("gcc", cc_opts + [asm_file.path, "-o", bin_file.path],
     env: {"PATH" => ENV.fetch("PATH")},
     error: STDERR
   )

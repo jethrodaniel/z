@@ -21,3 +21,5 @@ jobs:
       run: |
         tree
         rake
+      env:
+        CI: true
