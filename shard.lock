@@ -1,6 +1,2 @@
 version: 2.0
-shards:
-  bindata:
-    git: https://github.com/spider-gazelle/bindata
-    version: 1.8.1
-
+shards: {}
