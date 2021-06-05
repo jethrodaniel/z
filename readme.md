@@ -1,80 +1,46 @@
 # z
 
 ![](https://github.com/jethrodaniel/z/workflows/ci/badge.svg)
+![](https://img.shields.io/github/license/jethrodaniel/z.svg)
 
 Building a C compiler along with Rui Ueyama's 9cc ([book][9cc-book], [repo][9cc]).
 
-Well, that's where _some_ of this started. The _eventual_ plan is to implement
-HolyC.
-
-## license
-
-MIT
-
 ## prerequisites
 
-- crystal 0.35 or greater
-- rake (ruby) for building
+Go.
+
+```
+$ make install_go
+$ go version # go version go1.16.4 linux/amd64
+```
 
 ## install
 
 ```
-git clone https://github.com/jethrodaniel/z
-cd z && rake
+git clone https://github.com/jethrodaniel/z && cd z && make install
 ```
 
-## usage
+or
 
 ```
-$ ./bin/z
-Usage: z [command] [arguments]
-    lex                              Lex input, output tokens
-    parse                            Parse input, output AST
-    dot                              Parse input, output graphviz dot
-    compile                          Compile input, output assembly
-    run                              Compile and run input
-    obj                              Analyze object files
-    -i                               Get input from stdin
-    -c                               Get input from string
-    -v, --version                    Show the version
-    -h, --help                       Show this help
+go install github.com/jethrodaniel/z@latest
 ```
 
-## example
-
-See the specs in the [spec/compiler directory](spec/compiler).
+## development
 
 ```
-$ pushd spec/compiler/
-$ ../../bin/z run hi.c
-hi!
-$ ../../bin/z run main.c
-fib(0)  = 0
-fib(1)  = 1
-fib(2)  = 1
-fib(3)  = 2
-fib(4)  = 3
-fib(5)  = 5
-fib(6)  = 8
-fib(7)  = 13
-fib(8)  = 21
-fib(9)  = 34
-fib(10) = 55
-fib(11) = 89
-fib(12) = 144
-$ z run -c 'p(c){putchar(c);}main(){p(65);p(10);}'
-A
+make build   # builds executables into ./bin
+make install # `go install` this project
+make test
 ```
 
-## references
+## License
+
+MIT
+
+## References
 
 TODO: clean this up, add more, order by subject
-
-> If I have seen further, it is by standing upon the shoulders of giants.
->
-> Sir Isaac Newton, 1675
-
-Thanks, y'all.
 
 ### c `atexit`, 
 
