@@ -12,14 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: install build tools
-      run: |
-        apt update -y
-        apt install -y rake tree
-
     - name: build and run tests
       run: |
-        tree
-        rake
+        make
       env:
         CI: true
